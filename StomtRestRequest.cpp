@@ -14,7 +14,7 @@ StomtRestRequest::~StomtRestRequest()
 
 void StomtRestRequest::MyHttpCall() 
 {
-	TSharedRef<IHttpRequest> Request = FHttpModule::Get().CreateRequest(); // Gets an Singelton and creates Request.
+	TSharedRef<IHttpRequest> Request = FHttpModule::Get().CreateRequest(); // Gets an singelton and creates request.
 	
 	Request->SetURL("https://test.rest.stomt.com/stomts/java-sdk-test-33956");
 	Request->SetVerb("GET");
@@ -31,8 +31,16 @@ void StomtRestRequest::MyHttpCall()
 	return;
 }
 
+void StomtRestRequest::SetVerb(SRequestVerb::Type Verb)
+{
+}
 
-void StomtRestRequest::OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful) 
+
+void StomtRestRequest::SetHeader(const FString & HeaderName, const FString & HeaderValue)
+{
+}
+
+void StomtRestRequest::OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
 	if (EHttpResponseCodes::IsOk(Response->GetResponseCode())) 
 	{
