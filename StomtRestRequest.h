@@ -8,11 +8,11 @@
  * 
  */
 
-class STOMT_API UHttp
+class STOMT_API StomtRestRequest
 {
 public:
-	UHttp();
-	~UHttp();
+	StomtRestRequest();
+	~StomtRestRequest();
 
 	void MyHttpCall();
 
