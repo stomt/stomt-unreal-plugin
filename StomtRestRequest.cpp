@@ -31,13 +31,20 @@ void StomtRestRequest::MyHttpCall()
 	return;
 }
 
+StomtRestRequest * StomtRestRequest::ConstructRequest()
+{
+	return nullptr;
+}
+
 void StomtRestRequest::SetVerb(SRequestVerb::Type Verb)
 {
+	this->RequestVerb = Verb;
 }
 
 
 void StomtRestRequest::SetHeader(const FString & HeaderName, const FString & HeaderValue)
 {
+	this->RequestHeaders.Add(HeaderName, HeaderValue);
 }
 
 void StomtRestRequest::OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
