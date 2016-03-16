@@ -6,8 +6,11 @@ public class stomt : ModuleRules
 {
 	public stomt(TargetInfo Target)
 	{
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HTTP"});
 
-        PrivateDependencyModuleNames.AddRange(new string[] { "VaRestPlugin" });
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HTTP", "Json" });
+
+        //PrivateDependencyModuleNames.AddRange(new string[] { "VaRestPlugin" });
+
+
 	}
 }
