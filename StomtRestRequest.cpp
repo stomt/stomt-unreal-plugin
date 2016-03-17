@@ -2,7 +2,7 @@
 
 #include "stomt.h"
 #include "StomtRestRequest.h"
-#include "Json.h"
+
 
 
 StomtRestRequest::StomtRestRequest()
@@ -72,7 +72,15 @@ int32 StomtRestRequest::GetResponseCode()
 
 FString StomtRestRequest::GetResponseHeader(const FString HeaderName)
 {
-	return this->GetResponseHeader;
+	FString Result;
+
+	FString* Header = ResponseHeaders.Find(HeaderName);
+	if (Header != NULL)
+	{
+		Result = *Header;
+	}
+
+	return Result;
 }
 
 
@@ -91,9 +99,9 @@ TArray<FString> StomtRestRequest::GetAllResponseHeaders()
 //////////////////////////////////////////////////////////////////////////
 // URL processing
 
-void ProccessRequest(TSharedRef<IHttpRequest> HttpRequest)
+void StomtRestRequest::ProcessRequest(TSharedRef<IHttpRequest> HttpRequest)
 {
-	/*// Set verb
+	// Set verb
 	switch (RequestVerb)
 	{
 	case SRequestVerb::GET:
@@ -122,7 +130,7 @@ void ProccessRequest(TSharedRef<IHttpRequest> HttpRequest)
 	// Serialize data to json string
 	FString OutputString;
 	TSharedRef< TJsonWriter<> > Writer = TJsonWriterFactory<>::Create(&OutputString);
-	FJsonSerializer::Serialize(RequestJsonObj->ToSharedRef(), Writer);
+	FJsonSerializer::Serialize(RequestJsonObj.ToSharedRef(), Writer);
 
 	// Set Json content
 	HttpRequest->SetContentAsString(OutputString);
@@ -135,11 +143,11 @@ void ProccessRequest(TSharedRef<IHttpRequest> HttpRequest)
 	}
 
 	// Bind event
-	HttpRequest->OnProcessRequestComplete().BindUObject(this, &UVaRestRequestJSON::OnProcessRequestComplete);
+	//HttpRequest->OnProcessRequestComplete().BindUObject(this, &UVaRestRequestJSON::OnProcessRequestComplete);
 
 	// Execute the request
 	HttpRequest->ProcessRequest();
-	*/
+	
 }
 
 

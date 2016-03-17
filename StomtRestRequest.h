@@ -2,6 +2,7 @@
 
 #pragma once
 #include "Http.h"
+#include "Json.h"
 
 
 /**
@@ -118,7 +119,7 @@ public:
 public:
 
 	/** Internal request data stored as JSON */
-	FJsonObject* RequestJsonObj;
+	TSharedPtr<FJsonObject>  RequestJsonObj;
 
 	/** Verb for making request (GET,POST,etc) */
 	SRequestVerb::Type RequestVerb;
