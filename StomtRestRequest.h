@@ -104,18 +104,21 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	// Request callbacks
 
-	private:
+private:
 	/** Internal bind function for the IHTTPRequest::OnProcessRequestCompleted() event */
 	void OnProcessRequestComplete(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 
-	public:
+public:
 	/** Event occured when the request has been completed */
 	//FOnRequestComplete OnRequestComplete;
 
 	/** Event occured when the request wasn't successfull */
 	//FOnRequestFail OnRequestFail;
 
-protected:
+public:
+
+	/** Internal request data stored as JSON */
+	FJsonObject* RequestJsonObj;
 
 	/** Verb for making request (GET,POST,etc) */
 	SRequestVerb::Type RequestVerb;

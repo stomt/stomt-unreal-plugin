@@ -2,6 +2,7 @@
 
 #include "stomt.h"
 #include "StomtRestRequest.h"
+#include "Json.h"
 
 
 StomtRestRequest::StomtRestRequest()
@@ -60,4 +61,87 @@ void StomtRestRequest::OnResponseReceived(FHttpRequestPtr Request, FHttpResponse
 
 	return;
 }
+
+///////////////////////////////////////////////////////////////////////////
+// Response data access
+
+int32 StomtRestRequest::GetResponseCode()
+{
+	return this->ResponseCode;
+}
+
+FString StomtRestRequest::GetResponseHeader(const FString HeaderName)
+{
+	return this->GetResponseHeader;
+}
+
+
+TArray<FString> StomtRestRequest::GetAllResponseHeaders()
+{
+	TArray<FString> Result;
+
+	for (TMap<FString, FString>::TConstIterator It(ResponseHeaders); It; ++It)
+	{
+		Result.Add(It.Key() + TEXT(": ") + It.Value());
+	}
+
+	return Result;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// URL processing
+
+void ProccessRequest(TSharedRef<IHttpRequest> HttpRequest)
+{
+	/*// Set verb
+	switch (RequestVerb)
+	{
+	case SRequestVerb::GET:
+		HttpRequest->SetVerb(TEXT("GET"));
+		break;
+
+	case SRequestVerb::POST:
+		HttpRequest->SetVerb(TEXT("POST"));
+		break;
+
+	case SRequestVerb::PUT:
+		HttpRequest->SetVerb(TEXT("PUT"));
+		break;
+
+	case SRequestVerb::DEL:
+		HttpRequest->SetVerb(TEXT("DELETE"));
+		break;
+
+	default:
+		break;
+	}
+
+	// Set content-type
+	HttpRequest->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+
+	// Serialize data to json string
+	FString OutputString;
+	TSharedRef< TJsonWriter<> > Writer = TJsonWriterFactory<>::Create(&OutputString);
+	FJsonSerializer::Serialize(RequestJsonObj->ToSharedRef(), Writer);
+
+	// Set Json content
+	HttpRequest->SetContentAsString(OutputString);
+
+
+	// Apply additional headers
+	for (TMap<FString, FString>::TConstIterator It(RequestHeaders); It; ++It)
+	{
+		HttpRequest->SetHeader(It.Key(), It.Value());
+	}
+
+	// Bind event
+	HttpRequest->OnProcessRequestComplete().BindUObject(this, &UVaRestRequestJSON::OnProcessRequestComplete);
+
+	// Execute the request
+	HttpRequest->ProcessRequest();
+	*/
+}
+
+
+
 
