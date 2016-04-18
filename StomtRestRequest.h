@@ -5,6 +5,12 @@
 #include "Json.h"
 
 
+#include "Object.h"
+
+#include "StomtRestRequest.generated.h"
+
+
+
 /**
  * 
  */
@@ -22,7 +28,8 @@ namespace SRequestVerb
 	};
 }
 
-class STOMT_API StomtRestRequest
+
+class STOMT_API StomtRestRequest : public UObject
 {
 public:
 
@@ -115,7 +122,9 @@ public:
 
 	/** Event occured when the request wasn't successfull */
 	//FOnRequestFail OnRequestFail;
-
+	
+	//////////////////////////////////////////////////////////////////////////
+	// Data
 public:
 
 	/** Internal request data stored as JSON */
@@ -132,6 +141,12 @@ public:
 
 	/** Http Response code */
 	int32 ResponseCode;
+
+
+protected:
+	/** Response data stored as JSON */
+
+	TSharedPtr<FJsonObject> ResponseJsonObj;
 
 
 };

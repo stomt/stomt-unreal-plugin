@@ -2,6 +2,7 @@
 
 #include "stomt.h"
 #include "StomtRestRequest.h"
+#include "CoreMisc.h"
 
 
 
@@ -22,7 +23,7 @@ void StomtRestRequest::MyHttpCall()
 	Request->SetHeader(TEXT("appid"), "R18OFQXmb6QzXwzP1lWdiZ7Y9");
 	Request->SetHeader("Content-Type", TEXT("application/json"));
 
-	Request->OnProcessRequestComplete().BindRaw(this, &StomtRestRequest::OnResponseReceived);
+	Request->OnProcessRequestComplete().BindUObject(this, &StomtRestRequest::OnResponseReceived);
 
 	if (!Request->ProcessRequest()) 
 	{
@@ -143,13 +144,104 @@ void StomtRestRequest::ProcessRequest(TSharedRef<IHttpRequest> HttpRequest)
 	}
 
 	// Bind event
-	//HttpRequest->OnProcessRequestComplete().BindUObject(this, &UVaRestRequestJSON::OnProcessRequestComplete);
+	//HttpRequest->OnProcessRequestComplete().BindUObject(this, &StomtRestRequest::OnProcessRequestComplete);
 
 	// Execute the request
 	HttpRequest->ProcessRequest();
 	
 }
+/*
+//////////////////////////////////////////////////////////////////////////
+// Request callbacks
 
 
+void OnProcessRequestComplete(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
+{
+	// Be sure that we have no data from previous response
+	ResetResponseData();
+
+	// Check we have result to process futher
+	if (!bWasSuccessful)
+	{
+		//UE_LOG(LogVaRest, Error, TEXT("Request failed: %s"), *Request->GetURL());
+
+		// Broadcast the result event
+		OnRequestFail.Broadcast(this);
+
+		return;
+	}
+
+	// Save response data as a string
+	ResponseContent = Response->GetContentAsString();
+
+	// Save response code as int32
+	ResponseCode = Response->GetResponseCode();
+
+	// Log response state
+	UE_LOG(LogVaRest, Log, TEXT("Response (%d): %s"), Response->GetResponseCode(), *Response->GetContentAsString());
+
+	// Process response headers
+	TArray<FString> Headers = Response->GetAllHeaders();
+	for (FString Header : Headers)
+	{
+		FString Key;
+		FString Value;
+		if (Header.Split(TEXT(": "), &Key, &Value))
+		{
+			ResponseHeaders.Add(Key, Value);
+		}
+	}
+
+	// Try to deserialize data to JSON
+	TSharedRef<TJsonReader<TCHAR>> JsonReader = TJsonReaderFactory<TCHAR>::Create(ResponseContent);
+	FJsonSerializer::Deserialize(JsonReader, ResponseJsonObj->GetRootObject());
+
+	// Decide whether the request was successful
+	bIsValidJsonResponse = bWasSuccessful && ResponseJsonObj->GetRootObject().IsValid();
+
+	// Log errors
+	if (!bIsValidJsonResponse)
+	{
+		if (!ResponseJsonObj->GetRootObject().IsValid())
+		{
+			// As we assume it's recommended way to use current class, but not the only one,
+			// it will be the warning instead of error
+			UE_LOG(LogVaRest, Warning, TEXT("JSON could not be decoded!"));
+		}
+	}
+
+	// Broadcast the result event
+	OnRequestComplete.Broadcast(this);
+
+	// Finish the latent action
+	if (ContinueAction)
+	{
+		FVaRestLatentAction<UVaRestJsonObject*> *K = ContinueAction;
+		ContinueAction = nullptr;
+
+		K->Call(ResponseJsonObj);
+	}
+}
 
 
+//////////////////////////////////////////////////////////////////////////
+// Destruction and reset
+
+
+void ResetResponseData()
+{
+	if (ResponseJsonObj != NULL)
+	{
+		ResponseJsonObj->Reset();
+	}
+	else
+	{
+		ResponseJsonObj = NewObject<UVaRestJsonObject>();
+	}
+
+	ResponseHeaders.Empty();
+	ResponseCode = -1;
+
+	bIsValidJsonResponse = false;
+}
+*/
