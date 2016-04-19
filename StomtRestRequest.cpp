@@ -150,12 +150,12 @@ void StomtRestRequest::ProcessRequest(TSharedRef<IHttpRequest> HttpRequest)
 	HttpRequest->ProcessRequest();
 	
 }
-/*
+
 //////////////////////////////////////////////////////////////////////////
 // Request callbacks
 
 
-void OnProcessRequestComplete(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
+void StomtRestRequest::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
 	// Be sure that we have no data from previous response
 	ResetResponseData();
@@ -166,7 +166,7 @@ void OnProcessRequestComplete(FHttpRequestPtr Request, FHttpResponsePtr Response
 		//UE_LOG(LogVaRest, Error, TEXT("Request failed: %s"), *Request->GetURL());
 
 		// Broadcast the result event
-		OnRequestFail.Broadcast(this);
+		//OnRequestFail.Broadcast(this);
 
 		return;
 	}
@@ -178,7 +178,7 @@ void OnProcessRequestComplete(FHttpRequestPtr Request, FHttpResponsePtr Response
 	ResponseCode = Response->GetResponseCode();
 
 	// Log response state
-	UE_LOG(LogVaRest, Log, TEXT("Response (%d): %s"), Response->GetResponseCode(), *Response->GetContentAsString());
+	//UE_LOG(LogVaRest, Log, TEXT("Response (%d): %s"), Response->GetResponseCode(), *Response->GetContentAsString());
 
 	// Process response headers
 	TArray<FString> Headers = Response->GetAllHeaders();
@@ -194,25 +194,26 @@ void OnProcessRequestComplete(FHttpRequestPtr Request, FHttpResponsePtr Response
 
 	// Try to deserialize data to JSON
 	TSharedRef<TJsonReader<TCHAR>> JsonReader = TJsonReaderFactory<TCHAR>::Create(ResponseContent);
-	FJsonSerializer::Deserialize(JsonReader, ResponseJsonObj->GetRootObject());
+	FJsonSerializer::Deserialize(JsonReader, *ResponseJsonObj);
 
 	// Decide whether the request was successful
-	bIsValidJsonResponse = bWasSuccessful && ResponseJsonObj->GetRootObject().IsValid();
+	bIsValidJsonResponse = bWasSuccessful && ResponseJsonObj->IsValid();
 
 	// Log errors
 	if (!bIsValidJsonResponse)
 	{
-		if (!ResponseJsonObj->GetRootObject().IsValid())
+		if (!ResponseJsonObj->IsValid())
 		{
 			// As we assume it's recommended way to use current class, but not the only one,
 			// it will be the warning instead of error
-			UE_LOG(LogVaRest, Warning, TEXT("JSON could not be decoded!"));
+			//UE_LOG(LogVaRest, Warning, TEXT("JSON could not be decoded!"));
 		}
 	}
 
 	// Broadcast the result event
-	OnRequestComplete.Broadcast(this);
+	//OnRequestComplete.Broadcast(this);
 
+	/*
 	// Finish the latent action
 	if (ContinueAction)
 	{
@@ -221,14 +222,14 @@ void OnProcessRequestComplete(FHttpRequestPtr Request, FHttpResponsePtr Response
 
 		K->Call(ResponseJsonObj);
 	}
+	*/
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // Destruction and reset
 
 
-void ResetResponseData()
+void StomtRestRequest::ResetResponseData()
 {
 	if (ResponseJsonObj != NULL)
 	{
@@ -236,7 +237,7 @@ void ResetResponseData()
 	}
 	else
 	{
-		ResponseJsonObj = NewObject<UVaRestJsonObject>();
+		ResponseJsonObj = new TSharedPtr<FJsonObject>();
 	}
 
 	ResponseHeaders.Empty();
@@ -244,4 +245,3 @@ void ResetResponseData()
 
 	bIsValidJsonResponse = false;
 }
-*/

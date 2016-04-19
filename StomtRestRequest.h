@@ -127,6 +127,14 @@ public:
 	// Data
 public:
 
+	/** Request response stored as a string */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "StomtRest|Response")
+	FString ResponseContent;
+
+	/** Is the response valid JSON? */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VaRest|Response")
+	bool bIsValidJsonResponse;
+
 	/** Internal request data stored as JSON */
 	TSharedPtr<FJsonObject>  RequestJsonObj;
 
@@ -146,7 +154,7 @@ public:
 protected:
 	/** Response data stored as JSON */
 
-	TSharedPtr<FJsonObject> ResponseJsonObj;
+	TSharedPtr<FJsonObject> *ResponseJsonObj;
 
 
 };
