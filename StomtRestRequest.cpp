@@ -144,7 +144,7 @@ void StomtRestRequest::ProcessRequest(TSharedRef<IHttpRequest> HttpRequest)
 	}
 
 	// Bind event
-	//HttpRequest->OnProcessRequestComplete().BindUObject(this, &StomtRestRequest::OnProcessRequestComplete);
+	HttpRequest->OnProcessRequestComplete().BindUObject(this, &StomtRestRequest::OnProcessRequestComplete);
 
 	// Execute the request
 	HttpRequest->ProcessRequest();
