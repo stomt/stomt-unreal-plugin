@@ -18,9 +18,10 @@ void AMyActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	NewObject<StandAloneImpl>()->StartupModule();
+	//StomtPlugin *plugin = NewObject<StomtPlugin>();
 
-	StomtRestRequest* request =  NewObject<StomtRestRequest>();
+
+	StomtRestRequest *request = NewObject<StomtRestRequest>();
 	request->MyHttpCall();
 	
 }
