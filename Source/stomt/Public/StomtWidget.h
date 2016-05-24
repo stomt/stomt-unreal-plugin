@@ -33,7 +33,7 @@ public:
 	bool IsScreenshotSelected;
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget")
-	void onMessageChanged();
+	void onMessageChanged(FString text);
 	
 	
 	
