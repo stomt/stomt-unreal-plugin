@@ -1,0 +1,19 @@
+{
+    "FileVersion": 3,
+	
+    "FriendlyName": "Stomt Plugin",
+    "Version": 1,
+    "VersionName": "1.0",
+    "Description": "Stomt Feedback",
+    "Category": "Widgets",
+    "CreatedBy": "Daniel Schukies",
+    "CreatedByUrl": "http://www.stomt.com",
+	
+	"Modules":
+     [
+        {
+            "Name": "StomtPlugin",
+            "Type": "Runtime"
+        }
+	]
+}
