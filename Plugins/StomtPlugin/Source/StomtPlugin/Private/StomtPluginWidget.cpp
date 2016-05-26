@@ -21,6 +21,6 @@ void UStomtPluginWidget::OnMessageChanged(FString text)
 
 void UStomtPluginWidget::ChangeButtonOrder(UButton *FirstButton, UButton *SecondButton)
 {
-	FirstButton->GetSlots
+	//FirstButton->GetSlots
 
 }

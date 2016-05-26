@@ -8,9 +8,6 @@ class FStomtPlugin : public StomtPlugin
 	virtual void StartupModule() override
 	{
 		// @HACK Force classes to be compiled on shipping build
-		//UVaRestJsonObject::StaticClass();
-		//UVaRestJsonValue::StaticClass();
-		//UVaRestRequestJSON::StaticClass();
 	}
 
 	virtual void ShutdownModule() override
@@ -24,5 +21,5 @@ class FStomtPlugin : public StomtPlugin
 IMPLEMENT_MODULE( FStomtPlugin, StomtPlugin)
 
 DEFINE_LOG_CATEGORY(LogStomt);
-
 DEFINE_LOG_CATEGORY(LogVaRest);
+
