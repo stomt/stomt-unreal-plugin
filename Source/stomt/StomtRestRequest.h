@@ -9,7 +9,8 @@
 
 #include "StomtRestRequest.generated.h"
 
-
+//General Log
+//DECLARE_LOG_CATEGORY_EXTERN(LogStomt, Log, All);
 
 /**
  * 
@@ -28,26 +29,27 @@ namespace SRequestVerb
 	};
 }
 
-
-class STOMT_API StomtRestRequest : public UObject
+UCLASS()
+class STOMT_API UStomtRestRequest : public UObject
 {
-public:
+	GENERATED_BODY()
 
+public:
 	//////////////////////////////////////////////////////////////////////////
 	// Construction
 
-	StomtRestRequest();
-	~StomtRestRequest();
+	UStomtRestRequest();
+	~UStomtRestRequest();
 
 	void MyHttpCall();
 
-	static StomtRestRequest* ConstructRequest();
+	static UStomtRestRequest* ConstructRequest();
 
 	/** Set verb to the request */
 	void SetVerb(SRequestVerb::Type Verb);
 
 	/** Sets header info */
-	void SetHeader(const FString& HeaderName, const FString& HeaderValue);
+	void SetHeader(const FString &HeaderName, const FString &HeaderValue);
 
 	void OnResponseReceived(
 		FHttpRequestPtr Request, 
@@ -103,7 +105,7 @@ public:
 	// URL processing
 
 	/** Open URL with current setup */
-	//virtual void ProcessURL(const FString& Url = TEXT("http://alyamkin.com"));
+	virtual void ProcessURL(const FString& Url = TEXT("http://alyamkin.com"));
 
 	/** Apply current internal setup to request and process it */
 	void ProcessRequest(TSharedRef<IHttpRequest> HttpRequest);
