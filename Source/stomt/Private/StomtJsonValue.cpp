@@ -1,6 +1,6 @@
 // Copyright 2014 Vladimir Alyamkin. All Rights Reserved.
+// Copyright 2016 Stomt. All Rights Reserved.
 
-//#include "StomtPluginPrivatePCH.h"
 #include "stomt.h"
 #include "StomtJsonValue.h"
 #include "CoreMisc.h"

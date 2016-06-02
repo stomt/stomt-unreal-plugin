@@ -1,7 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright 2016 Daniel Schukies. All Rights Reserved.
 
+#pragma once
 #include "stomt.h"
 #include "StomtRestRequest.h"
+#include "StomtJsonObject.h"
 #include "CoreMisc.h"
 
 //General Log
@@ -200,12 +202,13 @@ void UStomtRestRequest::ProcessRequest(TSharedRef<IHttpRequest> HttpRequest)
 	// Serialize data to json string
 	FString OutputString;
 	TSharedRef< TJsonWriter<> > Writer = TJsonWriterFactory<>::Create(&OutputString);
-	FJsonSerializer::Serialize(RequestJsonObj.ToSharedRef(), Writer); // kaputt
+	FJsonSerializer::Serialize(JsonObj.ToSharedRef(), Writer); // kaputt
+
+	//RequestJsonObj->Reset();
 
 	// Set Json content
 	HttpRequest->SetContentAsString(OutputString);
 
-	//----
 		
 	// Apply additional headers
 	for (TMap<FString, FString>::TConstIterator It(RequestHeaders); It; ++It)
@@ -226,8 +229,8 @@ void UStomtRestRequest::ProcessRequest(TSharedRef<IHttpRequest> HttpRequest)
 
 void UStomtRestRequest::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
-	// Be sure that we have no data from previous response
-	ResetResponseData();
+	//// Be sure that we have no data from previous response
+	//ResetResponseData();
 
 	// Check we have result to process futher
 	if (!bWasSuccessful)
@@ -261,23 +264,23 @@ void UStomtRestRequest::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpR
 		}
 	}
 
-	// Try to deserialize data to JSON
-	TSharedRef<TJsonReader<TCHAR>> JsonReader = TJsonReaderFactory<TCHAR>::Create(ResponseContent);
-	FJsonSerializer::Deserialize(JsonReader, *ResponseJsonObj);
+	//// Try to deserialize data to JSON
+	//TSharedRef<TJsonReader<TCHAR>> JsonReader = TJsonReaderFactory<TCHAR>::Create(ResponseContent);
+	//FJsonSerializer::Deserialize(JsonReader, *ResponseJsonObj);
 
-	// Decide whether the request was successful
-	bIsValidJsonResponse = bWasSuccessful && ResponseJsonObj->IsValid();
+	//// Decide whether the request was successful
+	//bIsValidJsonResponse = bWasSuccessful && ResponseJsonObj->IsValid();
 
-	// Log errors
-	if (!bIsValidJsonResponse)
-	{
-		if (!ResponseJsonObj->IsValid())
-		{
-			// As we assume it's recommended way to use current class, but not the only one,
-			// it will be the warning instead of error
-			UE_LOG(LogTemp, Warning, TEXT("JSON could not be decoded!"));
-		}
-	}
+	//// Log errors
+	//if (!bIsValidJsonResponse)
+	//{
+	//	if (!ResponseJsonObj->IsValid())
+	//	{
+	//		// As we assume it's recommended way to use current class, but not the only one,
+	//		// it will be the warning instead of error
+	//		UE_LOG(LogTemp, Warning, TEXT("JSON could not be decoded!"));
+	//	}
+	//}
 
 	// Broadcast the result event
 	//OnRequestComplete.Broadcast(this);
@@ -298,19 +301,19 @@ void UStomtRestRequest::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpR
 // Destruction and reset
 
 
-void UStomtRestRequest::ResetResponseData()
-{
-	if (ResponseJsonObj != NULL)
-	{
-		ResponseJsonObj->Reset();
-	}
-	else
-	{
-		ResponseJsonObj = new TSharedPtr<FJsonObject>();
-	}
-
-	ResponseHeaders.Empty();
-	ResponseCode = -1;
-
-	bIsValidJsonResponse = false;
-}
+//void UStomtRestRequest::ResetResponseData()
+//{
+//	if (ResponseJsonObj != NULL)
+//	{
+//		ResponseJsonObj->Reset();
+//	}
+//	else
+//	{
+//		ResponseJsonObj = NewObject<UStomtJsonObject>();
+//	}
+//
+//	ResponseHeaders.Empty();
+//	ResponseCode = -1;
+//
+//	bIsValidJsonResponse = false;
+//}

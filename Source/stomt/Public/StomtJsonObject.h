@@ -1,15 +1,10 @@
 // Copyright 1998-2014 Epic Games, Inc. All Rights Reserved.
 // Copyright 2014 Vladimir Alyamkin. All Rights Reserved.
+// Copyright 2016 Stomt. All Rights Reserved.
 
 #pragma once
 
-#include "Http.h"
-#include "Json.h"
-
-
 #include "StomtJsonValue.h"
-
-#include "Object.h"
 #include "StomtJsonObject.generated.h"
 
 

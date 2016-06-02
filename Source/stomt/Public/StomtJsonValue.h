@@ -1,11 +1,9 @@
 // Copyright 1998-2014 Epic Games, Inc. All Rights Reserved.
 // Copyright 2014 Vladimir Alyamkin. All Rights Reserved.
+// Copyright 2016 Stomt. All Rights Reserved.
 
 #pragma once
-#include "Object.h"
-#include "Http.h"
-#include "Json.h"
-//#include "StomtJsonObject.h"
+#include "stomt.h"
 #include "StomtJsonValue.generated.h"
 
 class UStomtJsonObject;
@@ -36,8 +34,6 @@ class STOMT_API UStomtJsonValue : public UObject
 {
 	GENERATED_BODY()
 public:
-	//UStomtJsonValue();
-	//UStomtJsonValue(FString& StringValue);
 
 	/** Create new Json Number value
 	* Attn.!! float used instead of double to make the function blueprintable! */
@@ -70,8 +66,8 @@ public:
 	void SetRootValue(TSharedPtr<FJsonValue>& JsonValue);
 
 
-//	//////////////////////////////////////////////////////////////////////////
-//	// FJsonValue API
+	//////////////////////////////////////////////////////////////////////////
+	// FJsonValue API
 
 	/** Get type of Json value (Enum) */
 	UFUNCTION(BlueprintCallable, Category = "Stomt|Json")
@@ -107,17 +103,17 @@ public:
 	//	UStomtJsonObject* AsObject();
 
 
-//	//////////////////////////////////////////////////////////////////////////
-//	// Data
-//
+	//////////////////////////////////////////////////////////////////////////
+	// Data
+
 private:
 	/** Internal JSON data */
 	TSharedPtr<FJsonValue> JsonVal;
 
-//
-//	//////////////////////////////////////////////////////////////////////////
-//	// Helpers
-//
+
+	//////////////////////////////////////////////////////////////////////////
+	// Helpers
+
 protected:
 	/** Simple error logger */
 	void ErrorMessage(const FString& InType) const;

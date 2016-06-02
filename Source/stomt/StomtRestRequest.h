@@ -1,20 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
-#include "Http.h"
-#include "Json.h"
-
-
-#include "Object.h"
-
+#include "stomt.h"
+#include "StomtJsonObject.h"
 #include "StomtRestRequest.generated.h"
-
-//General Log
-//DECLARE_LOG_CATEGORY_EXTERN(LogStomt, Log, All);
-
-/**
- * 
- */
 
  /** Verb (GET, PUT, POST) */
 UENUM(BlueprintType)
@@ -137,8 +126,16 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VaRest|Response")
 	bool bIsValidJsonResponse;
 
+
+
+
+protected:
+
 	/** Internal request data stored as JSON */
-	TSharedPtr<FJsonObject>  RequestJsonObj;
+	UStomtJsonObject* RequestJsonObj;
+
+	/** Response data stored as JSON */
+	UStomtJsonObject* ResponseJsonObj;
 
 	/** Verb for making request (GET,POST,etc) */
 	SRequestVerb::Type RequestVerb;
@@ -152,11 +149,10 @@ public:
 	/** Http Response code */
 	int32 ResponseCode;
 
-
-protected:
 	/** Response data stored as JSON */
+	TSharedPtr<FJsonObject> JsonObj;
 
-	TSharedPtr<FJsonObject> *ResponseJsonObj;
+
 
 
 };
