@@ -3,7 +3,6 @@
 // Copyright 2016 Stomt. All Rights Reserved.
 
 #pragma once
-
 #include "StomtJsonValue.h"
 #include "StomtJsonObject.generated.h"
 
@@ -16,14 +15,15 @@ UCLASS()
 class STOMT_API UStomtRestJsonObject : public UObject
 {
 	GENERATED_BODY()
-	
+
+public:
 	/** Create new Json object */
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "Construct Json Object", HidePin = "WorldContextObject", DefaultToSelf = "WorldContextObject"), Category = "Stomt|Json")
 	static UStomtRestJsonObject* ConstructJsonObject(UObject* WorldContextObject);
 
 	/** Reset all internal data */
 	UFUNCTION(BlueprintCallable, Category = "Stomt|Json")
-		void Reset();
+	void Reset();
 
 	/** Get the root Json object */
 	TSharedPtr<FJsonObject>& GetRootObject();

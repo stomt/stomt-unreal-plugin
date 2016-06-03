@@ -3,17 +3,12 @@
 #pragma once
 #include "stomt.h"
 #include "StomtRestRequest.h"
-#include "StomtJsonObject.h"
-#include "CoreMisc.h"
-
-//General Log
-//DEFINE_LOG_CATEGORY(LogStomt);
-
-
 
 
 UStomtRestRequest::UStomtRestRequest()
 {
+	ResponseJsonObj = NULL;
+	RequestJsonObj = NULL;
 }
 
 UStomtRestRequest::~UStomtRestRequest()
@@ -25,12 +20,8 @@ void UStomtRestRequest::MyHttpCall()
 	//TSharedRef<IHttpRequest> Request = FHttpModule::Get().CreateRequest(); // Gets an singelton and creates request.
 	
 	this->SetVerb(SRequestVerb::GET);
-	//this->SetHeader(FString(TEXT("123")), FString(TEXT("123")) );
 	this->SetHeader(FString(TEXT("appid")), FString(TEXT("R18OFQXmb6QzXwzP1lWdiZ7Y9")));
 	this->ProcessURL("https://test.rest.stomt.com/stomts/java-sdk-test-33956");
-
-	//GetResponseCode
-
 
 	/*
 	Request->SetURL("https://test.rest.stomt.com/stomts/java-sdk-test-33956");
@@ -202,9 +193,8 @@ void UStomtRestRequest::ProcessRequest(TSharedRef<IHttpRequest> HttpRequest)
 	// Serialize data to json string
 	FString OutputString;
 	TSharedRef< TJsonWriter<> > Writer = TJsonWriterFactory<>::Create(&OutputString);
-	FJsonSerializer::Serialize(JsonObj.ToSharedRef(), Writer); // kaputt
+	FJsonSerializer::Serialize(ResponseJsonObj->GetRootObject().ToSharedRef(), Writer); // kaputt
 
-	//RequestJsonObj->Reset();
 
 	// Set Json content
 	HttpRequest->SetContentAsString(OutputString);
@@ -229,8 +219,8 @@ void UStomtRestRequest::ProcessRequest(TSharedRef<IHttpRequest> HttpRequest)
 
 void UStomtRestRequest::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
-	//// Be sure that we have no data from previous response
-	//ResetResponseData();
+	// Be sure that we have no data from previous response
+	ResetResponseData();
 
 	// Check we have result to process futher
 	if (!bWasSuccessful)
@@ -301,19 +291,19 @@ void UStomtRestRequest::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpR
 // Destruction and reset
 
 
-//void UStomtRestRequest::ResetResponseData()
-//{
-//	if (ResponseJsonObj != NULL)
-//	{
-//		ResponseJsonObj->Reset();
-//	}
-//	else
-//	{
-//		ResponseJsonObj = NewObject<UStomtJsonObject>();
-//	}
-//
-//	ResponseHeaders.Empty();
-//	ResponseCode = -1;
-//
-//	bIsValidJsonResponse = false;
-//}
+void UStomtRestRequest::ResetResponseData()
+{
+	if (ResponseJsonObj != NULL)
+	{
+		ResponseJsonObj->Reset();
+	}
+	else
+	{
+		ResponseJsonObj = NewObject<UStomtRestJsonObject>();
+	}
+
+	ResponseHeaders.Empty();
+	ResponseCode = -1;
+
+	bIsValidJsonResponse = false;
+}

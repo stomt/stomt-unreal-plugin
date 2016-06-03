@@ -123,7 +123,7 @@ public:
 	FString ResponseContent;
 
 	/** Is the response valid JSON? */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VaRest|Response")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "StomtRest|Response")
 	bool bIsValidJsonResponse;
 
 
@@ -132,10 +132,10 @@ public:
 protected:
 
 	/** Internal request data stored as JSON */
-	UStomtJsonObject* RequestJsonObj;
+	UStomtRestJsonObject* RequestJsonObj;
 
 	/** Response data stored as JSON */
-	UStomtJsonObject* ResponseJsonObj;
+	UStomtRestJsonObject* ResponseJsonObj;
 
 	/** Verb for making request (GET,POST,etc) */
 	SRequestVerb::Type RequestVerb;
@@ -149,8 +149,6 @@ protected:
 	/** Http Response code */
 	int32 ResponseCode;
 
-	/** Response data stored as JSON */
-	TSharedPtr<FJsonObject> JsonObj;
 
 
 
