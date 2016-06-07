@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright 2016 Daniel Schukies. All Rights Reserved.
 
 #pragma once
 #include "stomt.h"
@@ -126,9 +126,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "StomtRest|Response")
 	bool bIsValidJsonResponse;
 
-
-
-
 protected:
 
 	/** Internal request data stored as JSON */
@@ -148,10 +145,6 @@ protected:
 
 	/** Http Response code */
 	int32 ResponseCode;
-
-
-
-
 
 };
 

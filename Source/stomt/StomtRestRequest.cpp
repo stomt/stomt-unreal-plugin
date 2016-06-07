@@ -9,6 +9,8 @@ UStomtRestRequest::UStomtRestRequest()
 {
 	ResponseJsonObj = NULL;
 	RequestJsonObj = NULL;
+
+	ResetData();
 }
 
 UStomtRestRequest::~UStomtRestRequest()
@@ -17,13 +19,14 @@ UStomtRestRequest::~UStomtRestRequest()
 
 void UStomtRestRequest::MyHttpCall() 
 {
-	//TSharedRef<IHttpRequest> Request = FHttpModule::Get().CreateRequest(); // Gets an singelton and creates request.
-	
 	this->SetVerb(SRequestVerb::GET);
 	this->SetHeader(FString(TEXT("appid")), FString(TEXT("R18OFQXmb6QzXwzP1lWdiZ7Y9")));
 	this->ProcessURL("https://test.rest.stomt.com/stomts/java-sdk-test-33956");
 
-	/*
+
+	TSharedRef<IHttpRequest> Request = FHttpModule::Get().CreateRequest(); // Gets an singelton and creates request.
+
+
 	Request->SetURL("https://test.rest.stomt.com/stomts/java-sdk-test-33956");
 	Request->SetVerb("GET");
 	Request->SetHeader(TEXT("appid"), "R18OFQXmb6QzXwzP1lWdiZ7Y9");
@@ -35,7 +38,7 @@ void UStomtRestRequest::MyHttpCall()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Internal error: ProcessRequest failed"));
 	}
-	*/
+
 	return;
 }
 
@@ -60,6 +63,7 @@ void UStomtRestRequest::OnResponseReceived(FHttpRequestPtr Request, FHttpRespons
 	if (EHttpResponseCodes::IsOk(Response->GetResponseCode())) 
 	{
 		UE_LOG(LogTemp, Warning, TEXT("EHttpResponseCodes::IsOk"));
+		UE_LOG(LogTemp, Warning, TEXT("Content: %s"), *Response->GetContentAsString() );
 	}
 	else 
 	{
@@ -115,56 +119,7 @@ void UStomtRestRequest::ProcessURL(const FString& Url)
 }
 
 void UStomtRestRequest::ProcessRequest(TSharedRef<IHttpRequest> HttpRequest)
-{/*
-	// Set verb
-	switch (RequestVerb)
-	{
-	case SRequestVerb::GET:
-		HttpRequest->SetVerb(TEXT("GET"));
-		break;
-
-	case SRequestVerb::POST:
-		HttpRequest->SetVerb(TEXT("POST"));
-		break;
-
-	case SRequestVerb::PUT:
-		HttpRequest->SetVerb(TEXT("PUT"));
-		break;
-
-	case SRequestVerb::DEL:
-		HttpRequest->SetVerb(TEXT("DELETE"));
-		break;
-
-	default:
-		break;
-	}
-
-	// Set content-type
-	HttpRequest->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
-	
-	// Serialize data to json string
-	FString OutputString;
-	TSharedRef< TJsonWriter<> > Writer = TJsonWriterFactory<>::Create(&OutputString);
-	FJsonSerializer::Serialize(RequestJsonObj.ToSharedRef(), Writer);
-
-	// Set Json content
-	HttpRequest->SetContentAsString(OutputString);
-	
-
-	// Apply additional headers
-	for (TMap<FString, FString>::TConstIterator It(RequestHeaders); It; ++It)
-	{
-		HttpRequest->SetHeader(It.Key(), It.Value());
-	}
-
-	// Bind event
-	HttpRequest->OnProcessRequestComplete().BindUObject(this, &UStomtRestRequest::OnProcessRequestComplete);
-
-	// Execute the request
-	HttpRequest->ProcessRequest();
-	*/
-
-	
+{	
 	// Set verb
 	switch (RequestVerb)
 	{
@@ -193,7 +148,7 @@ void UStomtRestRequest::ProcessRequest(TSharedRef<IHttpRequest> HttpRequest)
 	// Serialize data to json string
 	FString OutputString;
 	TSharedRef< TJsonWriter<> > Writer = TJsonWriterFactory<>::Create(&OutputString);
-	FJsonSerializer::Serialize(ResponseJsonObj->GetRootObject().ToSharedRef(), Writer); // kaputt
+	FJsonSerializer::Serialize(RequestJsonObj->GetRootObject().ToSharedRef(), Writer); // kaputt
 
 
 	// Set Json content
@@ -240,7 +195,7 @@ void UStomtRestRequest::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpR
 	ResponseCode = Response->GetResponseCode();
 
 	// Log response state
-	UE_LOG(LogTemp, Log, TEXT("Response (%d): %s"), Response->GetResponseCode(), *Response->GetContentAsString());
+	UE_LOG(LogTemp, Warning, TEXT("Response (%d): %s"), Response->GetResponseCode(), *Response->GetContentAsString());
 
 	// Process response headers
 	TArray<FString> Headers = Response->GetAllHeaders();
@@ -254,23 +209,23 @@ void UStomtRestRequest::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpR
 		}
 	}
 
-	//// Try to deserialize data to JSON
-	//TSharedRef<TJsonReader<TCHAR>> JsonReader = TJsonReaderFactory<TCHAR>::Create(ResponseContent);
-	//FJsonSerializer::Deserialize(JsonReader, *ResponseJsonObj);
+	// Try to deserialize data to JSON
+	TSharedRef<TJsonReader<TCHAR>> JsonReader = TJsonReaderFactory<TCHAR>::Create(ResponseContent);
+	FJsonSerializer::Deserialize(JsonReader, ResponseJsonObj->GetRootObject());
 
-	//// Decide whether the request was successful
-	//bIsValidJsonResponse = bWasSuccessful && ResponseJsonObj->IsValid();
+	// Decide whether the request was successful
+	bIsValidJsonResponse = bWasSuccessful && ResponseJsonObj->GetRootObject().IsValid();
 
-	//// Log errors
-	//if (!bIsValidJsonResponse)
-	//{
-	//	if (!ResponseJsonObj->IsValid())
-	//	{
-	//		// As we assume it's recommended way to use current class, but not the only one,
-	//		// it will be the warning instead of error
-	//		UE_LOG(LogTemp, Warning, TEXT("JSON could not be decoded!"));
-	//	}
-	//}
+	// Log errors
+	if (!bIsValidJsonResponse)
+	{
+		if (!ResponseJsonObj->GetRootObject().IsValid())
+		{
+			// As we assume it's recommended way to use current class, but not the only one,
+			// it will be the warning instead of error
+			UE_LOG(LogTemp, Warning, TEXT("JSON could not be decoded!"));
+		}
+	}
 
 	// Broadcast the result event
 	//OnRequestComplete.Broadcast(this);
@@ -290,6 +245,23 @@ void UStomtRestRequest::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpR
 //////////////////////////////////////////////////////////////////////////
 // Destruction and reset
 
+void UStomtRestRequest::ResetData()
+{
+	ResetRequestData();
+	ResetResponseData();
+}
+
+void UStomtRestRequest::ResetRequestData()
+{
+	if (RequestJsonObj != NULL)
+	{
+		RequestJsonObj->Reset();
+	}
+	else
+	{
+		RequestJsonObj = NewObject<UStomtRestJsonObject>();
+	}
+}
 
 void UStomtRestRequest::ResetResponseData()
 {

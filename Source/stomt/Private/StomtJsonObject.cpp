@@ -15,7 +15,11 @@ typedef TJsonWriter< TCHAR, TCondensedJsonPrintPolicy<TCHAR> > FCondensedJsonStr
 //{
 //	Reset();
 //}
-
+UStomtRestJsonObject::UStomtRestJsonObject()
+{
+	Reset();
+	UE_LOG(LogTemp, Warning, TEXT("UStomtRestJsonObject Constructor"));
+}
 
 UStomtRestJsonObject* UStomtRestJsonObject::ConstructJsonObject(UObject* WorldContextObject)
 {

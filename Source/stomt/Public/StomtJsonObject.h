@@ -17,6 +17,8 @@ class STOMT_API UStomtRestJsonObject : public UObject
 	GENERATED_BODY()
 
 public:
+	UStomtRestJsonObject();
+
 	/** Create new Json object */
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "Construct Json Object", HidePin = "WorldContextObject", DefaultToSelf = "WorldContextObject"), Category = "Stomt|Json")
 	static UStomtRestJsonObject* ConstructJsonObject(UObject* WorldContextObject);
