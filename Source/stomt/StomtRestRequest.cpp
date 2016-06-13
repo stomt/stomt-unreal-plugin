@@ -4,6 +4,8 @@
 #include "stomt.h"
 #include "StomtRestRequest.h"
 
+//////////////////////////////////////////////////////////////////////////
+// Construction
 
 UStomtRestRequest::UStomtRestRequest()
 {
@@ -19,11 +21,22 @@ UStomtRestRequest::~UStomtRestRequest()
 
 void UStomtRestRequest::MyHttpCall() 
 {
+	// Testing V2: 
+
 	this->SetVerb(SRequestVerb::GET);
 	this->SetHeader(FString(TEXT("appid")), FString(TEXT("R18OFQXmb6QzXwzP1lWdiZ7Y9")));
-	this->ProcessURL("https://test.rest.stomt.com/stomts/java-sdk-test-33956");
+	
+	//TSharedPtr<FJsonValue> NewVal = UStomtJsonValue::ConstructJsonValueString(this, TEXT("unreal");// MakeShareable(new FJsonObject());
+
+	UStomtJsonValue* NewValue = UStomtJsonValue::ConstructJsonValueString(this, TEXT("unreal") );// MakeShareable(new FJsonObject());
+	//NewValue->SetRootValue(NewVal);
+	this->GetRequestObject()->SetField(TEXT("target_id"), NewValue);
+
+	this->ProcessURL("https://test.stomt.com/unreal");
 
 
+	// Testing V1:
+	/*
 	TSharedRef<IHttpRequest> Request = FHttpModule::Get().CreateRequest(); // Gets an singelton and creates request.
 
 
@@ -40,6 +53,7 @@ void UStomtRestRequest::MyHttpCall()
 	}
 
 	return;
+	*/
 }
 
 UStomtRestRequest * UStomtRestRequest::ConstructRequest()
@@ -72,6 +86,11 @@ void UStomtRestRequest::OnResponseReceived(FHttpRequestPtr Request, FHttpRespons
 
 	return;
 }
+
+//////////////////////////////////////////////////////////////////////////
+// Helpers
+
+
 
 ///////////////////////////////////////////////////////////////////////////
 // Response data access
@@ -148,13 +167,14 @@ void UStomtRestRequest::ProcessRequest(TSharedRef<IHttpRequest> HttpRequest)
 	// Serialize data to json string
 	FString OutputString;
 	TSharedRef< TJsonWriter<> > Writer = TJsonWriterFactory<>::Create(&OutputString);
-	FJsonSerializer::Serialize(RequestJsonObj->GetRootObject().ToSharedRef(), Writer); // kaputt
+	FJsonSerializer::Serialize(RequestJsonObj->GetRootObject().ToSharedRef(), Writer); 
 
 
 	// Set Json content
 	HttpRequest->SetContentAsString(OutputString);
 
-		
+	UE_LOG(LogTemp, Log, TEXT("Request (json): %s %s %s"), *HttpRequest->GetVerb(), *HttpRequest->GetURL(), *OutputString);
+
 	// Apply additional headers
 	for (TMap<FString, FString>::TConstIterator It(RequestHeaders); It; ++It)
 	{
@@ -184,7 +204,6 @@ void UStomtRestRequest::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpR
 
 		// Broadcast the result event
 		//OnRequestFail.Broadcast(this);
-
 		return;
 	}
 
@@ -278,4 +297,28 @@ void UStomtRestRequest::ResetResponseData()
 	ResponseCode = -1;
 
 	bIsValidJsonResponse = false;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+// JSON data accessors
+
+UStomtRestJsonObject* UStomtRestRequest::GetRequestObject()
+{
+	return RequestJsonObj;
+}
+
+void UStomtRestRequest::SetRequestObject(UStomtRestJsonObject* JsonObject)
+{
+	RequestJsonObj = JsonObject;
+}
+
+UStomtRestJsonObject* UStomtRestRequest::GetResponseObject()
+{
+	return ResponseJsonObj;
+}
+
+void UStomtRestRequest::SetResponseObject(UStomtRestJsonObject* JsonObject)
+{
+	ResponseJsonObj = JsonObject;
 }

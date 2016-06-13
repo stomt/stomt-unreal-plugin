@@ -65,16 +65,16 @@ public:
 	// JSON data accessors
 	
 	/** Get the Request Json object */
-	//UVaRestJsonObject* GetRequestObject();
+	UStomtRestJsonObject* GetRequestObject();
 
 	/** Set the Request Json object */
-	//void SetRequestObject(UVaRestJsonObject* JsonObject);
+	void SetRequestObject(UStomtRestJsonObject* JsonObject);
 
 	/** Get the Response Json object */
-	//UVaRestJsonObject* GetResponseObject();
+	UStomtRestJsonObject* GetResponseObject();
 
 	/** Set the Response Json object */
-	//void SetResponseObject(UVaRestJsonObject* JsonObject);
+	void SetResponseObject(UStomtRestJsonObject* JsonObject);
 
 
 	///////////////////////////////////////////////////////////////////////////
