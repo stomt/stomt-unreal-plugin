@@ -22,28 +22,31 @@ UStomtRestRequest::~UStomtRestRequest()
 void UStomtRestRequest::MyHttpCall() 
 {
 	// Testing V2: 
-
+	
 	this->SetVerb(SRequestVerb::GET);
-	this->SetHeader(FString(TEXT("appid")), FString(TEXT("R18OFQXmb6QzXwzP1lWdiZ7Y9")));
+	this->SetHeader(TEXT("appid"), TEXT("R18OFQXmb6QzXwzP1lWdiZ7Y9"));
 	
 	//TSharedPtr<FJsonValue> NewVal = UStomtJsonValue::ConstructJsonValueString(this, TEXT("unreal");// MakeShareable(new FJsonObject());
 
-	UStomtJsonValue* NewValue = UStomtJsonValue::ConstructJsonValueString(this, TEXT("unreal") );// MakeShareable(new FJsonObject());
+	//UStomtJsonValue* NewValue = UStomtJsonValue::ConstructJsonValueString(this, TEXT("unreal") );// MakeShareable(new FJsonObject());
 	//NewValue->SetRootValue(NewVal);
-	this->GetRequestObject()->SetField(TEXT("target_id"), NewValue);
+	//this->GetRequestObject()->SetField(TEXT("target_id"), NewValue);
 
-	this->ProcessURL("https://test.stomt.com/unreal");
+	this->ProcessURL("https://test.rest.stomt.com/targets/unreal?target_id=unreal");
 
-
+	
 	// Testing V1:
 	/*
 	TSharedRef<IHttpRequest> Request = FHttpModule::Get().CreateRequest(); // Gets an singelton and creates request.
 
 
-	Request->SetURL("https://test.rest.stomt.com/stomts/java-sdk-test-33956");
+	//Request->SetURL("https://test.rest.stomt.com/stomts/java-sdk-test-33956");
+	Request->SetURL("https://test.rest.stomt.com/targets/unreal");
 	Request->SetVerb("GET");
 	Request->SetHeader(TEXT("appid"), "R18OFQXmb6QzXwzP1lWdiZ7Y9");
 	Request->SetHeader("Content-Type", TEXT("application/json"));
+	Request->SetContentAsString(TEXT("{\"target_id\": \"unreal\"}"));
+
 
 	Request->OnProcessRequestComplete().BindUObject(this, &UStomtRestRequest::OnResponseReceived);
 
@@ -51,9 +54,9 @@ void UStomtRestRequest::MyHttpCall()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Internal error: ProcessRequest failed"));
 	}
-
-	return;
 	*/
+	return;
+
 }
 
 UStomtRestRequest * UStomtRestRequest::ConstructRequest()
@@ -74,6 +77,19 @@ void UStomtRestRequest::SetHeader(const FString &HeaderName, const FString &Head
 
 void UStomtRestRequest::OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
+	// Check we have result to process futher
+	if (!bWasSuccessful)
+	{
+		//UE_LOG(LogTemp, Error, TEXT("Request failed: %s ResponseCode: %d "), *Request->GetURL(), Response->GetContentAsString());
+		
+		
+		
+		// Broadcast the result event
+		//OnRequestFail.Broadcast(this);
+		return;
+	}
+
+
 	if (EHttpResponseCodes::IsOk(Response->GetResponseCode())) 
 	{
 		UE_LOG(LogTemp, Warning, TEXT("EHttpResponseCodes::IsOk"));
@@ -142,24 +158,24 @@ void UStomtRestRequest::ProcessRequest(TSharedRef<IHttpRequest> HttpRequest)
 	// Set verb
 	switch (RequestVerb)
 	{
-	case SRequestVerb::GET:
-		HttpRequest->SetVerb(TEXT("GET"));
-		break;
+		case SRequestVerb::GET:
+			HttpRequest->SetVerb(TEXT("GET"));
+			break;
 
-	case SRequestVerb::POST:
-		HttpRequest->SetVerb(TEXT("POST"));
-		break;
+		case SRequestVerb::POST:
+			HttpRequest->SetVerb(TEXT("POST"));
+			break;
 
-	case SRequestVerb::PUT:
-		HttpRequest->SetVerb(TEXT("PUT"));
-		break;
+		case SRequestVerb::PUT:
+			HttpRequest->SetVerb(TEXT("PUT"));
+			break;
 
-	case SRequestVerb::DEL:
-		HttpRequest->SetVerb(TEXT("DELETE"));
-		break;
+		case SRequestVerb::DEL:
+			HttpRequest->SetVerb(TEXT("DELETE"));
+			break;
 
-	default:
-		break;
+		default:
+			break;
 	}
 
 	HttpRequest->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
@@ -171,7 +187,11 @@ void UStomtRestRequest::ProcessRequest(TSharedRef<IHttpRequest> HttpRequest)
 
 
 	// Set Json content
-	HttpRequest->SetContentAsString(OutputString);
+	if ( !HttpRequest->GetVerb().Equals( TEXT("GET") ) )
+	{
+		HttpRequest->SetContentAsString(OutputString);
+	}
+	
 
 	UE_LOG(LogTemp, Log, TEXT("Request (json): %s %s %s"), *HttpRequest->GetVerb(), *HttpRequest->GetURL(), *OutputString);
 
@@ -214,7 +234,7 @@ void UStomtRestRequest::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpR
 	ResponseCode = Response->GetResponseCode();
 
 	// Log response state
-	UE_LOG(LogTemp, Warning, TEXT("Response (%d): %s"), Response->GetResponseCode(), *Response->GetContentAsString());
+	UE_LOG(LogTemp, Log, TEXT("Response (%d): %s"), Response->GetResponseCode(), *Response->GetContentAsString());
 
 	// Process response headers
 	TArray<FString> Headers = Response->GetAllHeaders();
@@ -246,6 +266,8 @@ void UStomtRestRequest::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpR
 		}
 	}
 
+
+	//UE_LOG(LogTemp, Log, TEXT("Response (json): %s "), this->ResponseJsonObj->GetRootObject()-> );
 	// Broadcast the result event
 	//OnRequestComplete.Broadcast(this);
 
