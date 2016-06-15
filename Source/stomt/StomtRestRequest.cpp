@@ -21,8 +21,32 @@ UStomtRestRequest::~UStomtRestRequest()
 
 void UStomtRestRequest::MyHttpCall() 
 {
-	// Testing V2: 
-	
+	// Testing V3: Write Stomt
+	///////////////////////////////////////////////////////////
+
+	this->SetVerb(SRequestVerb::POST);
+	this->SetHeader(TEXT("appid"), TEXT("R18OFQXmb6QzXwzP1lWdiZ7Y9"));
+
+	//TSharedPtr<FJsonValue> NewVal = UStomtJsonValue::ConstructJsonValueString(this, TEXT("unreal");// MakeShareable(new FJsonObject());
+
+	//UStomtJsonValue* NewValue = UStomtJsonValue::ConstructJsonValueString(this, TEXT("unreal") );// MakeShareable(new FJsonObject());
+
+	this->GetRequestObject()->SetField(TEXT("target_id"), UStomtJsonValue::ConstructJsonValueString(this, TEXT("unreal")) );
+
+	this->GetRequestObject()->SetField(TEXT("positive"), UStomtJsonValue::ConstructJsonValueBool(this, true) );
+
+	this->GetRequestObject()->SetField(TEXT("text"), UStomtJsonValue::ConstructJsonValueString(this, TEXT("A Text")));
+
+	this->GetRequestObject()->SetField(TEXT("anonym"), UStomtJsonValue::ConstructJsonValueBool(this, true));
+
+	this->ProcessURL("https://test.rest.stomt.com/stomts");
+
+
+
+	// Testing V2: Read Target 
+	///////////////////////////////////////////////////////////
+
+	/*
 	this->SetVerb(SRequestVerb::GET);
 	this->SetHeader(TEXT("appid"), TEXT("R18OFQXmb6QzXwzP1lWdiZ7Y9"));
 	
@@ -33,12 +57,13 @@ void UStomtRestRequest::MyHttpCall()
 	//this->GetRequestObject()->SetField(TEXT("target_id"), NewValue);
 
 	this->ProcessURL("https://test.rest.stomt.com/targets/unreal?target_id=unreal");
-
+	*/
 	
-	// Testing V1:
+	// Testing V1: Manually
+	///////////////////////////////////////////////////////////
+
 	/*
 	TSharedRef<IHttpRequest> Request = FHttpModule::Get().CreateRequest(); // Gets an singelton and creates request.
-
 
 	//Request->SetURL("https://test.rest.stomt.com/stomts/java-sdk-test-33956");
 	Request->SetURL("https://test.rest.stomt.com/targets/unreal");
@@ -55,8 +80,6 @@ void UStomtRestRequest::MyHttpCall()
 		UE_LOG(LogTemp, Warning, TEXT("Internal error: ProcessRequest failed"));
 	}
 	*/
-	return;
-
 }
 
 UStomtRestRequest * UStomtRestRequest::ConstructRequest()
