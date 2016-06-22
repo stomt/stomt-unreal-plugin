@@ -3,6 +3,7 @@
 //#include "stomt.h"
 #include "StomtPluginPrivatePCH.h"
 #include "StomtPluginWidget.h"
+#include "StomtRestRequest.h"
 
 void UStomtPluginWidget::OnMessageChanged(FString text)
 {
@@ -16,6 +17,10 @@ void UStomtPluginWidget::OnMessageChanged(FString text)
 	{
 		this->Message = FString(TEXT(""));
 	}
+
+
+	UStomtRestRequest *request = NewObject<UStomtRestRequest>();
+	request->MyHttpCall();
 	
 }
 
