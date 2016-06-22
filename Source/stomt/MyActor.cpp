@@ -2,7 +2,7 @@
 
 #include "stomt.h"
 #include "MyActor.h"
-#include "StomtRestRequest.h"
+//#include "StomtRestRequest.h"
 #include "StomtPlugin.h"
 
 // Sets default values
@@ -19,8 +19,8 @@ void AMyActor::BeginPlay()
 	Super::BeginPlay();
 
 
-	UStomtRestRequest *request = NewObject<UStomtRestRequest>();
-	request->MyHttpCall();
+	//UStomtRestRequest *request = NewObject<UStomtRestRequest>();
+	//request->MyHttpCall();
 	
 }
 

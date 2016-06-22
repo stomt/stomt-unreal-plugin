@@ -3,7 +3,7 @@
 // Copyright 2016 Stomt. All Rights Reserved.
 
 #pragma once
-#include "stomt.h"
+#include "StomtPluginPrivatePCH.h"
 #include "StomtJsonValue.generated.h"
 
 class UStomtJsonObject;
@@ -30,7 +30,7 @@ namespace EVaJson
  * Blueprintable FJsonValue wrapper
  */
 UCLASS(BlueprintType, Blueprintable)
-class STOMT_API UStomtJsonValue : public UObject
+class UStomtJsonValue : public UObject
 {
 	GENERATED_BODY()
 public:

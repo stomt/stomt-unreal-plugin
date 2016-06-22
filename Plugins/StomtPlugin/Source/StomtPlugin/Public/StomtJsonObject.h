@@ -12,7 +12,7 @@
  * Blueprintable FJsonObject wrapper
  */
 UCLASS()
-class STOMT_API UStomtRestJsonObject : public UObject
+class UStomtRestJsonObject : public UObject
 {
 	GENERATED_BODY()
 

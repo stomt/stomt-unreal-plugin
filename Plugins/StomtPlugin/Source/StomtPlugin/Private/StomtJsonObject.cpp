@@ -3,7 +3,7 @@
 
 //#include "StomtPluginPrivatePCH.h"
 
-#include "stomt.h"
+#include "StomtPluginPrivatePCH.h"
 #include "StomtJsonObject.h"
 #include "CoreMisc.h"
 
@@ -15,6 +15,7 @@ typedef TJsonWriter< TCHAR, TCondensedJsonPrintPolicy<TCHAR> > FCondensedJsonStr
 //{
 //	Reset();
 //}
+
 UStomtRestJsonObject::UStomtRestJsonObject()
 {
 	Reset();

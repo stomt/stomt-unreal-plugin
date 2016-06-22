@@ -1,7 +1,7 @@
 // Copyright 2016 Daniel Schukies. All Rights Reserved.
 
 #pragma once
-#include "stomt.h"
+#include "StomtPluginPrivatePCH.h"
 #include "StomtJsonObject.h"
 #include "StomtRestRequest.generated.h"
 
@@ -19,7 +19,7 @@ namespace SRequestVerb
 }
 
 UCLASS()
-class STOMT_API UStomtRestRequest : public UObject
+class UStomtRestRequest : public UObject
 {
 	GENERATED_BODY()
 
