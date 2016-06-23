@@ -4,4 +4,3 @@
 
 
 IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, stomt, "stomt" );
- 
