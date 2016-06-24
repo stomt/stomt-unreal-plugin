@@ -12,8 +12,9 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	// Construction
 
-	/** Create new Stomt object */
 	UStomt();
+
+	/** Create new Stomt object */
 	static UStomt* ConstructStomt(FString target_id, bool positive, FString text);
 
 	//////////////////////////////////////////////////////////////////////////
@@ -31,8 +32,6 @@ public:
 	// Data
 
 private:
-
-	UStomtRestRequest request;
 
 	FString		target_id;
 	bool		positive;

@@ -44,3 +44,5 @@ void UStomt::SetAnonym()
 {
 	this->anonym = true;
 }
+
+
