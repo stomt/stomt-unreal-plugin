@@ -16,7 +16,7 @@ UStomt* UStomt::ConstructStomt(FString target_id, bool positive, FString text)
 {
 	UStomt* stomt = NewObject<UStomt>();
 	stomt->SetTargetID(target_id);
-	stomt->SetPoitive(true);
+	stomt->SetPositive(true);
 	stomt->SetText(text);
 
 	return stomt;
@@ -30,7 +30,7 @@ void UStomt::SetTargetID(FString target_id)
 	this->target_id = target_id;
 }
 
-void UStomt::SetPoitive(bool positive)
+void UStomt::SetPositive(bool positive)
 {
 	this->positive = positive;
 }
@@ -43,6 +43,26 @@ void UStomt::SetText(FString text)
 void UStomt::SetAnonym()
 {
 	this->anonym = true;
+}
+
+FString UStomt::GetTargetID()
+{
+	return this->target_id;
+}
+
+bool UStomt::GetPositive()
+{
+	return this->positive;
+}
+
+FString UStomt::GetText()
+{
+	return this->text;
+}
+
+bool UStomt::GetAnonym()
+{
+	return this->anonym;
 }
 
 

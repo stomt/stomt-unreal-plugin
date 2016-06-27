@@ -24,9 +24,14 @@ public:
 	// Data accessors
 
 	void SetTargetID(FString target_id);
-	void SetPoitive(bool positive);
+	void SetPositive(bool positive);
 	void SetText(FString text);
 	void SetAnonym();
+
+	FString GetTargetID();
+	bool	GetPositive();
+	FString GetText();
+	bool	GetAnonym();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Data

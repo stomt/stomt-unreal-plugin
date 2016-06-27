@@ -1,27 +1,43 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright 2016 Daniel Schukies. All Rights Reserved.
 
-//#include "stomt.h"
+
 #include "StomtPluginPrivatePCH.h"
 #include "StomtPluginWidget.h"
 #include "StomtRestRequest.h"
+
+
+
+UStomtPluginWidget::~UStomtPluginWidget()
+{
+}
 
 void UStomtPluginWidget::OnMessageChanged(FString text)
 {
 	if (!text.IsEmpty())
 	{
 		this->Message = text;
-		UE_LOG(LogTemp, Warning, TEXT("MessageChanged %s") );
-		GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, this->Message);
+	/*	//UE_LOG(LogTemp, Warning, TEXT("MessageChanged %s", text) ); */
+	/*	//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, this->Message); */
 	}
 	else
 	{
 		this->Message = FString(TEXT(""));
 	}
+}
 
+void UStomtPluginWidget::OnSubmit()
+{
+	if (!this->Message.IsEmpty())
+	{
+		UStomt* stomt = UStomt::ConstructStomt(TEXT("unreal"), true, this->Message);
 
-	UStomtRestRequest *request = NewObject<UStomtRestRequest>();
-	request->MyHttpCall();
-	
+		if (api == NULL)
+		{
+			api = NewObject<UStomtAPI>();
+		}
+
+		api->SendStomt(stomt);
+	}
 }
 
 void UStomtPluginWidget::ChangeButtonOrder(UButton *FirstButton, UButton *SecondButton)

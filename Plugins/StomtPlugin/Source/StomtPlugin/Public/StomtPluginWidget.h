@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright 2016 Daniel Schukies. All Rights Reserved.
 
 #pragma once
 #include "Runtime/UMG/Public/UMG.h"
@@ -8,6 +8,10 @@
 #include "Runtime/UMG/Public/Blueprint/UserWidget.h"
 
 #include "Blueprint/UserWidget.h"
+
+#include "Stomt.h"
+#include "StomtAPI.h"
+
 #include "StomtPluginWidget.generated.h"
 
 /**
@@ -20,6 +24,10 @@ class UStomtPluginWidget : public UUserWidget
 	
 
 public:
+
+	
+	~UStomtPluginWidget();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
 	FString Message;
 
@@ -36,7 +44,15 @@ public:
 	void OnMessageChanged(FString text);
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
+	void OnSubmit();
+
+	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	void ChangeButtonOrder(UButton *FirstButton, UButton *SecondButton);
+
+private:
+
+	UStomt* stomt;
+	UStomtAPI* api;
 	
 	
 	
