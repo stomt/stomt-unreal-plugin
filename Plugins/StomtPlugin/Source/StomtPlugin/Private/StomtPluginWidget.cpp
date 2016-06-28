@@ -40,6 +40,18 @@ void UStomtPluginWidget::OnSubmit()
 	}
 }
 
+void UStomtPluginWidget::OnConstruction()
+{
+	if (api == NULL)
+	{
+		api = NewObject<UStomtAPI>();
+	}
+
+	api->ReadTarget(TEXT("unreal"));
+
+	this->TargetName = api->GetTargetName();
+}
+
 void UStomtPluginWidget::ChangeButtonOrder(UButton *FirstButton, UButton *SecondButton)
 {
 	//FirstButton->GetSlots

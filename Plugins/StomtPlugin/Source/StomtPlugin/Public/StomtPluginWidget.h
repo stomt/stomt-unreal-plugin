@@ -47,6 +47,9 @@ public:
 	void OnSubmit();
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
+	void OnConstruction();
+
+	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	void ChangeButtonOrder(UButton *FirstButton, UButton *SecondButton);
 
 private:
