@@ -24,7 +24,7 @@ void UStomtRestRequest::MyHttpCall()
 	// Testing V3: Write Stomt
 	///////////////////////////////////////////////////////////
 
-	this->SetVerb(SRequestVerb::POST);
+	this->SetVerb(ERequestVerb::POST);
 	this->SetHeader(TEXT("appid"), TEXT("R18OFQXmb6QzXwzP1lWdiZ7Y9"));
 
 	//TSharedPtr<FJsonValue> NewVal = UStomtJsonValue::ConstructJsonValueString(this, TEXT("unreal");// MakeShareable(new FJsonObject());
@@ -47,7 +47,7 @@ void UStomtRestRequest::MyHttpCall()
 	///////////////////////////////////////////////////////////
 
 	/*
-	this->SetVerb(SRequestVerb::GET);
+	this->SetVerb(ERequestVerb::GET);
 	this->SetHeader(TEXT("appid"), TEXT("R18OFQXmb6QzXwzP1lWdiZ7Y9"));
 	
 	//TSharedPtr<FJsonValue> NewVal = UStomtJsonValue::ConstructJsonValueString(this, TEXT("unreal");// MakeShareable(new FJsonObject());
@@ -87,7 +87,7 @@ UStomtRestRequest * UStomtRestRequest::ConstructRequest()
 	return nullptr;
 }
 
-void UStomtRestRequest::SetVerb(SRequestVerb::Type Verb)
+void UStomtRestRequest::SetVerb(ERequestVerb::Type Verb)
 {
 	this->RequestVerb = Verb;
 }
@@ -181,19 +181,19 @@ void UStomtRestRequest::ProcessRequest(TSharedRef<IHttpRequest> HttpRequest)
 	// Set verb
 	switch (RequestVerb)
 	{
-		case SRequestVerb::GET:
+		case ERequestVerb::GET:
 			HttpRequest->SetVerb(TEXT("GET"));
 			break;
 
-		case SRequestVerb::POST:
+		case ERequestVerb::POST:
 			HttpRequest->SetVerb(TEXT("POST"));
 			break;
 
-		case SRequestVerb::PUT:
+		case ERequestVerb::PUT:
 			HttpRequest->SetVerb(TEXT("PUT"));
 			break;
 
-		case SRequestVerb::DEL:
+		case ERequestVerb::DEL:
 			HttpRequest->SetVerb(TEXT("DELETE"));
 			break;
 
@@ -289,21 +289,21 @@ void UStomtRestRequest::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpR
 		}
 	}
 
-
+	
 	//UE_LOG(LogTemp, Log, TEXT("Response (json): %s "), this->ResponseJsonObj->GetRootObject()-> );
 	// Broadcast the result event
-	//OnRequestComplete.Broadcast(this);
+	OnRequestComplete.Broadcast(this);
 
-	/*
+	
 	// Finish the latent action
 	if (ContinueAction)
 	{
-		FVaRestLatentAction<UVaRestJsonObject*> *K = ContinueAction;
+		FVaRestLatentAction<UStomtRestJsonObject*> *K = ContinueAction;
 		ContinueAction = nullptr;
 
 		K->Call(ResponseJsonObj);
 	}
-	*/
+	
 }
 
 //////////////////////////////////////////////////////////////////////////

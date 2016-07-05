@@ -5,9 +5,66 @@
 #include "StomtJsonObject.h"
 #include "StomtRestRequest.generated.h"
 
+
+/**
+* @author Original latent action class by https://github.com/unktomi
+*/
+template <class T> class FVaRestLatentAction : public FPendingLatentAction
+{
+public:
+	virtual void Call(const T &Value)
+	{
+		Result = Value;
+		Called = true;
+	}
+
+	void operator()(const T &Value)
+	{
+		Call(Value);
+	}
+
+	void Cancel();
+
+	FVaRestLatentAction(FWeakObjectPtr RequestObj, T& ResultParam, const FLatentActionInfo& LatentInfo) :
+		Called(false),
+		Request(RequestObj),
+		ExecutionFunction(LatentInfo.ExecutionFunction),
+		OutputLink(LatentInfo.Linkage),
+		CallbackTarget(LatentInfo.CallbackTarget),
+		Result(ResultParam)
+	{
+	}
+
+	virtual void UpdateOperation(FLatentResponse& Response) override
+	{
+		Response.FinishAndTriggerIf(Called, ExecutionFunction, OutputLink, CallbackTarget);
+	}
+
+	virtual void NotifyObjectDestroyed()
+	{
+		Cancel();
+	}
+
+	virtual void NotifyActionAborted()
+	{
+		Cancel();
+	}
+
+private:
+	bool Called;
+	FWeakObjectPtr Request;
+
+public:
+	const FName ExecutionFunction;
+	const int32 OutputLink;
+	const FWeakObjectPtr CallbackTarget;
+	T &Result;
+
+};
+
  /** Verb (GET, PUT, POST) */
 UENUM(BlueprintType)
-namespace SRequestVerb
+namespace ERequestVerb
 {
 	enum Type
 	{
@@ -17,6 +74,11 @@ namespace SRequestVerb
 		DEL UMETA(DisplayName = "DELETE"),
 	};
 }
+
+/** Generate a delegates for callback events */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRequestComplete, class UStomtRestRequest*, Request);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRequestFail, class UStomtRestRequest*, Request);
+
 
 UCLASS()
 class UStomtRestRequest : public UObject
@@ -35,7 +97,7 @@ public:
 	static UStomtRestRequest* ConstructRequest();
 
 	/** Set verb to the request */
-	void SetVerb(SRequestVerb::Type Verb);
+	void SetVerb(ERequestVerb::Type Verb);
 
 	/** Sets header info */
 	void SetHeader(const FString &HeaderName, const FString &HeaderValue);
@@ -109,10 +171,12 @@ private:
 
 public:
 	/** Event occured when the request has been completed */
-	//FOnRequestComplete OnRequestComplete;
+	UPROPERTY(BlueprintAssignable, Category = "Stomt|Event")
+	FOnRequestComplete OnRequestComplete;
 
 	/** Event occured when the request wasn't successfull */
-	//FOnRequestFail OnRequestFail;
+	UPROPERTY(BlueprintAssignable, Category = "Stomt|Event")
+	FOnRequestFail OnRequestFail;
 	
 	//////////////////////////////////////////////////////////////////////////
 	// Data
@@ -127,6 +191,8 @@ public:
 	bool bIsValidJsonResponse;
 
 protected:
+	/** Latent action helper */
+	FVaRestLatentAction <UStomtRestJsonObject*> *ContinueAction;
 
 	/** Internal request data stored as JSON */
 	UStomtRestJsonObject* RequestJsonObj;
@@ -135,7 +201,7 @@ protected:
 	UStomtRestJsonObject* ResponseJsonObj;
 
 	/** Verb for making request (GET,POST,etc) */
-	SRequestVerb::Type RequestVerb;
+	ERequestVerb::Type RequestVerb;
 
 	/** Mapping of header section to values. Used to generate final header string for request */
 	TMap<FString, FString> RequestHeaders;

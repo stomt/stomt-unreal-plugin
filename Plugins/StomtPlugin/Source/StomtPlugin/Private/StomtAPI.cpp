@@ -22,7 +22,7 @@ UStomtAPI::~UStomtAPI()
 
 void UStomtAPI::SendStomt(UStomt* stomt)
 {
-	this->request->SetVerb(SRequestVerb::POST);
+	this->request->SetVerb(ERequestVerb::POST);
 	this->request->SetHeader(TEXT("appid"), this->GetAppID() );
 
 	this->request->GetRequestObject()->SetField(TEXT("target_id"),	UStomtJsonValue::ConstructJsonValueString(	this, stomt->GetTargetID()	));
@@ -35,10 +35,19 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 
 void UStomtAPI::ReadTarget(FString targetID)
 {
-	this->request->SetVerb(SRequestVerb::GET);
-	this->request->SetHeader(TEXT("appid"), TEXT("R18OFQXmb6QzXwzP1lWdiZ7Y9"));
+	this->request->SetVerb(ERequestVerb::GET);
+	this->request->SetHeader(TEXT("appid"), this->GetAppID() );
 
 	this->request->ProcessURL( this->GetRestURL().Append("/targets/").Append( this->GetTargetID() ).Append("?target_id=").Append( this->GetTargetID() ) );
+	
+	if (this->request->GetResponseObject()->HasField(TEXT("images")))
+	{
+		UE_LOG(LogTemp, Log, TEXT("images exist"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("images exist not"));
+	}
 }
 
 void UStomtAPI::SetRestURL(FString URL)
