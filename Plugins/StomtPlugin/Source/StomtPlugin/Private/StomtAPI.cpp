@@ -48,6 +48,8 @@ void UStomtAPI::ReadTarget(FString targetID)
 	{
 		UE_LOG(LogTemp, Log, TEXT("images exist not"));
 	}
+
+	//this->request->AddDynamic(this, &ABleakwise::OnOverlap);
 }
 
 void UStomtAPI::SetRestURL(FString URL)
@@ -83,5 +85,10 @@ void UStomtAPI::SetTargetID(FString targetID)
 FString UStomtAPI::GetTargetID()
 {
 	return this->targetID;
+}
+
+UStomtRestRequest * UStomtAPI::GetRequest()
+{
+	return this->request;
 }
 

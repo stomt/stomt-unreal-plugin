@@ -49,6 +49,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	void OnConstruction();
 
+	UFUNCTION()
+	void OnReceiving(UStomtRestRequest* Request);
+
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	void ChangeButtonOrder(UButton *FirstButton, UButton *SecondButton);
 

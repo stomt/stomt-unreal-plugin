@@ -39,6 +39,8 @@ public:
 	void	SetTargetID(FString targetID);
 	FString	GetTargetID();
 
+	UStomtRestRequest* GetRequest();
+
 
 	//////////////////////////////////////////////////////////////////////////
 	// Data

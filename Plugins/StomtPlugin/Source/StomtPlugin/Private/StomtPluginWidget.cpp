@@ -50,6 +50,18 @@ void UStomtPluginWidget::OnConstruction()
 	api->ReadTarget(TEXT("unreal"));
 
 	this->TargetName = api->GetTargetName();
+	this->api->GetRequest()->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnReceiving);
+}
+
+void UStomtPluginWidget::OnReceiving(UStomtRestRequest * Request)
+{
+	UE_LOG(LogTemp, Warning, TEXT("OnReceiving !"));
+	//if (Request->GetResponseObject()->HasField(TEXT("displayname")))
+	{
+		this->TargetName = Request->GetResponseObject()->GetStringField("displayname");
+	}
+
+
 }
 
 void UStomtPluginWidget::ChangeButtonOrder(UButton *FirstButton, UButton *SecondButton)
