@@ -55,13 +55,13 @@ void UStomtPluginWidget::OnConstruction()
 
 void UStomtPluginWidget::OnReceiving(UStomtRestRequest * Request)
 {
-	UE_LOG(LogTemp, Warning, TEXT("OnReceiving !"));
-	//if (Request->GetResponseObject()->HasField(TEXT("displayname")))
+	if (Request->GetResponseObject()->HasField(TEXT("data")))
 	{
-		this->TargetName = Request->GetResponseObject()->GetStringField("displayname");
+		if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("displayname")))
+		{
+			this->TargetName = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetStringField(TEXT("displayname"));
+		}
 	}
-
-
 }
 
 void UStomtPluginWidget::ChangeButtonOrder(UButton *FirstButton, UButton *SecondButton)
