@@ -39,6 +39,9 @@ public:
 	void	SetTargetID(FString targetID);
 	FString	GetTargetID();
 
+	void	SetImageURL(FString URL);
+	FString	GetImageURL();
+
 	UStomtRestRequest* GetRequest();
 
 
@@ -51,5 +54,6 @@ private:
 	FString				targetName;
 	FString				targetID;
 	FString				appID;
+	FString				imageURL;
 
 };

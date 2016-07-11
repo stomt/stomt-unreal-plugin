@@ -9,6 +9,7 @@
 
 #include "Blueprint/UserWidget.h"
 
+#include "StomtRestRequest.h"
 #include "Stomt.h"
 #include "StomtAPI.h"
 
@@ -35,6 +36,12 @@ public:
 	FString TargetName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
+	FString	ImageURL;
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
+	//UStomtRestRequest Request;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
 	bool IsWish;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
@@ -47,7 +54,7 @@ public:
 	void OnSubmit();
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
-	void OnConstruction();
+	void OnConstruction(FString targetID);
 
 	UFUNCTION()
 	void OnReceiving(UStomtRestRequest* Request);

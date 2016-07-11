@@ -16,7 +16,7 @@ UStomt* UStomt::ConstructStomt(FString target_id, bool positive, FString text)
 {
 	UStomt* stomt = NewObject<UStomt>();
 	stomt->SetTargetID(target_id);
-	stomt->SetPositive(true);
+	stomt->SetPositive(positive);
 	stomt->SetText(text);
 
 	return stomt;

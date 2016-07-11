@@ -40,16 +40,14 @@ void UStomtPluginWidget::OnSubmit()
 	}
 }
 
-void UStomtPluginWidget::OnConstruction()
+void UStomtPluginWidget::OnConstruction(FString targetID)
 {
 	if (api == NULL)
 	{
 		api = NewObject<UStomtAPI>();
 	}
 
-	api->ReadTarget(TEXT("unreal"));
-
-	this->TargetName = api->GetTargetName();
+	api->ReadTarget(targetID);
 	this->api->GetRequest()->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnReceiving);
 }
 
@@ -61,6 +59,14 @@ void UStomtPluginWidget::OnReceiving(UStomtRestRequest * Request)
 		{
 			this->TargetName = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetStringField(TEXT("displayname"));
 		}
+
+		this->api->SetImageURL(Request->GetResponseObject()
+			->GetObjectField(TEXT("data"))
+			->GetObjectField(TEXT("images"))
+			->GetObjectField(TEXT("profile"))
+			->GetStringField(TEXT("url")));
+
+		this->ImageURL = this->api->GetImageURL();
 	}
 }
 
