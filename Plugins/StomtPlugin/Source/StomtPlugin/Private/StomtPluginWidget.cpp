@@ -29,7 +29,7 @@ void UStomtPluginWidget::OnSubmit()
 {
 	if (!this->Message.IsEmpty())
 	{
-		UStomt* stomt = UStomt::ConstructStomt(TEXT("unreal"), true, this->Message);
+		UStomt* stomt = UStomt::ConstructStomt(TEXT("unreal"), !this->IsWish, this->Message);
 
 		if (api == NULL)
 		{
