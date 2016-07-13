@@ -38,8 +38,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
 	FString	ImageURL;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
-	//UStomtRestRequest Request;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
+	UStomtRestRequest* Request;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
 	bool IsWish;
@@ -57,7 +57,7 @@ public:
 	void OnConstruction(FString targetID);
 
 	UFUNCTION()
-	void OnReceiving(UStomtRestRequest* Request);
+	void OnReceiving(UStomtRestRequest* requestFuckUnreal);
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	void ChangeButtonOrder(UButton *FirstButton, UButton *SecondButton);
