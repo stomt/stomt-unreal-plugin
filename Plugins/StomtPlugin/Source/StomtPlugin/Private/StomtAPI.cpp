@@ -11,7 +11,7 @@ UStomtAPI::UStomtAPI()
 {
 	this->request = NewObject<UStomtRestRequest>();
 	this->restURL = TEXT("https://test.rest.stomt.com");
-	this->targetName = TEXT("");
+	this->targetName = TEXT("...");
 	this->SetAppID("R18OFQXmb6QzXwzP1lWdiZ7Y9");
 	this->SetTargetID("unreal");
 }

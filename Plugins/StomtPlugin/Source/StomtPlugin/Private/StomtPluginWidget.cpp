@@ -40,16 +40,18 @@ void UStomtPluginWidget::OnSubmit()
 	}
 }
 
-void UStomtPluginWidget::OnConstruction(FString targetID)
+void UStomtPluginWidget::OnConstruction(FString TargetID, FString RestURL, FString AppID)
 {
 	if (api == NULL)
 	{
 		api = NewObject<UStomtAPI>();
 	}
+	this->api->SetAppID(AppID);
+	this->api->SetTargetID(TargetID);
 
 	this->Request = this->api->GetRequest();
 
-	api->ReadTarget(targetID);
+	api->ReadTarget(TargetID);
 	this->api->GetRequest()->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnReceiving);
 }
 

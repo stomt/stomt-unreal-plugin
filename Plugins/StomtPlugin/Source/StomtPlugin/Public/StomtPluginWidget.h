@@ -54,10 +54,10 @@ public:
 	void OnSubmit();
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
-	void OnConstruction(FString targetID);
+	void OnConstruction(FString TargetID, FString RestURL, FString AppID);
 
 	UFUNCTION()
-	void OnReceiving(UStomtRestRequest* requestFuckUnreal);
+	void OnReceiving(UStomtRestRequest* CurrentRequest);
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	void ChangeButtonOrder(UButton *FirstButton, UButton *SecondButton);
