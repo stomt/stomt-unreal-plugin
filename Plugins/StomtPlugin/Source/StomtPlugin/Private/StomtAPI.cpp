@@ -39,15 +39,6 @@ void UStomtAPI::ReadTarget(FString targetID)
 	this->request->SetHeader(TEXT("appid"), this->GetAppID() );
 
 	this->request->ProcessURL( this->GetRestURL().Append("/targets/").Append( this->GetTargetID() ).Append("?target_id=").Append( this->GetTargetID() ) );
-	
-	if (this->request->GetResponseObject()->HasField(TEXT("images")))
-	{
-		UE_LOG(LogTemp, Log, TEXT("images exist"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Log, TEXT("images exist not"));
-	}
 }
 
 void UStomtAPI::SetRestURL(FString URL)

@@ -16,8 +16,6 @@ void UStomtPluginWidget::OnMessageChanged(FString text)
 	if (!text.IsEmpty())
 	{
 		this->Message = text;
-	/*	//UE_LOG(LogTemp, Warning, TEXT("MessageChanged %s", text) ); */
-	/*	//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, this->Message); */
 	}
 	else
 	{
