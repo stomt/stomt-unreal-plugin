@@ -1,3 +1,6 @@
+// Copyright 2016 Daniel Schukies. All Rights Reserved.
+
+
 #pragma once
 #include "StomtPluginPrivatePCH.h"
 #include "StomtRestRequest.h"
@@ -14,11 +17,17 @@ public:
 
 	UStomt();
 
-	/** Create new Stomt object */
+	/** 
+	* Creates new Stomt object 
+	* @param target_id - Stomt target ID
+	* @param positive - whether it is wish(false) or like(true)
+	* @param text - Stomt content text.
+	*/
 	static UStomt* ConstructStomt(FString target_id, bool positive, FString text);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Destruction and reset
+	//TODO reset functions
 
 	//////////////////////////////////////////////////////////////////////////
 	// Data accessors
@@ -26,7 +35,7 @@ public:
 	void SetTargetID(FString target_id);
 	void SetPositive(bool positive);
 	void SetText(FString text);
-	void SetAnonym();
+	void SetAnonym(bool IsAnonym);
 
 	FString GetTargetID();
 	bool	GetPositive();

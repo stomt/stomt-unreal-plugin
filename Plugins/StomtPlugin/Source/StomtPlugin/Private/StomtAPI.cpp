@@ -33,7 +33,7 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 	this->request->ProcessURL( this->GetRestURL().Append(TEXT("/stomts")) );
 }
 
-void UStomtAPI::ReadTarget(FString targetID)
+void UStomtAPI::RequestTarget(FString targetID)
 {
 	this->request->SetVerb(ERequestVerb::GET);
 	this->request->SetHeader(TEXT("appid"), this->GetAppID() );

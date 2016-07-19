@@ -18,8 +18,7 @@ class FStomtPlugin : public StomtPlugin
 
 
 
-IMPLEMENT_MODULE( FStomtPlugin, StomtPlugin)
+IMPLEMENT_MODULE(FStomtPlugin, StomtPlugin);
 
 DEFINE_LOG_CATEGORY(LogStomt);
-DEFINE_LOG_CATEGORY(LogVaRest);
 

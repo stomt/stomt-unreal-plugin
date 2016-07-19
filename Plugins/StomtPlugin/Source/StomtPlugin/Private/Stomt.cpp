@@ -40,9 +40,9 @@ void UStomt::SetText(FString text)
 	this->text = text;
 }
 
-void UStomt::SetAnonym()
+void UStomt::SetAnonym(bool IsAnonym)
 {
-	this->anonym = true;
+	this->anonym = IsAnonym;
 }
 
 FString UStomt::GetTargetID()

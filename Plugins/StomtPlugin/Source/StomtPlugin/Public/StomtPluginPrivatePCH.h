@@ -18,7 +18,5 @@
 #include "ModuleManager.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogStomt, Log, All);
-DECLARE_LOG_CATEGORY_EXTERN(LogVaRest, Log, All);
 #include "StomtPlugin.h"
 
-//#include "VaRestPluginClasses.h"

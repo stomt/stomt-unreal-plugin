@@ -27,7 +27,9 @@ void UStomtPluginWidget::OnSubmit()
 {
 	if (!this->Message.IsEmpty())
 	{
-		UStomt* stomt = UStomt::ConstructStomt(TEXT("unreal"), !this->IsWish, this->Message);
+		UStomt* stomt = UStomt::ConstructStomt(this->api->GetTargetID(), !this->IsWish, this->Message);
+
+		stomt->SetAnonym(true);
 
 		if (api == NULL)
 		{
@@ -49,7 +51,7 @@ void UStomtPluginWidget::OnConstruction(FString TargetID, FString RestURL, FStri
 
 	this->Request = this->api->GetRequest();
 
-	api->ReadTarget(TargetID);
+	api->RequestTarget(TargetID);
 	this->api->GetRequest()->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnReceiving);
 }
 
@@ -72,8 +74,3 @@ void UStomtPluginWidget::OnReceiving(UStomtRestRequest * Request)
 	}
 }
 
-void UStomtPluginWidget::ChangeButtonOrder(UButton *FirstButton, UButton *SecondButton)
-{
-	//FirstButton->GetSlots
-
-}

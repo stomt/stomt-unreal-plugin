@@ -29,44 +29,73 @@ public:
 	
 	~UStomtPluginWidget();
 
+	/**
+	 *	Stomt content-text from the UI textbox.	
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
 	FString Message;
 
+	/**
+	*	Target-name that will be shown in the widget.
+	*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
 	FString TargetName;
 
+	/**
+	*	Target-image URL
+	*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
 	FString	ImageURL;
 
+	/**
+	*	REST request to send stomt.
+	*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
 	UStomtRestRequest* Request;
 
+	/**
+	*	Whether the stomt is not positive (a wish).
+	*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
 	bool IsWish;
 
+	/**
+	*	Whether a screenshot should be appended. (not implemented)
+	*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
 	bool IsScreenshotSelected;
 
+	/**
+	*	Event when text inside the widget changed.
+	*	@param text - Current text from the widget-textbox
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	void OnMessageChanged(FString text);
 
+	/**
+	*	Once the user sends off the stomt.
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	void OnSubmit();
 
+	/**
+	*	Called at the widget startup to initialize variables.
+	*	@param TargetID - Stomt target-id
+	*	@param RestURL - Stomt REST-API URL
+	*	@param AppID - Stomt application-ID
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	void OnConstruction(FString TargetID, FString RestURL, FString AppID);
 
-	UFUNCTION()
-	void OnReceiving(UStomtRestRequest* CurrentRequest);
-
+	/**
+	*	Event called after the stomt server responded.
+	*	@param CurrentRequest - Stomt request that carries the response information.
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
-	void ChangeButtonOrder(UButton *FirstButton, UButton *SecondButton);
+	void OnReceiving(UStomtRestRequest* CurrentRequest);
 
 private:
 
 	UStomt* stomt;
 	UStomtAPI* api;
-	
-	
-	
 };
