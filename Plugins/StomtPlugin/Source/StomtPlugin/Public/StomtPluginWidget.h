@@ -96,6 +96,9 @@ public:
 
 private:
 
+	UPROPERTY()
 	UStomt* stomt;
+
+	UPROPERTY()
 	UStomtAPI* api;
 };

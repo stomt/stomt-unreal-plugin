@@ -195,9 +195,11 @@ protected:
 	FVaRestLatentAction <UStomtRestJsonObject*> *ContinueAction;
 
 	/** Internal request data stored as JSON */
+	UPROPERTY()
 	UStomtRestJsonObject* RequestJsonObj;
 
 	/** Response data stored as JSON */
+	UPROPERTY()
 	UStomtRestJsonObject* ResponseJsonObj;
 
 	/** Verb for making request (GET,POST,etc) */

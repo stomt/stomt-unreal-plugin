@@ -82,7 +82,9 @@ public:
 	// Data
 
 private:
+	UPROPERTY()
 	UStomtRestRequest*	request;
+
 	FString				restURL;
 	FString				targetName;
 	FString				targetID;
