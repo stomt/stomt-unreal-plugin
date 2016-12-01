@@ -1,5 +1,7 @@
 # stomt Unreal-SDK [![Stomt API](https://img.shields.io/badge/stomt-v2.4.X-brightgreen.svg)](https://rest.stomt.com/)
 
+<img alt="stomt Unreal feedback integration" src="http://schukies.io/images/stomt/StomtUnrealWidget.PNG" />
+
 This SDK allows the easy integration of the feedback solution [www.stomt.com](https://www.stomt.com/) in your Unreal apps and games.
 
 ## Installation
