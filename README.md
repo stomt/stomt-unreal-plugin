@@ -1,13 +1,13 @@
-# stomt Unreal-SDK [![Stomt API](https://img.shields.io/badge/stomt-v2.4.X-brightgreen.svg)](https://rest.stomt.com/)
+# STOMT Unreal-SDK [![Stomt API](https://img.shields.io/badge/stomt-v2.4.X-brightgreen.svg)](https://rest.stomt.com/)
 
-<img alt="stomt Unreal feedback integration" src="http://schukies.io/images/stomt/StomtUnrealWidget.PNG" />
+<img alt="STOMT Unreal Engine feedback integration" src="http://schukies.io/images/stomt/StomtUnrealWidget.PNG" />
 
 This SDK allows the easy integration of the feedback solution [www.stomt.com](https://www.stomt.com/) in your Unreal apps and games.
 
 ## Installation
 
 1. Register on [www.stomt.com](https://www.stomt.com/) 
-2. [Create a target page on stomt](https://www.stomt.com/createTarget).
+2. [Create a target page on STOMT](https://www.stomt.com/createTarget).
 3. Go to [Settings > My Apps](https://www.stomt.com/dev/my-apps) and create an application.
 4. Clone Or Download Zip and extract this repository to a folder.
 5. Copy the Plugins folder into your project directory. 
@@ -29,14 +29,14 @@ If you want to test the integration please feel free to do what you want on [tes
 
 ## Contribution
 
-We would love to see you contributing to this project. Feel free to fork it and send in your pull requests! Visit the [project on stomt](https://www.stomt.com/) to support with your ideas, wishes and feedback.
+We would love to see you contributing to this project. Feel free to fork it and send in your pull requests! Visit the [project on STOMT](https://www.stomt.com/) to support with your ideas, wishes and feedback.
 
 ## Authors
 
-[Daniel Schukies](https://github.com/daniel-schukies) | [Follow me on stomt](https://www.stomt.com/danielschukies)    
+[Daniel Schukies](https://github.com/daniel-schukies) | [Follow me on STOMT](https://www.stomt.com/danielschukies)    
 
 ## More about stomt
 
 * On the web [www.stomt.com](https://www.stomt.com)
-* [stomt for iOS](http://stomt.co/ios)
-* [stomt for Android](http://stomt.co/android)
+* [STOMT for iOS](http://stomt.co/ios)
+* [STOMT for Android](http://stomt.co/android)
