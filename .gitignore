@@ -258,3 +258,5 @@ Saved/
 *.sln
 *.sln
 stomt.VC.opendb
+*.opendb
+*.db
