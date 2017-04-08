@@ -5,7 +5,9 @@
 #include "StomtPluginPrivatePCH.h"
 #include "StomtRestRequest.h"
 #include "Stomt.h"
+
 #include "StomtAPI.generated.h"
+
 
 /**
  * 
@@ -76,6 +78,9 @@ public:
 	* Gets the request object that contains request/response information.
 	*/
 	UStomtRestRequest* GetRequest();
+
+	bool CaptureComponent2D_SaveImage(class USceneCaptureComponent2D* Target, const FString ImagePath, const FLinearColor ClearColour);
+
 
 
 	//////////////////////////////////////////////////////////////////////////

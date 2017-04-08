@@ -4,6 +4,7 @@
 #include "StomtPluginPrivatePCH.h"
 #include "StomtPluginWidget.h"
 #include "StomtRestRequest.h"
+#include "Runtime/Engine/Classes/Components/SceneCaptureComponent2D.h"
 
 
 
@@ -72,5 +73,16 @@ void UStomtPluginWidget::OnReceiving(UStomtRestRequest * Request)
 
 		this->ImageURL = this->api->GetImageURL();
 	}
+}
+
+void UStomtPluginWidget::TakeScreenshot()
+{
+	USceneCaptureComponent2D* cap = NewObject<USceneCaptureComponent2D>();
+
+	api->CaptureComponent2D_SaveImage(cap, FString("/bild/"), FLinearColor());
+	/*
+	FTexureRenderTarget2DResource *Texture = (FTextureRenderTarget2DResource *)SceneCapture->TextureTarget->Resource;
+	TArray<FColor> ColorBuffer;
+	Texture->ReadPixels(ColorBuffer);*/
 }
 

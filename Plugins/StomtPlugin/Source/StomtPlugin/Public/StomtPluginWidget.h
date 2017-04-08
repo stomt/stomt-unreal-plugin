@@ -7,6 +7,7 @@
 #include "Runtime/UMG/Public/IUMGModule.h"
 #include "Runtime/UMG/Public/Blueprint/UserWidget.h"
 
+
 #include "Blueprint/UserWidget.h"
 
 #include "StomtRestRequest.h"
@@ -93,6 +94,10 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	void OnReceiving(UStomtRestRequest* CurrentRequest);
+
+
+	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
+	void TakeScreenshot();
 
 private:
 

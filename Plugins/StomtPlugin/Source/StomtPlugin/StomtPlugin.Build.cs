@@ -9,7 +9,7 @@ public class StomtPlugin : ModuleRules
         PublicIncludePaths.AddRange(new string[] { "StomtPlugin/Public" });
  
 
-        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HTTP", "Json", "StomtPlugin", "UMG", "Slate", "SlateCore" });
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HTTP", "Json", "StomtPlugin", "UMG", "Slate", "SlateCore", "ImageWrapper" });
 
         PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore", "UMG" });
 
