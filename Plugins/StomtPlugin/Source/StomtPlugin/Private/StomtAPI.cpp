@@ -5,6 +5,7 @@
 #include "StomtAPI.h"
 #include "Runtime/ImageWrapper/Public/Interfaces/IImageWrapper.h"
 #include "Runtime/ImageWrapper/Public/Interfaces/IImageWrapperModule.h"
+#include "Runtime/Engine/Public/HighResScreenshot.h"
 
 
 
@@ -150,5 +151,31 @@ bool UStomtAPI::CaptureComponent2D_SaveImage(USceneCaptureComponent2D * Target, 
 	}
 
 	return false;
+}
+
+void UStomtAPI::SaveRenderTargetToDisk(UTextureRenderTarget2D* InRenderTarget, FString Filename)
+{
+	FTextureRenderTargetResource* RTResource = InRenderTarget->GameThread_GetRenderTargetResource();
+
+	FReadSurfaceDataFlags ReadPixelFlags(RCM_UNorm);
+	ReadPixelFlags.SetLinearToGamma(true);
+
+	TArray<FColor> OutBMP;
+	RTResource->ReadPixels(OutBMP, ReadPixelFlags);
+
+	for (FColor& color : OutBMP)
+	{
+		color.A = 255;
+	}
+
+
+	FIntRect SourceRect;
+
+	FIntPoint DestSize(InRenderTarget->GetSurfaceWidth(), InRenderTarget->GetSurfaceHeight());
+
+
+	FString ResultPath;
+	FHighResScreenshotConfig& HighResScreenshotConfig = GetHighResScreenshotConfig();
+	HighResScreenshotConfig.SaveImage(Filename, OutBMP, DestSize, &ResultPath);
 }
 

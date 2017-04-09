@@ -26,6 +26,8 @@ void UStomtPluginWidget::OnMessageChanged(FString text)
 
 void UStomtPluginWidget::OnSubmit()
 {
+	//TakeScreenshot();
+
 	if (!this->Message.IsEmpty())
 	{
 		UStomt* stomt = UStomt::ConstructStomt(this->api->GetTargetID(), !this->IsWish, this->Message);
@@ -78,8 +80,18 @@ void UStomtPluginWidget::OnReceiving(UStomtRestRequest * Request)
 void UStomtPluginWidget::TakeScreenshot()
 {
 	USceneCaptureComponent2D* cap = NewObject<USceneCaptureComponent2D>();
-
-	api->CaptureComponent2D_SaveImage(cap, FString("/bild/"), FLinearColor());
+	UTextureRenderTarget2D* RenderTarget = NewObject<UTextureRenderTarget2D>();
+	RenderTarget->InitAutoFormat(1024, 1024);
+	//UMaterialInstanceDynamic* ScopeMat = UMaterialInstanceDynamic::Create(AssetScopeMat_Default, this);
+	cap->TextureTarget = RenderTarget;
+	if (!api->CaptureComponent2D_SaveImage(cap, FString("bild.png"), FLinearColor()))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("bad!"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("nice"));
+	}
 	/*
 	FTexureRenderTarget2DResource *Texture = (FTextureRenderTarget2DResource *)SceneCapture->TextureTarget->Resource;
 	TArray<FColor> ColorBuffer;
