@@ -51,6 +51,7 @@ void UStomtPluginWidget::OnConstruction(FString TargetID, FString RestURL, FStri
 	}
 	this->api->SetAppID(AppID);
 	this->api->SetTargetID(TargetID);
+	this->api->SetRestURL(RestURL);
 
 	this->Request = this->api->GetRequest();
 
