@@ -108,7 +108,7 @@ void UStomtRestRequest::OnResponseReceived(FHttpRequestPtr Request, FHttpRespons
 		
 		
 		// Broadcast the result event
-		//OnRequestFail.Broadcast(this);
+		OnRequestFail.Broadcast(this);
 		return;
 	}
 
@@ -246,7 +246,7 @@ void UStomtRestRequest::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpR
 		UE_LOG(LogTemp, Error, TEXT("Request failed: %s"), *Request->GetURL());
 
 		// Broadcast the result event
-		//OnRequestFail.Broadcast(this);
+		OnRequestFail.Broadcast(this);
 		return;
 	}
 
