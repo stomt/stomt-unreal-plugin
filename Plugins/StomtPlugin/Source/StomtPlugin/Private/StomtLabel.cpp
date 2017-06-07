@@ -13,18 +13,29 @@
 UStomtLabel::UStomtLabel()
 {
 	// Default 
+	/*
 	this->color = FString("#5EBEFF");
 	this->isPublic = false;
 	this->asTargetOwner = false;
+	*/
 }
 
-
+/*
 UStomtLabel::~UStomtLabel()
 {
 }
+*/
 
 //////////////////////////////////////////////////////////////////////////
 // Data accessors
+
+UStomtLabel * UStomtLabel::ConstructLabel(FString name)
+{
+	UStomtLabel* stomtLabel = NewObject<UStomtLabel>();
+	stomtLabel->SetName(name);
+
+	return stomtLabel;
+}
 
 void UStomtLabel::SetName(FString name)
 {

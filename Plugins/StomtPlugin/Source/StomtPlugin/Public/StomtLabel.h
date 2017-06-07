@@ -9,12 +9,17 @@ UCLASS()
 class UStomtLabel : public UObject
 {
 	GENERATED_BODY()
+
 public:
+
 	//////////////////////////////////////////////////////////////////////////
 	// Construction
 
 	UStomtLabel();
-	~UStomtLabel();
+	//~UStomtLabel();
+
+	static UStomtLabel* ConstructLabel(FString name);
+
 
 	//////////////////////////////////////////////////////////////////////////
 	// Data accessors
