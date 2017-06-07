@@ -36,6 +36,22 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 	this->request->ProcessURL( this->GetRestURL().Append(TEXT("/stomts")) );
 }
 
+void UStomtAPI::SendStomtLabels(UStomt * stomt)
+{
+	if (!stomt->GetServersideID().IsEmpty() && stomt->GetLabels().Max() > 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("nice1"));
+		this->request->SetVerb(ERequestVerb::POST);
+		this->request->SetHeader(TEXT("appid"), this->GetAppID() );
+
+		this->request->GetRequestObject()->SetField(TEXT("name"),	UStomtJsonValue::ConstructJsonValueString(	this, TEXT("newlabeltest")	));
+
+
+		this->request->ProcessURL( this->GetRestURL().Append(TEXT("/stomts")).Append(stomt->GetServersideID()).Append(TEXT("/labels") ) );
+	}
+	UE_LOG(LogTemp, Warning, TEXT("bad 1"));
+}
+
 void UStomtAPI::RequestTarget(FString targetID)
 {
 	this->request->SetVerb(ERequestVerb::GET);

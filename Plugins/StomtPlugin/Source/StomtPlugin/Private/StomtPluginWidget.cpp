@@ -4,6 +4,7 @@
 #include "StomtPluginPrivatePCH.h"
 #include "StomtPluginWidget.h"
 #include "StomtRestRequest.h"
+#include "StomtLabel.h"
 #include "Runtime/Engine/Classes/Components/SceneCaptureComponent2D.h"
 
 
@@ -30,7 +31,7 @@ void UStomtPluginWidget::OnSubmit()
 
 	if (!this->Message.IsEmpty())
 	{
-		UStomt* stomt = UStomt::ConstructStomt(this->api->GetTargetID(), !this->IsWish, this->Message);
+		this->stomt = UStomt::ConstructStomt(this->api->GetTargetID(), !this->IsWish, this->Message);
 
 		stomt->SetAnonym(true);
 
@@ -76,6 +77,20 @@ void UStomtPluginWidget::OnReceiving(UStomtRestRequest * Request)
 
 		this->ImageURL = this->api->GetImageURL();
 	}
+
+	if (Request->GetResponseObject()->HasField(TEXT("data")))
+	{
+		if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("id")))
+		{
+			if (this->stomt != NULL)
+			{
+				this->stomt->AddLabel(UStomtLabel::ConstructLabel(TEXT("newlabeltest1")));
+				this->stomt->SetServersideID(Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetStringField(TEXT("id")));
+				this->api->SendStomtLabels(this->stomt);
+			}
+		}
+	}
+
 }
 
 void UStomtPluginWidget::TakeScreenshot()

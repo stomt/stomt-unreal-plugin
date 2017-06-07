@@ -29,6 +29,12 @@ public:
 	void SendStomt(UStomt* stomt);
 
 	/**
+	* Sends stomt labels.
+	* @param stomt - Stomt Object with serverside ID set and labels set.
+	*/
+	void SendStomtLabels(UStomt* stomt);
+
+	/**
 	* Sends an REST request for a stomt target.
 	* To receive the respose it is necessary to add a event delegate function.
 	* For example: api->GetRequest()->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnReceiving).
