@@ -32,7 +32,7 @@ void UStomtPluginWidget::OnSubmit()
 	{
 		UStomt* stomt = UStomt::ConstructStomt(this->api->GetTargetID(), !this->IsWish, this->Message);
 
-		stomt->SetAnonym(true);
+		stomt->SetAnonym(false);
 
 		if (api == NULL)
 		{
