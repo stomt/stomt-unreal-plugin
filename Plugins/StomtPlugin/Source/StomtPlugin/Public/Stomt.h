@@ -36,11 +36,13 @@ public:
 	void SetPositive(bool positive);
 	void SetText(FString text);
 	void SetAnonym(bool IsAnonym);
+	void SetLabels(TArray<FString> labels);
 
 	FString GetTargetID();
 	bool	GetPositive();
 	FString GetText();
 	bool	GetAnonym();
+	TArray<FString>	GetLabels();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Data
@@ -54,5 +56,6 @@ private:
 	bool		anonym;
 	FString		img_name;
 	FString		lonlat;
+	TArray<FString> labels;
 };
 

@@ -45,6 +45,11 @@ void UStomt::SetAnonym(bool IsAnonym)
 	this->anonym = IsAnonym;
 }
 
+void UStomt::SetLabels(TArray<FString> labels)
+{
+//	UStomt::labels.Append(label);
+}
+
 FString UStomt::GetTargetID()
 {
 	return this->target_id;
@@ -63,6 +68,11 @@ FString UStomt::GetText()
 bool UStomt::GetAnonym()
 {
 	return this->anonym;
+}
+
+TArray<FString> UStomt::GetLabels()
+{
+	return TArray<FString>();
 }
 
 
