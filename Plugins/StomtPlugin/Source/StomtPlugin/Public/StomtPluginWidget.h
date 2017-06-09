@@ -67,6 +67,12 @@ public:
 	bool IsScreenshotSelected;
 
 	/**
+	*	The labels which will be appended to the stomt.
+	*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
+	TArray<FString> Labels;
+
+	/**
 	*	Event when text inside the widget changed.
 	*	@param text - Current text from the widget-textbox
 	*/

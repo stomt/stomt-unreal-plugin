@@ -42,6 +42,7 @@ public:
 	// Labels
 	void AddLabel(UStomtLabel* label);
 	void SetLabels(TArray<UStomtLabel*> labels);
+	void SetLabels(TArray<FString> labels);
 
 	FString					GetTargetID();
 	bool					GetPositive();

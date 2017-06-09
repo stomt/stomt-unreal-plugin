@@ -32,6 +32,7 @@ void UStomtPluginWidget::OnSubmit()
 	if (!this->Message.IsEmpty())
 	{
 		this->stomt = UStomt::ConstructStomt(this->api->GetTargetID(), !this->IsWish, this->Message);
+		this->stomt->SetLabels(this->Labels);
 
 		stomt->SetAnonym(true);
 
@@ -67,17 +68,19 @@ void UStomtPluginWidget::OnReceiving(UStomtRestRequest * Request)
 		if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("displayname")))
 		{
 			this->TargetName = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetStringField(TEXT("displayname"));
+
+			this->api->SetImageURL(Request->GetResponseObject()
+				->GetObjectField(TEXT("data"))
+				->GetObjectField(TEXT("images"))
+				->GetObjectField(TEXT("profile"))
+				->GetStringField(TEXT("url")));
+
+			this->ImageURL = this->api->GetImageURL();
+
 		}
-
-		this->api->SetImageURL(Request->GetResponseObject()
-			->GetObjectField(TEXT("data"))
-			->GetObjectField(TEXT("images"))
-			->GetObjectField(TEXT("profile"))
-			->GetStringField(TEXT("url")));
-
-		this->ImageURL = this->api->GetImageURL();
 	}
 
+	/*
 	if (Request->GetResponseObject()->HasField(TEXT("data")))
 	{
 		if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("id")))
@@ -90,6 +93,7 @@ void UStomtPluginWidget::OnReceiving(UStomtRestRequest * Request)
 			}
 		}
 	}
+	*/
 
 }
 

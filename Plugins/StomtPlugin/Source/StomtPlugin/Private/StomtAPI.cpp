@@ -6,6 +6,7 @@
 #include "Runtime/ImageWrapper/Public/Interfaces/IImageWrapper.h"
 #include "Runtime/ImageWrapper/Public/Interfaces/IImageWrapperModule.h"
 #include "Runtime/Engine/Public/HighResScreenshot.h"
+#include "StomtJsonObject.h"
 
 
 
@@ -25,6 +26,10 @@ UStomtAPI::~UStomtAPI()
 
 void UStomtAPI::SendStomt(UStomt* stomt)
 {
+	//Reset Request
+	this->request->ResetResponseData();
+	this->request->ResetRequestData();
+
 	this->request->SetVerb(ERequestVerb::POST);
 	this->request->SetHeader(TEXT("appid"), this->GetAppID() );
 
@@ -33,23 +38,39 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 	this->request->GetRequestObject()->SetField(TEXT("text"),		UStomtJsonValue::ConstructJsonValueString(	this, stomt->GetText()		));
 	this->request->GetRequestObject()->SetField(TEXT("anonym"),		UStomtJsonValue::ConstructJsonValueBool(	this, stomt->GetAnonym()	));
 
+	UStomtRestJsonObject* jObj = UStomtRestJsonObject::ConstructJsonObject(this);
+	TArray<UStomtJsonValue*> labels = TArray<UStomtJsonValue*>();
+
+	for (int i = 0; i != stomt->GetLabels().Num(); ++i)
+	{
+		labels.Add(UStomtJsonValue::ConstructJsonValueString(this, stomt->GetLabels()[i]->GetName() ));
+	}
+
+	jObj->SetArrayField(TEXT("labels"), labels);
+	
+	this->request->GetRequestObject()->SetObjectField(TEXT("extradata"), jObj );
 	this->request->ProcessURL( this->GetRestURL().Append(TEXT("/stomts")) );
 }
 
 void UStomtAPI::SendStomtLabels(UStomt * stomt)
 {
+	/*
 	if (!stomt->GetServersideID().IsEmpty() && stomt->GetLabels().Max() > 0)
 	{
+		//Reset Request
+		this->request->ResetResponseData();
+		this->request->ResetRequestData();
+
 		UE_LOG(LogTemp, Warning, TEXT("nice1"));
 		this->request->SetVerb(ERequestVerb::POST);
 		this->request->SetHeader(TEXT("appid"), this->GetAppID() );
 
 		this->request->GetRequestObject()->SetField(TEXT("name"),	UStomtJsonValue::ConstructJsonValueString(	this, TEXT("newlabeltest")	));
+		this->request->GetRequestObject()->SetField(TEXT("as_target_owner"), UStomtJsonValue::ConstructJsonValueString(this, TEXT("true")));
 
-
-		this->request->ProcessURL( this->GetRestURL().Append(TEXT("/stomts")).Append(stomt->GetServersideID()).Append(TEXT("/labels") ) );
+		this->request->ProcessURL( this->GetRestURL().Append(TEXT("/stomts/")).Append(stomt->GetServersideID()).Append(TEXT("/labels") ) );
 	}
-	UE_LOG(LogTemp, Warning, TEXT("bad 1"));
+	*/
 }
 
 void UStomtAPI::RequestTarget(FString targetID)

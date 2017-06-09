@@ -58,12 +58,19 @@ void UStomt::SetLabels(TArray<UStomtLabel*> labels)
 {
 	this->labels = labels;
 }
-/*
-void UStomt::AddLabel(UStomtLabel label)
+
+void UStomt::SetLabels(TArray<FString> labels)
 {
-	//this->labels.Add(label);
+	if (labels.Num() <= 0)
+		return;
+
+	this->labels.Empty();
+
+	for (int i = 0; i != labels.Num(); ++i)
+	{
+		this->labels.Add(UStomtLabel::ConstructLabel(labels[i]));
+	}
 }
-*/
 
 FString UStomt::GetTargetID()
 {
