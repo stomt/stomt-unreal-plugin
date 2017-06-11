@@ -20,6 +20,7 @@ class UStomtAPI : public UObject
 public:
 
 	UStomtAPI();
+
 	~UStomtAPI();
 
 	/**
@@ -29,7 +30,7 @@ public:
 	void SendStomt(UStomt* stomt);
 
 	/**
-	* Sends stomt labels.
+	* Sends stomt labels. (deprecated)
 	* @param stomt - Stomt Object with serverside ID set and labels set.
 	*/
 	void SendStomtLabels(UStomt* stomt);
@@ -86,6 +87,15 @@ public:
 	*/
 	UStomtRestRequest* GetRequest();
 
+	/**/
+	bool SaveAccesstoken(FString accesstoken);
+
+	/**/
+	FString ReadAccesstoken();
+
+	UFUNCTION()
+	void OnReceiving(UStomtRestRequest* Request);
+
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	bool CaptureComponent2D_SaveImage(class USceneCaptureComponent2D* Target, const FString ImagePath, const FLinearColor ClearColour);
 
@@ -98,8 +108,12 @@ public:
 	// Data
 
 private:
+	bool WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting);
+	bool ReadFile(FString& Result, FString FileName, FString SaveDirectory);
+
 	UPROPERTY()
 	UStomtRestRequest*	request;
+	FString				accesstoken;
 
 	FString				restURL;
 	FString				targetName;

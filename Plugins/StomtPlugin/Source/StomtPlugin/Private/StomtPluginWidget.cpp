@@ -57,7 +57,7 @@ void UStomtPluginWidget::OnConstruction(FString TargetID, FString RestURL, FStri
 
 	this->Request = this->api->GetRequest();
 
-	api->RequestTarget(TargetID);
+	this->api->RequestTarget(TargetID);
 	this->api->GetRequest()->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnReceiving);
 }
 

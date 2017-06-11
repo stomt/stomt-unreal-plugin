@@ -6,14 +6,21 @@
 #include "Runtime/ImageWrapper/Public/Interfaces/IImageWrapper.h"
 #include "Runtime/ImageWrapper/Public/Interfaces/IImageWrapperModule.h"
 #include "Runtime/Engine/Public/HighResScreenshot.h"
+#include "Runtime/Core/Public/Misc/FileHelper.h"
 #include "StomtJsonObject.h"
-
 
 
 
 UStomtAPI::UStomtAPI()
 {
+	this->accesstoken = FString(TEXT(""));
+	ReadAccesstoken();
+
 	this->request = NewObject<UStomtRestRequest>();
+
+	this->request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnReceiving);
+
+	//Default Request Data:
 	this->restURL = TEXT("https://test.rest.stomt.com");
 	this->targetName = TEXT("...");
 	this->SetAppID("R18OFQXmb6QzXwzP1lWdiZ7Y9");
@@ -32,6 +39,11 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 
 	this->request->SetVerb(ERequestVerb::POST);
 	this->request->SetHeader(TEXT("appid"), this->GetAppID() );
+
+	if (!this->accesstoken.IsEmpty())
+	{
+		this->request->SetHeader(TEXT("accesstoken"), this->accesstoken);
+	}
 
 	this->request->GetRequestObject()->SetField(TEXT("target_id"),	UStomtJsonValue::ConstructJsonValueString(	this, stomt->GetTargetID()	));
 	this->request->GetRequestObject()->SetField(TEXT("positive"),	UStomtJsonValue::ConstructJsonValueBool(	this, stomt->GetPositive()	));
@@ -54,6 +66,9 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 
 void UStomtAPI::SendStomtLabels(UStomt * stomt)
 {
+	return;
+	//ToDo: Finish this some day.
+
 	/*
 	if (!stomt->GetServersideID().IsEmpty() && stomt->GetLabels().Max() > 0)
 	{
@@ -129,6 +144,51 @@ FString UStomtAPI::GetImageURL()
 UStomtRestRequest * UStomtAPI::GetRequest()
 {
 	return this->request;
+}
+
+bool UStomtAPI::SaveAccesstoken(FString accesstoken)
+{
+	UStomtRestJsonObject* jsonObj = UStomtRestJsonObject::ConstructJsonObject(this);
+
+	jsonObj->SetStringField(TEXT("accesstoken"), accesstoken);
+
+	return this->WriteFile(jsonObj->EncodeJson(), TEXT("stomt.conf.json"), TEXT("/stomt"), true);
+}
+
+FString UStomtAPI::ReadAccesstoken()
+{
+	FString result;
+
+	if (this->ReadFile(result, TEXT("stomt.conf.json"), TEXT("/stomt")))
+	{
+		UStomtRestJsonObject* jsonObj = UStomtRestJsonObject::ConstructJsonObject(this);
+		jsonObj->DecodeJson(result);
+		this->accesstoken = jsonObj->GetField(TEXT("accesstoken"))->AsString();
+	}
+
+	return result;
+}
+
+
+void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
+{
+	if (this->accesstoken.IsEmpty())
+	{
+		if (Request->GetResponseObject()->HasField(TEXT("meta")))
+		{
+			if (Request->GetResponseObject()->GetObjectField(TEXT("meta"))->HasField(TEXT("accesstoken")))
+			{
+				this->accesstoken = Request->GetResponseObject()->GetObjectField(TEXT("meta"))->GetStringField(TEXT("accesstoken"));
+				this->SaveAccesstoken(this->accesstoken);
+				//UE_LOG(LogTemp, Warning, TEXT("saved token! %s "), *this->accesstoken);
+			}
+		}
+	}
+	else
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("Token not empty"));
+		//UE_LOG(LogTemp, Warning, TEXT("Token: %s"), *this->accesstoken);
+	}
 }
 
 bool UStomtAPI::CaptureComponent2D_SaveImage(USceneCaptureComponent2D * Target, const FString ImagePath, const FLinearColor ClearColour)
@@ -214,5 +274,41 @@ void UStomtAPI::SaveRenderTargetToDisk(UTextureRenderTarget2D* InRenderTarget, F
 	FString ResultPath;
 	FHighResScreenshotConfig& HighResScreenshotConfig = GetHighResScreenshotConfig();
 	HighResScreenshotConfig.SaveImage(Filename, OutBMP, DestSize, &ResultPath);
+}
+
+bool UStomtAPI::WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting)
+{
+	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
+
+	// CreateDirectoryTree returns true if the destination
+	// directory existed prior to call or has been created
+	// during the call.
+	if (PlatformFile.CreateDirectoryTree(*SaveDirectory))
+	{
+		// Get absolute file path
+		FString AbsoluteFilePath = SaveDirectory + "/" + FileName;
+
+		// Allow overwriting or file doesn't already exist
+		if (AllowOverwriting || !FPaths::FileExists(*AbsoluteFilePath))
+		{
+			return FFileHelper::SaveStringToFile(TextToSave, *AbsoluteFilePath);
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool UStomtAPI::ReadFile(FString& Result, FString FileName, FString SaveDirectory)
+{
+	FString path = SaveDirectory + TEXT("/") + FileName;
+
+	return 	FFileHelper::LoadFileToString( Result, *path);
+
 }
 
