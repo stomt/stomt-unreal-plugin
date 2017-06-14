@@ -45,6 +45,33 @@ void UStomt::SetAnonym(bool IsAnonym)
 	this->anonym = IsAnonym;
 }
 
+void UStomt::SetServersideID(FString serversideID)
+{
+	this->serversideID = serversideID;
+}
+
+void UStomt::AddLabel(UStomtLabel* label)
+{
+	this->labels.Add(label);
+}
+void UStomt::SetLabels(TArray<UStomtLabel*> labels)
+{
+	this->labels = labels;
+}
+
+void UStomt::SetLabels(TArray<FString> labels)
+{
+	if (labels.Num() <= 0)
+		return;
+
+	this->labels.Empty();
+
+	for (int i = 0; i != labels.Num(); ++i)
+	{
+		this->labels.Add(UStomtLabel::ConstructLabel(labels[i]));
+	}
+}
+
 FString UStomt::GetTargetID()
 {
 	return this->target_id;
@@ -64,5 +91,13 @@ bool UStomt::GetAnonym()
 {
 	return this->anonym;
 }
+TArray<UStomtLabel*> UStomt::GetLabels()
+{
+	return this->labels;
+}
 
+FString UStomt::GetServersideID()
+{
+	return this->serversideID;
+}
 

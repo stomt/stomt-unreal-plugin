@@ -4,6 +4,7 @@
 #include "StomtPluginPrivatePCH.h"
 #include "StomtPluginWidget.h"
 #include "StomtRestRequest.h"
+#include "StomtLabel.h"
 #include "Runtime/Engine/Classes/Components/SceneCaptureComponent2D.h"
 
 
@@ -30,7 +31,8 @@ void UStomtPluginWidget::OnSubmit()
 
 	if (!this->Message.IsEmpty())
 	{
-		UStomt* stomt = UStomt::ConstructStomt(this->api->GetTargetID(), !this->IsWish, this->Message);
+		this->stomt = UStomt::ConstructStomt(this->api->GetTargetID(), !this->IsWish, this->Message);
+		this->stomt->SetLabels(this->Labels);
 
 		stomt->SetAnonym(false);
 
@@ -55,7 +57,7 @@ void UStomtPluginWidget::OnConstruction(FString TargetID, FString RestURL, FStri
 
 	this->Request = this->api->GetRequest();
 
-	api->RequestTarget(TargetID);
+	this->api->RequestTarget(TargetID);
 	this->api->GetRequest()->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnReceiving);
 }
 
@@ -66,16 +68,33 @@ void UStomtPluginWidget::OnReceiving(UStomtRestRequest * Request)
 		if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("displayname")))
 		{
 			this->TargetName = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetStringField(TEXT("displayname"));
+
+			this->api->SetImageURL(Request->GetResponseObject()
+				->GetObjectField(TEXT("data"))
+				->GetObjectField(TEXT("images"))
+				->GetObjectField(TEXT("profile"))
+				->GetStringField(TEXT("url")));
+
+			this->ImageURL = this->api->GetImageURL();
+
 		}
-
-		this->api->SetImageURL(Request->GetResponseObject()
-			->GetObjectField(TEXT("data"))
-			->GetObjectField(TEXT("images"))
-			->GetObjectField(TEXT("profile"))
-			->GetStringField(TEXT("url")));
-
-		this->ImageURL = this->api->GetImageURL();
 	}
+
+	/*
+	if (Request->GetResponseObject()->HasField(TEXT("data")))
+	{
+		if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("id")))
+		{
+			if (this->stomt != NULL)
+			{
+				this->stomt->AddLabel(UStomtLabel::ConstructLabel(TEXT("newlabeltest1")));
+				this->stomt->SetServersideID(Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetStringField(TEXT("id")));
+				this->api->SendStomtLabels(this->stomt);
+			}
+		}
+	}
+	*/
+
 }
 
 void UStomtPluginWidget::TakeScreenshot()

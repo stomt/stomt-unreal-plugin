@@ -4,6 +4,7 @@
 #pragma once
 #include "StomtPluginPrivatePCH.h"
 #include "StomtRestRequest.h"
+#include "StomtLabel.h"
 #include "Stomt.generated.h"
 
 UCLASS()
@@ -36,17 +37,26 @@ public:
 	void SetPositive(bool positive);
 	void SetText(FString text);
 	void SetAnonym(bool IsAnonym);
+	void SetServersideID(FString serversideID);
 
-	FString GetTargetID();
-	bool	GetPositive();
-	FString GetText();
-	bool	GetAnonym();
+	// Labels
+	void AddLabel(UStomtLabel* label);
+	void SetLabels(TArray<UStomtLabel*> labels);
+	void SetLabels(TArray<FString> labels);
+
+	FString					GetTargetID();
+	bool					GetPositive();
+	FString					GetText();
+	bool					GetAnonym();
+	TArray<UStomtLabel*>	GetLabels();
+	FString					GetServersideID();
+	
 
 	//////////////////////////////////////////////////////////////////////////
 	// Data
 
 private:
-
+	FString		serversideID;
 	FString		target_id;
 	bool		positive;
 	FString		text;
@@ -54,5 +64,6 @@ private:
 	bool		anonym;
 	FString		img_name;
 	FString		lonlat;
+	TArray<UStomtLabel*> labels;
 };
 
