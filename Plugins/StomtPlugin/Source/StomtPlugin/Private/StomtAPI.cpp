@@ -7,6 +7,8 @@
 #include "Runtime/ImageWrapper/Public/Interfaces/IImageWrapperModule.h"
 #include "Runtime/Engine/Public/HighResScreenshot.h"
 #include "Runtime/Core/Public/Misc/FileHelper.h"
+#include "Runtime/Core/Public/Misc/Paths.h"
+#include "Runtime/Core/Public/GenericPlatform/GenericPlatformFile.h"
 #include "StomtJsonObject.h"
 
 
@@ -19,6 +21,8 @@ UStomtAPI::UStomtAPI()
 	this->request = NewObject<UStomtRestRequest>();
 
 	this->request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnReceiving);
+
+	this->ReadLogFile(TEXT("stomt.log"));
 
 	//Default Request Data:
 	this->restURL = TEXT("https://test.rest.stomt.com");
@@ -159,7 +163,7 @@ FString UStomtAPI::ReadAccesstoken()
 {
 	FString result;
 
-	if (this->ReadFile(result, TEXT("stomt.conf.json"), TEXT("/stomt")))
+	if (this->ReadFile(result, TEXT("stomt.conf.json"), TEXT("/stomt/")))
 	{
 		UStomtRestJsonObject* jsonObj = UStomtRestJsonObject::ConstructJsonObject(this);
 		jsonObj->DecodeJson(result);
@@ -169,6 +173,45 @@ FString UStomtAPI::ReadAccesstoken()
 	return result;
 }
 
+
+FString UStomtAPI::ReadLogFile(FString LogFileName)
+{
+	FString errorLog;
+
+	FString LogFilePath = FPaths::GameLogDir() + LogFileName;
+	FString LogFileCopyPath = FPaths::GameLogDir() + LogFileName + TEXT("Copy.log");
+	FString LogFileCopyName = LogFileName + TEXT("Copy.log");
+
+	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
+	PlatformFile.BypassSecurity(true);
+
+	// Copy LogFile
+	if (!PlatformFile.CopyFile(*LogFileCopyPath, *LogFilePath, EPlatformFileRead::AllowWrite, EPlatformFileWrite::AllowRead))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("LogFile Copy did not work FromFile: %s | ToFile %s"), *LogFilePath, *LogFileCopyPath);
+	}
+
+	// Read LogFileCopy from Disk
+	if (!this->ReadFile(errorLog, LogFileCopyName, FPaths::GameLogDir() ))
+	{
+		if (FPaths::FileExists(FPaths::GameLogDir() + LogFileCopyName))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Could not read LogFile %s, but it exists"), *LogFileCopyName);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Could not read LogFile %s, because it does not exist"), *LogFileCopyName);
+		}
+	}
+
+	// Delete LogFileCopy
+	if (!PlatformFile.DeleteFile(*LogFileCopyPath))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Could not delete LogFileCopy %s"), *LogFileCopyPath);
+	}
+
+	return errorLog;
+}
 
 void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
 {
@@ -305,10 +348,22 @@ bool UStomtAPI::WriteFile(FString TextToSave, FString FileName, FString SaveDire
 }
 
 bool UStomtAPI::ReadFile(FString& Result, FString FileName, FString SaveDirectory)
-{
-	FString path = SaveDirectory + TEXT("/") + FileName;
+{	
 
-	return 	FFileHelper::LoadFileToString( Result, *path);
+	FString path = SaveDirectory + FileName;
+
+/*
+	if (SaveDirectory.GetCharArray()[SaveDirectory.Len() - 2] == '/')
+	{
+		UE_LOG(LogTemp, Warning, TEXT(" / am enden: %s "), *path);
+	}*/
+
+	if (!FPaths::FileExists(path))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("File does not exist: %s "), *path);
+	}
+
+	return FFileHelper::LoadFileToString( Result, *path);
 
 }
 

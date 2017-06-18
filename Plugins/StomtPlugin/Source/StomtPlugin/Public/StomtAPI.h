@@ -87,11 +87,20 @@ public:
 	*/
 	UStomtRestRequest* GetRequest();
 
-	/**/
+	/** 
+	* Saves the access token in /stomt/stomt.conf.json
+	*/
 	bool SaveAccesstoken(FString accesstoken);
 
-	/**/
+	/**
+	* Loads the access token from disk.
+	*/
 	FString ReadAccesstoken();
+
+	/**
+	* Loads an Log file from disk.
+	*/
+	FString ReadLogFile(FString LogFileName);
 
 	UFUNCTION()
 	void OnReceiving(UStomtRestRequest* Request);
