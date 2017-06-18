@@ -9,6 +9,7 @@
 #include "Runtime/Core/Public/Misc/FileHelper.h"
 #include "Runtime/Core/Public/Misc/Paths.h"
 #include "Runtime/Core/Public/GenericPlatform/GenericPlatformFile.h"
+#include "Runtime/Core/Public/Misc/Base64.h"
 #include "StomtJsonObject.h"
 
 
@@ -21,8 +22,6 @@ UStomtAPI::UStomtAPI()
 	this->request = NewObject<UStomtRestRequest>();
 
 	this->request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnReceiving);
-
-	this->ReadLogFile(TEXT("stomt.log"));
 
 	//Default Request Data:
 	this->restURL = TEXT("https://test.rest.stomt.com");
@@ -37,24 +36,16 @@ UStomtAPI::~UStomtAPI()
 
 void UStomtAPI::SendStomt(UStomt* stomt)
 {
-	//Reset Request
-	this->request->ResetResponseData();
-	this->request->ResetRequestData();
+	this->SetupRequest();
 
-	this->request->SetVerb(ERequestVerb::POST);
-	this->request->SetHeader(TEXT("appid"), this->GetAppID() );
-
-	if (!this->accesstoken.IsEmpty())
-	{
-		this->request->SetHeader(TEXT("accesstoken"), this->accesstoken);
-	}
-
+	// Fields
 	this->request->GetRequestObject()->SetField(TEXT("target_id"),	UStomtJsonValue::ConstructJsonValueString(	this, stomt->GetTargetID()	));
 	this->request->GetRequestObject()->SetField(TEXT("positive"),	UStomtJsonValue::ConstructJsonValueBool(	this, stomt->GetPositive()	));
 	this->request->GetRequestObject()->SetField(TEXT("text"),		UStomtJsonValue::ConstructJsonValueString(	this, stomt->GetText()		));
 	this->request->GetRequestObject()->SetField(TEXT("anonym"),		UStomtJsonValue::ConstructJsonValueBool(	this, stomt->GetAnonym()	));
-
-	UStomtRestJsonObject* jObj = UStomtRestJsonObject::ConstructJsonObject(this);
+	
+	//Labels
+	UStomtRestJsonObject* jObjExtraData = UStomtRestJsonObject::ConstructJsonObject(this);
 	TArray<UStomtJsonValue*> labels = TArray<UStomtJsonValue*>();
 
 	for (int i = 0; i != stomt->GetLabels().Num(); ++i)
@@ -62,9 +53,21 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 		labels.Add(UStomtJsonValue::ConstructJsonValueString(this, stomt->GetLabels()[i]->GetName() ));
 	}
 
-	jObj->SetArrayField(TEXT("labels"), labels);
+	jObjExtraData->SetArrayField(TEXT("labels"), labels);
+	this->request->GetRequestObject()->SetObjectField(TEXT("extradata"), jObjExtraData);
+
+	// Error Logs
+	if (!this->errorLog_file_uid.IsEmpty())
+	{
+		UStomtRestJsonObject* jObjFile = UStomtRestJsonObject::ConstructJsonObject(this);
+		UStomtRestJsonObject* jObjFileContext = UStomtRestJsonObject::ConstructJsonObject(this);
+		jObjFileContext->SetField(TEXT("file_uid"), UStomtJsonValue::ConstructJsonValueString(this, this->errorLog_file_uid));
+
+		jObjFile->SetObjectField(TEXT("stomt"), jObjFileContext);
+		this->request->GetRequestObject()->SetObjectField(TEXT("files"), jObjFile);
+	}
+;
 	
-	this->request->GetRequestObject()->SetObjectField(TEXT("extradata"), jObj );
 	this->request->ProcessURL( this->GetRestURL().Append(TEXT("/stomts")) );
 }
 
@@ -185,7 +188,7 @@ FString UStomtAPI::ReadLogFile(FString LogFileName)
 	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
 	PlatformFile.BypassSecurity(true);
 
-	// Copy LogFile
+	// Copy LogFileData
 	if (!PlatformFile.CopyFile(*LogFileCopyPath, *LogFilePath, EPlatformFileRead::AllowWrite, EPlatformFileWrite::AllowRead))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("LogFile Copy did not work FromFile: %s | ToFile %s"), *LogFilePath, *LogFileCopyPath);
@@ -213,6 +216,23 @@ FString UStomtAPI::ReadLogFile(FString LogFileName)
 	return errorLog;
 }
 
+void UStomtAPI::SendLogFile(FString LogFileData, FString LogFileName)
+{
+	this->SetupRequest();
+
+	UStomtRestJsonObject* jObjFiles = UStomtRestJsonObject::ConstructJsonObject(this);
+	UStomtRestJsonObject* jObjContext = UStomtRestJsonObject::ConstructJsonObject(this);
+	UStomtJsonValue*	  jsonValueLogData = UStomtJsonValue::ConstructJsonValueString(this, FBase64::Encode(LogFileData));
+	UStomtJsonValue*	  jsonValueLogFileName = UStomtJsonValue::ConstructJsonValueString(this, LogFileName);
+
+	jObjContext->SetField(TEXT("data"), jsonValueLogData);
+	jObjContext->SetField(TEXT("filename"), jsonValueLogFileName);
+	jObjFiles->SetObjectField(TEXT("stomt"), jObjContext);
+
+	this->request->GetRequestObject()->SetObjectField(TEXT("files"), jObjFiles);
+	this->request->ProcessURL(this->GetRestURL().Append(TEXT("/files")));
+}
+
 void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
 {
 	if (this->accesstoken.IsEmpty())
@@ -231,6 +251,17 @@ void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("Token not empty"));
 		//UE_LOG(LogTemp, Warning, TEXT("Token: %s"), *this->accesstoken);
+	}
+
+	if (Request->GetResponseObject()->HasField(TEXT("data")))
+	{
+		if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("files")))
+		{
+			UStomtRestJsonObject* jObjFileContext = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetObjectField(TEXT("stomt"));
+			this->errorLog_file_uid = jObjFileContext->GetField(TEXT("file_uid"))->AsString();
+
+			UE_LOG(LogTemp, Warning, TEXT("FIle UID ERRORLOG: %s"), *this->errorLog_file_uid);
+		}
 	}
 }
 
@@ -365,5 +396,20 @@ bool UStomtAPI::ReadFile(FString& Result, FString FileName, FString SaveDirector
 
 	return FFileHelper::LoadFileToString( Result, *path);
 
+}
+
+inline void UStomtAPI::SetupRequest()
+{
+	//Reset Request
+	this->request->ResetResponseData();
+	this->request->ResetRequestData();
+
+	this->request->SetVerb(ERequestVerb::POST);
+	this->request->SetHeader(TEXT("appid"), this->GetAppID());
+
+	if (!this->accesstoken.IsEmpty())
+	{
+		this->request->SetHeader(TEXT("accesstoken"), this->accesstoken);
+	}
 }
 
