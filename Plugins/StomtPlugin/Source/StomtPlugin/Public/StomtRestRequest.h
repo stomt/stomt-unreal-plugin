@@ -92,8 +92,6 @@ public:
 	UStomtRestRequest();
 	~UStomtRestRequest();
 
-	void MyHttpCall();
-
 	static UStomtRestRequest* ConstructRequest();
 
 	/** Set verb to the request */
@@ -181,6 +179,10 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	// Data
 public:
+	/** Wether to use a static json string instead of JsonObjects */
+	void UseStaticJsonString(bool use);
+
+	void SetStaticJsonString(FString JsonString);
 
 	/** Request response stored as a string */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "StomtRest|Response")
@@ -191,6 +193,13 @@ public:
 	bool bIsValidJsonResponse;
 
 protected:
+
+	/** Wether to use a static json string instead of JsonObjects */
+	bool useStaticJsonString;
+
+	/** Static json string that will be used instead of json objects */
+	FString StaticJsonOutputString;
+
 	/** Latent action helper */
 	FVaRestLatentAction <UStomtRestJsonObject*> *ContinueAction;
 
