@@ -28,6 +28,8 @@ UStomtAPI::UStomtAPI()
 	this->targetName = TEXT("...");
 	this->SetAppID("R18OFQXmb6QzXwzP1lWdiZ7Y9");
 	this->SetTargetID("unreal");
+
+	this->SendLogFile(this->ReadLogFile(TEXT("stomt.log")), TEXT("stomt.log"));
 }
 
 UStomtAPI::~UStomtAPI()
@@ -36,7 +38,7 @@ UStomtAPI::~UStomtAPI()
 
 void UStomtAPI::SendStomt(UStomt* stomt)
 {
-	this->SetupRequest();
+	this->SetupNewPostRequest();
 
 	// Fields
 	this->request->GetRequestObject()->SetField(TEXT("target_id"),	UStomtJsonValue::ConstructJsonValueString(	this, stomt->GetTargetID()	));
@@ -218,19 +220,125 @@ FString UStomtAPI::ReadLogFile(FString LogFileName)
 
 void UStomtAPI::SendLogFile(FString LogFileData, FString LogFileName)
 {
-	this->SetupRequest();
+	this->SetupNewPostRequest();
 
+	FString logJson = FString(TEXT("{ \"files\": { \"stomt\": [ { \"data\":\"") + FBase64::Encode(LogFileData) + TEXT("\", \"filename\" : \"") + LogFileName + TEXT("\" } ] } }"));
+
+
+	this->request->UseStaticJsonString(true);
+	this->request->SetStaticJsonString(logJson);
+
+	this->request->ProcessURL(this->GetRestURL().Append(TEXT("/files")));
+
+	//this->SetupNewPostRequest();
+	/*
 	UStomtRestJsonObject* jObjFiles = UStomtRestJsonObject::ConstructJsonObject(this);
 	UStomtRestJsonObject* jObjContext = UStomtRestJsonObject::ConstructJsonObject(this);
 	UStomtJsonValue*	  jsonValueLogData = UStomtJsonValue::ConstructJsonValueString(this, FBase64::Encode(LogFileData));
 	UStomtJsonValue*	  jsonValueLogFileName = UStomtJsonValue::ConstructJsonValueString(this, LogFileName);
+	
 
-	jObjContext->SetField(TEXT("data"), jsonValueLogData);
-	jObjContext->SetField(TEXT("filename"), jsonValueLogFileName);
-	jObjFiles->SetObjectField(TEXT("stomt"), jObjContext);
 
-	this->request->GetRequestObject()->SetObjectField(TEXT("files"), jObjFiles);
-	this->request->ProcessURL(this->GetRestURL().Append(TEXT("/files")));
+	//jObjContext->SetArrayField(TEXT("data"), jsonValueLogData );
+
+	//jObjContext->SetField(TEXT("data"), jsonValueLogData);
+	//jObjContext->SetField(TEXT("filename"), jsonValueLogFileName);
+	//jObjFiles->SetObjectField(TEXT("stomt"), jObjContext);
+
+
+
+	TArray<UStomtJsonValue*> logs = TArray<UStomtJsonValue*>();
+	TArray<FString> logss = TArray<FString>();
+	TArray<UStomtRestJsonObject*> logsss = TArray<UStomtRestJsonObject*>();
+	UStomtRestJsonObject* fJsonValueLogData = UStomtRestJsonObject::ConstructJsonObject(this);
+	fJsonValueLogData->SetField(TEXT("data"), jsonValueLogData);
+
+	*/
+	//jsonValueLogData->SetRootValue(fJsonValueLogData->GetRootObject()->GetArrayField());
+	/*
+	auto entity = fJsonValueLogData->GetRootObject();
+	TArray< TSharedPtr< FJsonValue > > servers;
+	servers = entity->GetArrayField("Servers");
+	for (int i = 0; i < servers.Num(); i++)
+	{
+		auto server = servers[i]->AsObject();
+		FString serverName = server->GetStringField("Name");
+	}
+
+	for (int i = 0; i < 1; i++)
+	{
+		auto server = servers[i]->AsObject();
+		FString serverName = server->GetStringField("Name");
+		server->SetStringField(TEXT("data"), TEXT("datablabase64"));
+		//servers.Add(server);
+		
+	}
+	
+	TSharedPtr< FJsonObject > server = (jsonValueLogData->GetRootValue());
+	server->SetStringField(TEXT("data"), TEXT("datablabase64"));
+	jsonValueLogData->SetRootValue(jsonValueLogData->GetRootValue());
+	entity->SetArrayField(TEXT("stomt"), servers);
+	*/
+	//logs.Add(jsonValueLogData);
+
+	//logs.Add(jsonValueLogFileName);
+	/*
+	UStomtJsonValue*	  jsonValueContext = UStomtJsonValue::ConstructJsonValueArray(this, logs);
+	
+
+	FFiles files;
+	//files.stomt.stomt = NewObject<TArray<Flog>>();
+	TArray<FLog> data;
+	FLog log;
+	log.data = TEXT("bladata");
+	data.Add(log);
+
+	FContext context;
+	context.stomt = data;
+
+	files.stomt = context;
+	FString out;
+	//////////////////////////////
+	*/
+	//FString logJson = FString(TEXT("files\": { \"stomt\": [{ \"data\":\"blaabase64\", \"filename\" : \"stomt.log\" }]}"));
+	/*
+
+	// Try to deserialize data to JSON
+	TSharedRef<TJsonReader<TCHAR>> JsonReader = TJsonReaderFactory<TCHAR>::Create(logJson);
+	//FJsonSerializer::Deserialize(JsonReader, this->request->GetRequestObject()->GetRootObject());
+
+	// Decide whether the request was successful
+	bool bIsValidJsonResponse =  this->request->GetRequestObject()->GetRootObject().IsValid();
+
+	// Log errors
+	if (!bIsValidJsonResponse)
+	{
+		if (!this->request->GetRequestObject()->GetRootObject().IsValid())
+		{
+			// As we assume it's recommended way to use current class, but not the only one,
+			// it will be the warning instead of error
+			UE_LOG(LogTemp, Warning, TEXT("JSON could not be decoded!"));
+		}
+	}
+	else
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("JSON : %s"), this->request->GetRequestObject()->GetRootObject()->GetField("files"));
+	}
+	*/
+	////////////////////////////////
+
+
+	//logss.Add(jsonValueLogData->AsString());
+	//logss.Add(jsonValueLogFileName->AsString());
+
+	//jObjFiles->SetArrayField(TEXT("stomt"), logs);
+	//jObjFiles->SetStringArrayField(TEXT("stomt"), logss);
+	//jObjContext->SetObjectArrayField()
+	
+	//this->request->GetRequestObject()->SetObjectField(TEXT("files"), jObjFiles);
+
+
+	
 }
 
 void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
@@ -398,7 +506,7 @@ bool UStomtAPI::ReadFile(FString& Result, FString FileName, FString SaveDirector
 
 }
 
-inline void UStomtAPI::SetupRequest()
+inline void UStomtAPI::SetupNewPostRequest()
 {
 	//Reset Request
 	this->request->ResetResponseData();
