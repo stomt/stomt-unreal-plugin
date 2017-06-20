@@ -365,10 +365,7 @@ void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
 	{
 		if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("files")))
 		{
-			UStomtRestJsonObject* jObjFileContext = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetObjectField(TEXT("stomt"));
-			this->errorLog_file_uid = jObjFileContext->GetField(TEXT("file_uid"))->AsString();
-
-			UE_LOG(LogTemp, Warning, TEXT("FIle UID ERRORLOG: %s"), *this->errorLog_file_uid);
+			this->errorLog_file_uid = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetObjectField(TEXT("files"))->GetObjectField(TEXT("stomt"))->GetStringField("file_uid");
 		}
 	}
 }
