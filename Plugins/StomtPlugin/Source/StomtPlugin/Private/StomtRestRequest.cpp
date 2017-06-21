@@ -160,7 +160,6 @@ void UStomtRestRequest::ProcessRequest(TSharedRef<IHttpRequest> HttpRequest)
 		}
 
 		HttpRequest->SetContentAsString(OutputString);
-		UE_LOG(LogTemp, Warning, TEXT("------ OutputString: %s"), *OutputString);
 	}
 	
 

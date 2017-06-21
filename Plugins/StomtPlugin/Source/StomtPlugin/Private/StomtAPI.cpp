@@ -10,6 +10,7 @@
 #include "Runtime/Core/Public/Misc/Paths.h"
 #include "Runtime/Core/Public/GenericPlatform/GenericPlatformFile.h"
 #include "Runtime/Core/Public/Misc/Base64.h"
+#include "Runtime/Core/Public/Misc/App.h"
 #include "StomtJsonObject.h"
 
 
@@ -29,7 +30,9 @@ UStomtAPI::UStomtAPI()
 	this->SetAppID("R18OFQXmb6QzXwzP1lWdiZ7Y9");
 	this->SetTargetID("unreal");
 
-	this->SendLogFile(this->ReadLogFile(TEXT("stomt.log")), TEXT("stomt.log"));
+	FString LogFileName = FApp::GetGameName() + FString(TEXT(".log"));
+
+	this->SendLogFile(this->ReadLogFile(LogFileName), LogFileName);
 }
 
 UStomtAPI::~UStomtAPI()
@@ -517,4 +520,5 @@ inline void UStomtAPI::SetupNewPostRequest()
 		this->request->SetHeader(TEXT("accesstoken"), this->accesstoken);
 	}
 }
+
 
