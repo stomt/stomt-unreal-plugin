@@ -9,32 +9,6 @@
 
 #include "StomtAPI.generated.h"
 
-USTRUCT()
-struct FLog
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY()
-	FString data;
-};
-
-USTRUCT()
-struct FContext
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY()
-	TArray<FLog> stomt;
-};
-
-USTRUCT()
-struct FFiles
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY()
-	FContext stomt;
-};
 
 /**
  * 
