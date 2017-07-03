@@ -87,11 +87,26 @@ public:
 	*/
 	UStomtRestRequest* GetRequest();
 
-	/**/
+	/** 
+	* Saves the access token in /stomt/stomt.conf.json
+	*/
 	bool SaveAccesstoken(FString accesstoken);
 
-	/**/
+	/**
+	* Loads the access token from disk.
+	*/
 	FString ReadAccesstoken();
+
+	/**
+	* Loads an Log file from disk.
+	* @param LogFileName - Log File Name.
+	*/
+	FString ReadLogFile(FString LogFileName);
+
+	/**
+	* Sends the LogFileData to stomt.com server.
+	*/
+	void SendLogFile(FString LogFileData, FString LogFileName);
 
 	UFUNCTION()
 	void OnReceiving(UStomtRestRequest* Request);
@@ -110,10 +125,12 @@ public:
 private:
 	bool WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting);
 	bool ReadFile(FString& Result, FString FileName, FString SaveDirectory);
+	void SetupNewPostRequest();
 
 	UPROPERTY()
 	UStomtRestRequest*	request;
 	FString				accesstoken;
+	FString				errorLog_file_uid;
 
 	FString				restURL;
 	FString				targetName;

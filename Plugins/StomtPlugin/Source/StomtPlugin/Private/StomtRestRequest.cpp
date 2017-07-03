@@ -9,6 +9,7 @@
 
 UStomtRestRequest::UStomtRestRequest()
 {
+	this->useStaticJsonString = false;
 	ResponseJsonObj = NULL;
 	RequestJsonObj = NULL;
 
@@ -19,68 +20,6 @@ UStomtRestRequest::~UStomtRestRequest()
 {
 }
 
-void UStomtRestRequest::MyHttpCall() 
-{
-	// Testing V3: Write Stomt
-	///////////////////////////////////////////////////////////
-
-	this->SetVerb(ERequestVerb::POST);
-	this->SetHeader(TEXT("appid"), TEXT("R18OFQXmb6QzXwzP1lWdiZ7Y9"));
-
-	//TSharedPtr<FJsonValue> NewVal = UStomtJsonValue::ConstructJsonValueString(this, TEXT("unreal");// MakeShareable(new FJsonObject());
-
-	//UStomtJsonValue* NewValue = UStomtJsonValue::ConstructJsonValueString(this, TEXT("unreal") );// MakeShareable(new FJsonObject());
-
-	this->GetRequestObject()->SetField(TEXT("target_id"), UStomtJsonValue::ConstructJsonValueString(this, TEXT("unreal")) );
-
-	this->GetRequestObject()->SetField(TEXT("positive"), UStomtJsonValue::ConstructJsonValueBool(this, true) );
-
-	this->GetRequestObject()->SetField(TEXT("text"), UStomtJsonValue::ConstructJsonValueString(this, TEXT("A Text")));
-
-	this->GetRequestObject()->SetField(TEXT("anonym"), UStomtJsonValue::ConstructJsonValueBool(this, true));
-
-	this->ProcessURL("https://test.rest.stomt.com/stomts");
-
-
-
-	// Testing V2: Read Target 
-	///////////////////////////////////////////////////////////
-
-	/*
-	this->SetVerb(ERequestVerb::GET);
-	this->SetHeader(TEXT("appid"), TEXT("R18OFQXmb6QzXwzP1lWdiZ7Y9"));
-	
-	//TSharedPtr<FJsonValue> NewVal = UStomtJsonValue::ConstructJsonValueString(this, TEXT("unreal");// MakeShareable(new FJsonObject());
-
-	//UStomtJsonValue* NewValue = UStomtJsonValue::ConstructJsonValueString(this, TEXT("unreal") );// MakeShareable(new FJsonObject());
-	//NewValue->SetRootValue(NewVal);
-	//this->GetRequestObject()->SetField(TEXT("target_id"), NewValue);
-
-	this->ProcessURL("https://test.rest.stomt.com/targets/unreal?target_id=unreal");
-	*/
-	
-	// Testing V1: Manually
-	///////////////////////////////////////////////////////////
-
-	/*
-	TSharedRef<IHttpRequest> Request = FHttpModule::Get().CreateRequest(); // Gets an singelton and creates request.
-
-	//Request->SetURL("https://test.rest.stomt.com/stomts/java-sdk-test-33956");
-	Request->SetURL("https://test.rest.stomt.com/targets/unreal");
-	Request->SetVerb("GET");
-	Request->SetHeader(TEXT("appid"), "R18OFQXmb6QzXwzP1lWdiZ7Y9");
-	Request->SetHeader("Content-Type", TEXT("application/json"));
-	Request->SetContentAsString(TEXT("{\"target_id\": \"unreal\"}"));
-
-
-	Request->OnProcessRequestComplete().BindUObject(this, &UStomtRestRequest::OnResponseReceived);
-
-	if (!Request->ProcessRequest()) 
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Internal error: ProcessRequest failed"));
-	}
-	*/
-}
 
 UStomtRestRequest * UStomtRestRequest::ConstructRequest()
 {
@@ -103,7 +42,7 @@ void UStomtRestRequest::OnResponseReceived(FHttpRequestPtr Request, FHttpRespons
 	// Check we have result to process futher
 	if (!bWasSuccessful)
 	{
-		//UE_LOG(LogTemp, Error, TEXT("Request failed: %s ResponseCode: %d "), *Request->GetURL(), Response->GetContentAsString());
+		UE_LOG(LogTemp, Error, TEXT("Request failed: %s ResponseCode: %d "), *Request->GetURL(), *Response->GetContentAsString());
 		
 		
 		
@@ -212,6 +151,14 @@ void UStomtRestRequest::ProcessRequest(TSharedRef<IHttpRequest> HttpRequest)
 	// Set Json content
 	if ( !HttpRequest->GetVerb().Equals( TEXT("GET") ) )
 	{
+		if (this->useStaticJsonString)
+		{
+			if (!this->StaticJsonOutputString.IsEmpty())
+			{
+				OutputString = this->StaticJsonOutputString;
+			}
+		}
+
 		HttpRequest->SetContentAsString(OutputString);
 	}
 	
@@ -306,6 +253,16 @@ void UStomtRestRequest::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpR
 	
 }
 
+void UStomtRestRequest::UseStaticJsonString(bool use)
+{
+	this->useStaticJsonString = use;
+}
+
+void UStomtRestRequest::SetStaticJsonString(FString JsonString)
+{
+	this->StaticJsonOutputString = JsonString;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Destruction and reset
 
@@ -325,6 +282,8 @@ void UStomtRestRequest::ResetRequestData()
 	{
 		RequestJsonObj = NewObject<UStomtRestJsonObject>();
 	}
+
+	this->useStaticJsonString = false;
 }
 
 void UStomtRestRequest::ResetResponseData()

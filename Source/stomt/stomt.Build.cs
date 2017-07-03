@@ -4,14 +4,14 @@ using UnrealBuildTool;
 
 public class stomt : ModuleRules
 {
-	public stomt(TargetInfo Target)
+	public stomt(ReadOnlyTargetRules ROTargetRules) : base(ROTargetRules)
 	{
-        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HTTP", "Json", "StomtPlugin", "UMG", "Slate", "SlateCore" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HTTP", "Json", "StomtPlugin", "UMG", "Slate", "SlateCore" });
 
-        PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore", "UMG" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore", "UMG" });
 
-       // PublicIncludePaths.AddRange(new string[] { "StomtPlugin/Public", "StomtPlugin/Classes" });
+	   // PublicIncludePaths.AddRange(new string[] { "StomtPlugin/Public", "StomtPlugin/Classes" });
 
-        //PrivateDependencyModuleNames.AddRange(new string[] { "VaRestPlugin" });
-    }
+		//PrivateDependencyModuleNames.AddRange(new string[] { "VaRestPlugin" });
+	}
 }

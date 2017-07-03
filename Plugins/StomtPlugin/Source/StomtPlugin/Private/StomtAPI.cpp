@@ -7,6 +7,10 @@
 #include "Runtime/ImageWrapper/Public/Interfaces/IImageWrapperModule.h"
 #include "Runtime/Engine/Public/HighResScreenshot.h"
 #include "Runtime/Core/Public/Misc/FileHelper.h"
+#include "Runtime/Core/Public/Misc/Paths.h"
+#include "Runtime/Core/Public/GenericPlatform/GenericPlatformFile.h"
+#include "Runtime/Core/Public/Misc/Base64.h"
+#include "Runtime/Core/Public/Misc/App.h"
 #include "StomtJsonObject.h"
 
 
@@ -25,6 +29,10 @@ UStomtAPI::UStomtAPI()
 	this->targetName = TEXT("...");
 	this->SetAppID("R18OFQXmb6QzXwzP1lWdiZ7Y9");
 	this->SetTargetID("unreal");
+
+	FString LogFileName = FApp::GetGameName() + FString(TEXT(".log"));
+
+	this->SendLogFile(this->ReadLogFile(LogFileName), LogFileName);
 }
 
 UStomtAPI::~UStomtAPI()
@@ -33,24 +41,16 @@ UStomtAPI::~UStomtAPI()
 
 void UStomtAPI::SendStomt(UStomt* stomt)
 {
-	//Reset Request
-	this->request->ResetResponseData();
-	this->request->ResetRequestData();
+	this->SetupNewPostRequest();
 
-	this->request->SetVerb(ERequestVerb::POST);
-	this->request->SetHeader(TEXT("appid"), this->GetAppID() );
-
-	if (!this->accesstoken.IsEmpty())
-	{
-		this->request->SetHeader(TEXT("accesstoken"), this->accesstoken);
-	}
-
+	// Fields
 	this->request->GetRequestObject()->SetField(TEXT("target_id"),	UStomtJsonValue::ConstructJsonValueString(	this, stomt->GetTargetID()	));
 	this->request->GetRequestObject()->SetField(TEXT("positive"),	UStomtJsonValue::ConstructJsonValueBool(	this, stomt->GetPositive()	));
 	this->request->GetRequestObject()->SetField(TEXT("text"),		UStomtJsonValue::ConstructJsonValueString(	this, stomt->GetText()		));
 	this->request->GetRequestObject()->SetField(TEXT("anonym"),		UStomtJsonValue::ConstructJsonValueBool(	this, stomt->GetAnonym()	));
-
-	UStomtRestJsonObject* jObj = UStomtRestJsonObject::ConstructJsonObject(this);
+	
+	//Labels
+	UStomtRestJsonObject* jObjExtraData = UStomtRestJsonObject::ConstructJsonObject(this);
 	TArray<UStomtJsonValue*> labels = TArray<UStomtJsonValue*>();
 
 	for (int i = 0; i != stomt->GetLabels().Num(); ++i)
@@ -58,9 +58,21 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 		labels.Add(UStomtJsonValue::ConstructJsonValueString(this, stomt->GetLabels()[i]->GetName() ));
 	}
 
-	jObj->SetArrayField(TEXT("labels"), labels);
+	jObjExtraData->SetArrayField(TEXT("labels"), labels);
+	this->request->GetRequestObject()->SetObjectField(TEXT("extradata"), jObjExtraData);
+
+	// Error Logs
+	if (!this->errorLog_file_uid.IsEmpty())
+	{
+		UStomtRestJsonObject* jObjFile = UStomtRestJsonObject::ConstructJsonObject(this);
+		UStomtRestJsonObject* jObjFileContext = UStomtRestJsonObject::ConstructJsonObject(this);
+		jObjFileContext->SetField(TEXT("file_uid"), UStomtJsonValue::ConstructJsonValueString(this, this->errorLog_file_uid));
+
+		jObjFile->SetObjectField(TEXT("stomt"), jObjFileContext);
+		this->request->GetRequestObject()->SetObjectField(TEXT("files"), jObjFile);
+	}
+;
 	
-	this->request->GetRequestObject()->SetObjectField(TEXT("extradata"), jObj );
 	this->request->ProcessURL( this->GetRestURL().Append(TEXT("/stomts")) );
 }
 
@@ -159,7 +171,7 @@ FString UStomtAPI::ReadAccesstoken()
 {
 	FString result;
 
-	if (this->ReadFile(result, TEXT("stomt.conf.json"), TEXT("/stomt")))
+	if (this->ReadFile(result, TEXT("stomt.conf.json"), TEXT("/stomt/")))
 	{
 		UStomtRestJsonObject* jsonObj = UStomtRestJsonObject::ConstructJsonObject(this);
 		jsonObj->DecodeJson(result);
@@ -169,6 +181,168 @@ FString UStomtAPI::ReadAccesstoken()
 	return result;
 }
 
+
+FString UStomtAPI::ReadLogFile(FString LogFileName)
+{
+	FString errorLog;
+
+	FString LogFilePath = FPaths::GameLogDir() + LogFileName;
+	FString LogFileCopyPath = FPaths::GameLogDir() + LogFileName + TEXT("Copy.log");
+	FString LogFileCopyName = LogFileName + TEXT("Copy.log");
+
+	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
+	PlatformFile.BypassSecurity(true);
+
+	// Copy LogFileData
+	if (!PlatformFile.CopyFile(*LogFileCopyPath, *LogFilePath, EPlatformFileRead::AllowWrite, EPlatformFileWrite::AllowRead))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("LogFile Copy did not work FromFile: %s | ToFile %s"), *LogFilePath, *LogFileCopyPath);
+	}
+
+	// Read LogFileCopy from Disk
+	if (!this->ReadFile(errorLog, LogFileCopyName, FPaths::GameLogDir() ))
+	{
+		if (FPaths::FileExists(FPaths::GameLogDir() + LogFileCopyName))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Could not read LogFile %s, but it exists"), *LogFileCopyName);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Could not read LogFile %s, because it does not exist"), *LogFileCopyName);
+		}
+	}
+
+	// Delete LogFileCopy
+	if (!PlatformFile.DeleteFile(*LogFileCopyPath))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Could not delete LogFileCopy %s"), *LogFileCopyPath);
+	}
+
+	return errorLog;
+}
+
+void UStomtAPI::SendLogFile(FString LogFileData, FString LogFileName)
+{
+	this->SetupNewPostRequest();
+
+	FString logJson = FString(TEXT("{ \"files\": { \"stomt\": [ { \"data\":\"") + FBase64::Encode(LogFileData) + TEXT("\", \"filename\" : \"") + LogFileName + TEXT("\" } ] } }"));
+
+
+	this->request->UseStaticJsonString(true);
+	this->request->SetStaticJsonString(logJson);
+
+	this->request->ProcessURL(this->GetRestURL().Append(TEXT("/files")));
+
+	//this->SetupNewPostRequest();
+	/*
+	UStomtRestJsonObject* jObjFiles = UStomtRestJsonObject::ConstructJsonObject(this);
+	UStomtRestJsonObject* jObjContext = UStomtRestJsonObject::ConstructJsonObject(this);
+	UStomtJsonValue*	  jsonValueLogData = UStomtJsonValue::ConstructJsonValueString(this, FBase64::Encode(LogFileData));
+	UStomtJsonValue*	  jsonValueLogFileName = UStomtJsonValue::ConstructJsonValueString(this, LogFileName);
+	
+
+
+	//jObjContext->SetArrayField(TEXT("data"), jsonValueLogData );
+
+	//jObjContext->SetField(TEXT("data"), jsonValueLogData);
+	//jObjContext->SetField(TEXT("filename"), jsonValueLogFileName);
+	//jObjFiles->SetObjectField(TEXT("stomt"), jObjContext);
+
+
+
+	TArray<UStomtJsonValue*> logs = TArray<UStomtJsonValue*>();
+	TArray<FString> logss = TArray<FString>();
+	TArray<UStomtRestJsonObject*> logsss = TArray<UStomtRestJsonObject*>();
+	UStomtRestJsonObject* fJsonValueLogData = UStomtRestJsonObject::ConstructJsonObject(this);
+	fJsonValueLogData->SetField(TEXT("data"), jsonValueLogData);
+
+	*/
+	//jsonValueLogData->SetRootValue(fJsonValueLogData->GetRootObject()->GetArrayField());
+	/*
+	auto entity = fJsonValueLogData->GetRootObject();
+	TArray< TSharedPtr< FJsonValue > > servers;
+	servers = entity->GetArrayField("Servers");
+	for (int i = 0; i < servers.Num(); i++)
+	{
+		auto server = servers[i]->AsObject();
+		FString serverName = server->GetStringField("Name");
+	}
+
+	for (int i = 0; i < 1; i++)
+	{
+		auto server = servers[i]->AsObject();
+		FString serverName = server->GetStringField("Name");
+		server->SetStringField(TEXT("data"), TEXT("datablabase64"));
+		//servers.Add(server);
+		
+	}
+	
+	TSharedPtr< FJsonObject > server = (jsonValueLogData->GetRootValue());
+	server->SetStringField(TEXT("data"), TEXT("datablabase64"));
+	jsonValueLogData->SetRootValue(jsonValueLogData->GetRootValue());
+	entity->SetArrayField(TEXT("stomt"), servers);
+	*/
+	//logs.Add(jsonValueLogData);
+
+	//logs.Add(jsonValueLogFileName);
+	/*
+	UStomtJsonValue*	  jsonValueContext = UStomtJsonValue::ConstructJsonValueArray(this, logs);
+	
+
+	FFiles files;
+	//files.stomt.stomt = NewObject<TArray<Flog>>();
+	TArray<FLog> data;
+	FLog log;
+	log.data = TEXT("bladata");
+	data.Add(log);
+
+	FContext context;
+	context.stomt = data;
+
+	files.stomt = context;
+	FString out;
+	//////////////////////////////
+	*/
+	//FString logJson = FString(TEXT("files\": { \"stomt\": [{ \"data\":\"blaabase64\", \"filename\" : \"stomt.log\" }]}"));
+	/*
+
+	// Try to deserialize data to JSON
+	TSharedRef<TJsonReader<TCHAR>> JsonReader = TJsonReaderFactory<TCHAR>::Create(logJson);
+	//FJsonSerializer::Deserialize(JsonReader, this->request->GetRequestObject()->GetRootObject());
+
+	// Decide whether the request was successful
+	bool bIsValidJsonResponse =  this->request->GetRequestObject()->GetRootObject().IsValid();
+
+	// Log errors
+	if (!bIsValidJsonResponse)
+	{
+		if (!this->request->GetRequestObject()->GetRootObject().IsValid())
+		{
+			// As we assume it's recommended way to use current class, but not the only one,
+			// it will be the warning instead of error
+			UE_LOG(LogTemp, Warning, TEXT("JSON could not be decoded!"));
+		}
+	}
+	else
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("JSON : %s"), this->request->GetRequestObject()->GetRootObject()->GetField("files"));
+	}
+	*/
+	////////////////////////////////
+
+
+	//logss.Add(jsonValueLogData->AsString());
+	//logss.Add(jsonValueLogFileName->AsString());
+
+	//jObjFiles->SetArrayField(TEXT("stomt"), logs);
+	//jObjFiles->SetStringArrayField(TEXT("stomt"), logss);
+	//jObjContext->SetObjectArrayField()
+	
+	//this->request->GetRequestObject()->SetObjectField(TEXT("files"), jObjFiles);
+
+
+	
+}
 
 void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
 {
@@ -188,6 +362,14 @@ void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("Token not empty"));
 		//UE_LOG(LogTemp, Warning, TEXT("Token: %s"), *this->accesstoken);
+	}
+
+	if (Request->GetResponseObject()->HasField(TEXT("data")))
+	{
+		if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("files")))
+		{
+			this->errorLog_file_uid = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetObjectField(TEXT("files"))->GetObjectField(TEXT("stomt"))->GetStringField("file_uid");
+		}
 	}
 }
 
@@ -305,10 +487,38 @@ bool UStomtAPI::WriteFile(FString TextToSave, FString FileName, FString SaveDire
 }
 
 bool UStomtAPI::ReadFile(FString& Result, FString FileName, FString SaveDirectory)
-{
-	FString path = SaveDirectory + TEXT("/") + FileName;
+{	
 
-	return 	FFileHelper::LoadFileToString( Result, *path);
+	FString path = SaveDirectory + FileName;
+
+/*
+	if (SaveDirectory.GetCharArray()[SaveDirectory.Len() - 2] == '/')
+	{
+		UE_LOG(LogTemp, Warning, TEXT(" / am enden: %s "), *path);
+	}*/
+
+	if (!FPaths::FileExists(path))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("File does not exist: %s "), *path);
+	}
+
+	return FFileHelper::LoadFileToString( Result, *path);
 
 }
+
+inline void UStomtAPI::SetupNewPostRequest()
+{
+	//Reset Request
+	this->request->ResetResponseData();
+	this->request->ResetRequestData();
+
+	this->request->SetVerb(ERequestVerb::POST);
+	this->request->SetHeader(TEXT("appid"), this->GetAppID());
+
+	if (!this->accesstoken.IsEmpty())
+	{
+		this->request->SetHeader(TEXT("accesstoken"), this->accesstoken);
+	}
+}
+
 
