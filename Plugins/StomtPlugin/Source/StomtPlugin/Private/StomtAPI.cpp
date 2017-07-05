@@ -24,15 +24,16 @@ UStomtAPI::UStomtAPI()
 
 	this->request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnReceiving);
 
+	LogFileWasSend = false;
+
 	//Default Request Data:
-	this->restURL = TEXT("https://test.rest.stomt.com");
+	//this->restURL = TEXT("https://test.rest.stomt.com");
 	this->targetName = TEXT("...");
 	this->SetAppID("R18OFQXmb6QzXwzP1lWdiZ7Y9");
 	this->SetTargetID("unreal");
 
-	FString LogFileName = FApp::GetGameName() + FString(TEXT(".log"));
 
-	this->SendLogFile(this->ReadLogFile(LogFileName), LogFileName);
+
 }
 
 UStomtAPI::~UStomtAPI()
@@ -153,6 +154,11 @@ FString UStomtAPI::GetImageURL()
 	return this->imageURL;
 }
 
+void UStomtAPI::SetStomtToSend(UStomt * stomt)
+{
+	this->StomtToSend = stomt;
+}
+
 UStomtRestRequest * UStomtAPI::GetRequest()
 {
 	return this->request;
@@ -232,6 +238,8 @@ void UStomtAPI::SendLogFile(FString LogFileData, FString LogFileName)
 	this->request->SetStaticJsonString(logJson);
 
 	this->request->ProcessURL(this->GetRestURL().Append(TEXT("/files")));
+
+	LogFileWasSend = true;
 
 	//this->SetupNewPostRequest();
 	/*
@@ -364,11 +372,16 @@ void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
 		//UE_LOG(LogTemp, Warning, TEXT("Token: %s"), *this->accesstoken);
 	}
 
-	if (Request->GetResponseObject()->HasField(TEXT("data")))
+	if (LogFileWasSend)
 	{
-		if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("files")))
+		if (Request->GetResponseObject()->HasField(TEXT("data")))
 		{
-			this->errorLog_file_uid = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetObjectField(TEXT("files"))->GetObjectField(TEXT("stomt"))->GetStringField("file_uid");
+			if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("files")))
+			{
+				this->errorLog_file_uid = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetObjectField(TEXT("files"))->GetObjectField(TEXT("stomt"))->GetStringField("file_uid");
+				this->LogFileWasSend = false;
+				this->SendStomt(StomtToSend);
+			}
 		}
 	}
 }

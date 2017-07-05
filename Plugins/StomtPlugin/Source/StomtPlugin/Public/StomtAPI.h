@@ -6,7 +6,6 @@
 #include "StomtRestRequest.h"
 #include "Stomt.h"
 #include "Runtime/Engine/Classes/Engine/TextureRenderTarget2D.h"
-
 #include "StomtAPI.generated.h"
 
 
@@ -82,6 +81,8 @@ public:
 	void	SetImageURL(FString URL);
 	FString	GetImageURL();
 
+	void SetStomtToSend(UStomt* stomt);
+
 	/**
 	* Gets the request object that contains request/response information.
 	*/
@@ -131,6 +132,9 @@ private:
 	UStomtRestRequest*	request;
 	FString				accesstoken;
 	FString				errorLog_file_uid;
+
+	bool				LogFileWasSend;
+	UStomt*				StomtToSend;
 
 	FString				restURL;
 	FString				targetName;

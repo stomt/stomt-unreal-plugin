@@ -41,7 +41,12 @@ void UStomtPluginWidget::OnSubmit()
 			api = NewObject<UStomtAPI>();
 		}
 
-		api->SendStomt(stomt);
+		this->api->SetStomtToSend(stomt);
+
+		FString LogFileName = FApp::GetGameName() + FString(TEXT(".log"));
+
+		this->api->SendLogFile(this->api->ReadLogFile(LogFileName), LogFileName);
+		//api->SendStomt(stomt);
 	}
 }
 
