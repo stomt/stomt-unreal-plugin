@@ -10,7 +10,7 @@ STOMT allows you to collect feedback in-game and [also from your website](https:
 
 ## Use-Cases // Games that use our widget
 
-[Empires of the Undergrowth](https://www.stomt.com/empires-of-the-undergrowth)
+[Empires of the Undergrowth](https://www.stomt.com/empires-of-the-undergrowth)      
 [All Walls Must Fall](https://www.stomt.com/AWMF)
 
 ## Installation
