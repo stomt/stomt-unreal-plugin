@@ -6,9 +6,9 @@ This SDK allows the easy integration of the feedback solution [www.stomt.com](ht
 
 ## Why?
 
-STOMT allows you to collect feedback in-game and [also from your website](https://github.com/stomt/stomt-javascript-sdk) and collect it at one central place where you manage it and where your community can vote and comment on the feedback of others. (see use-cases below)
+STOMT allows you to collect simple and constructive feedback in-game and [also from your website](https://github.com/stomt/stomt-javascript-sdk) and collect it at one central place where you manage it and where your community can vote and comment on the feedback of others. (see use-cases below)
 
-## Use-Cases // Games that use our widget
+## Some Use-Cases // What will the result look like? // Example Games that use our widget
 
 [Empires of the Undergrowth](https://www.stomt.com/empires-of-the-undergrowth)      
 [All Walls Must Fall](https://www.stomt.com/AWMF)
