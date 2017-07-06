@@ -4,6 +4,15 @@
 
 This SDK allows the easy integration of the feedback solution [www.stomt.com](https://www.stomt.com/) in your Unreal apps and games.
 
+## Why?
+
+STOMT allows you to collect feedback in-game and [also from your website](https://github.com/stomt/stomt-javascript-sdk) and collect it at one central place where you manage it and where your community can vote and comment on the feedback of others. (see use-cases below)
+
+## Use-Cases // Games that use our widget
+
+[Empires of the Undergrowth](https://www.stomt.com/empires-of-the-undergrowth)
+[All Walls Must Fall](https://www.stomt.com/AWMF)
+
 ## Installation
 
 1. Register on [www.stomt.com](https://www.stomt.com/) 
