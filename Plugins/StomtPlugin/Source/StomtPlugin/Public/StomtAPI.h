@@ -99,6 +99,11 @@ public:
 	FString ReadAccesstoken();
 
 	/**
+	* Delete stomt.conf.json
+	*/
+	void DeleteStomtConf();
+
+	/**
 	* Loads an Log file from disk.
 	* @param LogFileName - Log File Name.
 	*/
@@ -131,6 +136,9 @@ private:
 	UPROPERTY()
 	UStomtRestRequest*	request;
 	FString				accesstoken;
+	FString				configFolder;
+	FString				configName;
+
 	FString				errorLog_file_uid;
 
 	bool				LogFileWasSend;
