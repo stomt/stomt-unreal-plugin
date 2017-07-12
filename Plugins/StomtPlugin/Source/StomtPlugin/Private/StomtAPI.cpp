@@ -17,6 +17,8 @@
 
 UStomtAPI::UStomtAPI()
 {
+	this->configFolder = FString(TEXT("/stomt"));
+	this->configName = FString(TEXT("stomt.conf.json"));
 	this->accesstoken = FString(TEXT(""));
 	ReadAccesstoken();
 
@@ -26,14 +28,13 @@ UStomtAPI::UStomtAPI()
 
 	LogFileWasSend = false;
 
+	/* Debug Stuff
 	//Default Request Data:
 	//this->restURL = TEXT("https://test.rest.stomt.com");
 	this->targetName = TEXT("...");
 	this->SetAppID("R18OFQXmb6QzXwzP1lWdiZ7Y9");
 	this->SetTargetID("unreal");
-
-
-
+	*/
 }
 
 UStomtAPI::~UStomtAPI()
@@ -72,7 +73,6 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 		jObjFile->SetObjectField(TEXT("stomt"), jObjFileContext);
 		this->request->GetRequestObject()->SetObjectField(TEXT("files"), jObjFile);
 	}
-;
 	
 	this->request->ProcessURL( this->GetRestURL().Append(TEXT("/stomts")) );
 }
@@ -185,6 +185,19 @@ FString UStomtAPI::ReadAccesstoken()
 	}
 
 	return result;
+}
+
+void UStomtAPI::DeleteStomtConf()
+{
+	FString file = this->configFolder + "/" + this->configName;
+	if (!FPlatformFileManager::Get().GetPlatformFile().DeleteFile(*file))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Could not delete stomt.conf.json: %s"), *file);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Deleted stomt.conf.json because of wrong access token Path: %s"), *file);
+	}
 }
 
 
@@ -354,6 +367,15 @@ void UStomtAPI::SendLogFile(FString LogFileData, FString LogFileName)
 
 void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
 {
+	
+
+	// Wrong access token
+	if (Request->GetResponseCode() == 403)
+	{
+		this->DeleteStomtConf();
+		this->accesstoken.Empty();
+	}
+
 	if (this->accesstoken.IsEmpty())
 	{
 		if (Request->GetResponseObject()->HasField(TEXT("meta")))
@@ -368,6 +390,10 @@ void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
 	}
 	else
 	{
+
+			//FString error = Request->GetResponseObject()->GetStringField("error");
+			//UE_LOG(LogTemp, Warning, TEXT("Error in Receiving: %d"), Request->GetResponseCode());
+
 		//UE_LOG(LogTemp, Warning, TEXT("Token not empty"));
 		//UE_LOG(LogTemp, Warning, TEXT("Token: %s"), *this->accesstoken);
 	}
