@@ -162,8 +162,16 @@ void UStomtRestRequest::ProcessRequest(TSharedRef<IHttpRequest> HttpRequest)
 		HttpRequest->SetContentAsString(OutputString);
 	}
 	
-
-	UE_LOG(LogTemp, Log, TEXT("Request (json): %s %s %s"), *HttpRequest->GetVerb(), *HttpRequest->GetURL(), *OutputString);
+	if (OutputString.Len() > 256)
+	{
+		FString shortContent = OutputString.LeftChop(OutputString.Len() - 256);
+		UE_LOG(LogTemp, Log, TEXT("Request (json): %s %s | truncated-content(256): %s"), *HttpRequest->GetVerb(), *HttpRequest->GetURL(), *shortContent);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("Request (json): %s %s %s"), *HttpRequest->GetVerb(), *HttpRequest->GetURL(), *OutputString);
+	}
+	
 
 	// Apply additional headers
 	for (TMap<FString, FString>::TConstIterator It(RequestHeaders); It; ++It)
@@ -204,7 +212,17 @@ void UStomtRestRequest::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpR
 	ResponseCode = Response->GetResponseCode();
 
 	// Log response state
-	UE_LOG(LogTemp, Log, TEXT("Response (%d): %s"), Response->GetResponseCode(), *Response->GetContentAsString());
+
+	if (Response->GetContentAsString().Len() > 256)
+	{
+		FString shortContent = Response->GetContentAsString().LeftChop(Response->GetContentAsString().Len() - 256);
+		UE_LOG(LogTemp, Log, TEXT("Response (%d): Content(truncated 256):  %s"), Response->GetResponseCode(), *shortContent);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("Response (%d): %s"), Response->GetResponseCode(), *Response->GetContentAsString());
+	}
+
 
 	// Process response headers
 	TArray<FString> Headers = Response->GetAllHeaders();
