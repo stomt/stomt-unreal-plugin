@@ -36,17 +36,12 @@ void UStomtPluginWidget::OnSubmit()
 
 		stomt->SetAnonym(false);
 
-		if (api == NULL)
-		{
-			api = NewObject<UStomtAPI>();
-		}
-
+		// API Object should not be null ;)
 		this->api->SetStomtToSend(stomt);
 
 		FString LogFileName = FApp::GetGameName() + FString(TEXT(".log"));
 
 		this->api->SendLogFile(this->api->ReadLogFile(LogFileName), LogFileName);
-		//api->SendStomt(stomt);
 	}
 }
 
@@ -54,7 +49,7 @@ void UStomtPluginWidget::OnConstruction(FString TargetID, FString RestURL, FStri
 {
 	if (api == NULL)
 	{
-		api = NewObject<UStomtAPI>();
+		api = UStomtAPI::ConstructRequest(TargetID, RestURL, AppID);
 	}
 	this->api->SetAppID(AppID);
 	this->api->SetTargetID(TargetID);
@@ -64,8 +59,6 @@ void UStomtPluginWidget::OnConstruction(FString TargetID, FString RestURL, FStri
 
 	this->api->RequestTarget(TargetID);
 	this->api->GetRequest()->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnReceiving);
-
-	//this->api->SendLogFile(this->api->ReadLogFile(TEXT("stomt.log")), TEXT("stomt.log") );
 }
 
 void UStomtPluginWidget::OnReceiving(UStomtRestRequest * Request)
@@ -86,22 +79,6 @@ void UStomtPluginWidget::OnReceiving(UStomtRestRequest * Request)
 
 		}
 	}
-
-	/*
-	if (Request->GetResponseObject()->HasField(TEXT("data")))
-	{
-		if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("id")))
-		{
-			if (this->stomt != NULL)
-			{
-				this->stomt->AddLabel(UStomtLabel::ConstructLabel(TEXT("newlabeltest1")));
-				this->stomt->SetServersideID(Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetStringField(TEXT("id")));
-				this->api->SendStomtLabels(this->stomt);
-			}
-		}
-	}
-	*/
-
 }
 
 void UStomtPluginWidget::TakeScreenshot()

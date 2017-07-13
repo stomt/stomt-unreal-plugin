@@ -18,6 +18,8 @@ class UStomtAPI : public UObject
 	GENERATED_BODY()
 public:
 
+	static UStomtAPI* ConstructRequest(FString TargetID, FString RestURL, FString AppID);
+
 	UStomtAPI();
 
 	~UStomtAPI();

@@ -13,6 +13,15 @@
 #include "Runtime/Core/Public/Misc/App.h"
 #include "StomtJsonObject.h"
 
+UStomtAPI* UStomtAPI::ConstructRequest(FString TargetID, FString RestURL, FString AppID)
+{
+	UStomtAPI* api = NewObject<UStomtAPI>();
+	api->SetAppID(AppID);
+	api->SetTargetID(TargetID);
+	api->SetRestURL(RestURL);
+
+	return api;
+}
 
 
 UStomtAPI::UStomtAPI()
@@ -27,14 +36,6 @@ UStomtAPI::UStomtAPI()
 	this->request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnReceiving);
 
 	LogFileWasSend = false;
-
-	/* Debug Stuff
-	//Default Request Data:
-	//this->restURL = TEXT("https://test.rest.stomt.com");
-	this->targetName = TEXT("...");
-	this->SetAppID("R18OFQXmb6QzXwzP1lWdiZ7Y9");
-	this->SetTargetID("unreal");
-	*/
 }
 
 UStomtAPI::~UStomtAPI()
@@ -80,7 +81,7 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 void UStomtAPI::SendStomtLabels(UStomt * stomt)
 {
 	return;
-	//ToDo: Finish this some day.
+	//ToDo: Finish this some day. Works only with target owner login.
 
 	/*
 	if (!stomt->GetServersideID().IsEmpty() && stomt->GetLabels().Max() > 0)
@@ -265,22 +266,26 @@ void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
 		this->accesstoken.Empty();
 		this->SendStomt(StomtToSend);
 	}
+	
 
-	if (this->accesstoken.IsEmpty())
-	{
-		if (Request->GetResponseObject()->HasField(TEXT("meta")))
-		{
-			if (Request->GetResponseObject()->GetObjectField(TEXT("meta"))->HasField(TEXT("accesstoken")))
-			{
-				this->accesstoken = Request->GetResponseObject()->GetObjectField(TEXT("meta"))->GetStringField(TEXT("accesstoken"));
-				this->SaveAccesstoken(this->accesstoken);
-				//UE_LOG(LogTemp, Warning, TEXT("saved token! %s "), *this->accesstoken);
-			}
-		}
-	}
 
 	if (LogFileWasSend)
 	{
+		// Request access token
+		if (this->accesstoken.IsEmpty())
+		{
+			if (Request->GetResponseObject()->HasField(TEXT("meta")))
+			{
+				if (Request->GetResponseObject()->GetObjectField(TEXT("meta"))->HasField(TEXT("accesstoken")))
+				{
+					this->accesstoken = Request->GetResponseObject()->GetObjectField(TEXT("meta"))->GetStringField(TEXT("accesstoken"));
+					this->SaveAccesstoken(this->accesstoken);
+					//UE_LOG(LogTemp, Warning, TEXT("saved token! %s "), *this->accesstoken);
+				}
+			}
+		}
+
+		// Get File uid of the error log and send stomt
 		if (Request->GetResponseObject()->HasField(TEXT("data")))
 		{
 			if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("files")))
