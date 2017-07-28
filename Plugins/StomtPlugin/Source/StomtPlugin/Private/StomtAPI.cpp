@@ -26,16 +26,17 @@ UStomtAPI* UStomtAPI::ConstructRequest(FString TargetID, FString RestURL, FStrin
 
 UStomtAPI::UStomtAPI()
 {
-	this->configFolder = FString(TEXT("/stomt"));
+	this->configFolder = FString(TEXT("/stomt/"));
 	this->configName = FString(TEXT("stomt.conf.json"));
 	this->accesstoken = FString(TEXT(""));
-	ReadAccesstoken();
+	ReadStomtConf(TEXT("accesstoken"));
 
 	this->request = NewObject<UStomtRestRequest>();
 
 	this->request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnReceiving);
 
 	LogFileWasSend = false;
+	EMailFlagWasSend = false;
 }
 
 UStomtAPI::~UStomtAPI()
@@ -167,30 +168,80 @@ UStomtRestRequest * UStomtAPI::GetRequest()
 
 bool UStomtAPI::SaveAccesstoken(FString accesstoken)
 {
-	UStomtRestJsonObject* jsonObj = UStomtRestJsonObject::ConstructJsonObject(this);
-
-	jsonObj->SetStringField(TEXT("accesstoken"), accesstoken);
-
-	return this->WriteFile(jsonObj->EncodeJson(), TEXT("stomt.conf.json"), TEXT("/stomt"), true);
+	return SaveValueToStomtConf(TEXT("accesstoken"), accesstoken);
 }
 
-FString UStomtAPI::ReadAccesstoken()
+bool UStomtAPI::SaveValueToStomtConf(FString FieldName, FString FieldValue)
+{
+	UStomtRestJsonObject* jsonObj = ReadStomtConfAsJson();
+
+	if (jsonObj->HasField(FieldName))
+	{
+		if (jsonObj->GetStringField(FieldName).Equals(FieldValue))
+		{
+			return false;
+		}	
+
+		jsonObj->RemoveField(FieldName);
+	}
+	
+	jsonObj->SetStringField(FieldName, FieldValue);
+
+	return this->WriteFile(jsonObj->EncodeJson(), configName, configFolder, true);
+}
+
+
+
+bool UStomtAPI::SaveFlag(FString FlagName, bool FlagState)
+{
+	return SaveValueToStomtConf(FlagName, FlagState ? TEXT("true") : TEXT("false"));
+}
+
+FString UStomtAPI::ReadStomtConf(FString FieldName)
 {
 	FString result;
 
-	if (this->ReadFile(result, TEXT("stomt.conf.json"), TEXT("/stomt/")))
+	if (this->ReadFile(result, configName, configFolder))
 	{
 		UStomtRestJsonObject* jsonObj = UStomtRestJsonObject::ConstructJsonObject(this);
 		jsonObj->DecodeJson(result);
-		this->accesstoken = jsonObj->GetField(TEXT("accesstoken"))->AsString();
+		this->accesstoken = jsonObj->GetField(FieldName)->AsString();
 	}
 
 	return result;
 }
 
+bool UStomtAPI::ReadFlag(FString FlagName)
+{
+	FString result;
+	bool FlagState = false;
+
+	if (this->ReadFile(result, configName, configFolder))
+	{
+		UStomtRestJsonObject* jsonObj = UStomtRestJsonObject::ConstructJsonObject(this);
+		jsonObj->DecodeJson(result);
+		FlagState = jsonObj->GetField(FlagName)->AsBool();
+	}
+
+	return FlagState;
+}
+
+UStomtRestJsonObject* UStomtAPI::ReadStomtConfAsJson()
+{
+	FString result;
+	UStomtRestJsonObject* jsonObj = UStomtRestJsonObject::ConstructJsonObject(this);
+
+	if (this->ReadFile(result, configName, configFolder))
+	{
+		jsonObj->DecodeJson(result);
+	}
+
+	return jsonObj;
+}
+
 void UStomtAPI::DeleteStomtConf()
 {
-	FString file = this->configFolder + "/" + this->configName;
+	FString file = this->configFolder + this->configName;
 	if (!FPlatformFileManager::Get().GetPlatformFile().DeleteFile(*file))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Could not delete stomt.conf.json: %s"), *file);
@@ -255,6 +306,17 @@ void UStomtAPI::SendLogFile(FString LogFileData, FString LogFileName)
 	LogFileWasSend = true;
 }
 
+void UStomtAPI::SendEMail(FString EMail)
+{
+	this->SetupNewPostRequest();
+
+	this->request->GetRequestObject()->SetStringField(TEXT("email"), EMail);
+
+	this->request->ProcessURL(this->GetRestURL().Append(TEXT("/authentication/subscribe")));
+
+	this->EMailFlagWasSend = true;
+}
+
 void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
 {
 	
@@ -295,6 +357,23 @@ void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
 				this->SendStomt(StomtToSend);
 			}
 		}
+	}
+
+
+	if (EMailFlagWasSend)
+	{
+		if (Request->GetResponseObject()->HasField(TEXT("data")))
+		{
+			if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("success")))
+			{
+				this->SaveFlag(TEXT("email"), true);
+			}
+			else
+			{
+				this->SaveFlag(TEXT("email"), false);
+			}
+		}
+		EMailFlagWasSend = false;
 	}
 }
 
@@ -398,6 +477,7 @@ bool UStomtAPI::WriteFile(FString TextToSave, FString FileName, FString SaveDire
 		// Allow overwriting or file doesn't already exist
 		if (AllowOverwriting || !FPaths::FileExists(*AbsoluteFilePath))
 		{
+			//Use " FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), EFileWrite::FILEWRITE_Append);" for append
 			return FFileHelper::SaveStringToFile(TextToSave, *AbsoluteFilePath);
 		}
 		else
@@ -424,7 +504,7 @@ bool UStomtAPI::ReadFile(FString& Result, FString FileName, FString SaveDirector
 
 	if (!FPaths::FileExists(path))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("File does not exist: %s "), *path);
+		UE_LOG(LogTemp, Warning, TEXT("File with this path does not exist: %s "), *path);
 	}
 
 	return FFileHelper::LoadFileToString( Result, *path);

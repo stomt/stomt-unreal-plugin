@@ -45,12 +45,23 @@ void UStomtPluginWidget::OnSubmit()
 	}
 }
 
+void UStomtPluginWidget::OnSubmitLastLayer()
+{
+	if (!this->EMail.IsEmpty())
+	{
+		this->api->SendEMail(this->EMail);
+	}
+}
+
 void UStomtPluginWidget::OnConstruction(FString TargetID, FString RestURL, FString AppID)
 {
+	// Create API Object
 	if (api == NULL)
 	{
 		api = UStomtAPI::ConstructRequest(TargetID, RestURL, AppID);
 	}
+
+	// Request Target Name
 	this->api->SetAppID(AppID);
 	this->api->SetTargetID(TargetID);
 	this->api->SetRestURL(RestURL);
@@ -59,7 +70,11 @@ void UStomtPluginWidget::OnConstruction(FString TargetID, FString RestURL, FStri
 
 	this->api->RequestTarget(TargetID);
 	this->api->GetRequest()->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnReceiving);
+
+	//Lookup EMail
+	this->IsEMailAlreadyKnown = this->api->ReadFlag(TEXT("email"));
 }
+
 
 void UStomtPluginWidget::OnReceiving(UStomtRestRequest * Request)
 {

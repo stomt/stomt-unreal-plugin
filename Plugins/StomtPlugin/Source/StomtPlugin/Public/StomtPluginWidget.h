@@ -37,6 +37,12 @@ public:
 	FString Message;
 
 	/**
+	*	EMail from the UI EMail layer.
+	*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
+	FString EMail;
+
+	/**
 	*	Target-name that will be shown in the widget.
 	*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
@@ -67,6 +73,12 @@ public:
 	bool IsScreenshotSelected;
 
 	/**
+	*	Whether the user mail is already known. 
+	*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
+	bool IsEMailAlreadyKnown;
+
+	/**
 	*	The labels which will be appended to the stomt.
 	*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
@@ -86,6 +98,12 @@ public:
 	void OnSubmit();
 
 	/**
+	*	Once the user finishes all layers.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
+	void OnSubmitLastLayer();
+
+	/**
 	*	Called at the widget startup to initialize variables.
 	*	@param TargetID - Stomt target-id
 	*	@param RestURL - Stomt REST-API URL
@@ -101,7 +119,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	void OnReceiving(UStomtRestRequest* CurrentRequest);
 
-
+	// Not ready yet.
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	void TakeScreenshot();
 
