@@ -47,6 +47,29 @@ void UStomtPluginWidget::OnSubmit()
 
 void UStomtPluginWidget::OnSubmitLastLayer()
 {
+	/*
+	if (!this->EMail.IsEmpty() && !this->UserPassword.IsEmpty())
+	{
+		this->api->SendLoginRequest(this->EMail, this->UserPassword);
+	}
+
+	if (!this->EMail.IsEmpty())
+	{
+		this->api->SendEMail(this->EMail);
+	}
+	*/
+}
+
+void UStomtPluginWidget::OnSubmitLogin()
+{
+	if (!this->UserName.IsEmpty() && !this->UserPassword.IsEmpty())
+	{
+		this->api->SendLoginRequest(this->EMail, this->UserPassword);
+	}
+}
+
+void UStomtPluginWidget::OnSubmitEMail()
+{
 	if (!this->EMail.IsEmpty())
 	{
 		this->api->SendEMail(this->EMail);

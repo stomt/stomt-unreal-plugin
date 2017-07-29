@@ -30,6 +30,9 @@ public:
 	*/
 	void SendStomt(UStomt* stomt);
 
+
+	void SendLoginRequest(FString UserName, FString Password);
+
 	/**
 	* Sends stomt labels. (deprecated)
 	* @param stomt - Stomt Object with serverside ID set and labels set.
@@ -121,6 +124,12 @@ public:
 	UStomtRestJsonObject* ReadStomtConfAsJson();
 
 	/**
+	* Loads the access token from disk.
+	*/
+bool WriteStomtConfAsJson(UStomtRestJsonObject* StomtConf);
+
+
+	/**
 	* Delete stomt.conf.json
 	*/
 	void DeleteStomtConf();
@@ -165,6 +174,7 @@ private:
 
 	FString				errorLog_file_uid;
 
+	bool				LoginRequestWasSend;
 	bool				EMailFlagWasSend;
 	bool				LogFileWasSend;
 	UStomt*				StomtToSend;

@@ -43,6 +43,19 @@ public:
 	FString EMail;
 
 	/**
+	*	UserName from the UI Login layer.
+	*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
+	FString UserName;
+
+	/**
+	*	UserPassword from the UI Login layer.
+	*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
+	FString UserPassword;
+
+
+	/**
 	*	Target-name that will be shown in the widget.
 	*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
@@ -102,6 +115,21 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	void OnSubmitLastLayer();
+
+	/**
+	*	Once the user finishes the login.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
+	void OnSubmitLogin();
+
+
+	/**
+	*	Once the user finishes the email input.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
+	void OnSubmitEMail();
+
+
 
 	/**
 	*	Called at the widget startup to initialize variables.

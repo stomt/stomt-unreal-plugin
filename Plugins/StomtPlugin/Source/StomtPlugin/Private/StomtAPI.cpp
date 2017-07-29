@@ -45,6 +45,8 @@ UStomtAPI::~UStomtAPI()
 
 void UStomtAPI::SendStomt(UStomt* stomt)
 {
+	SendLoginRequest(TEXT("daniel.schukies@gmail.com"), TEXT("leinadD1"));
+
 	this->SetupNewPostRequest();
 
 	// Fields
@@ -77,6 +79,19 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 	}
 	
 	this->request->ProcessURL( this->GetRestURL().Append(TEXT("/stomts")) );
+}
+
+void UStomtAPI::SendLoginRequest(FString UserName, FString Password)
+{
+	this->SetupNewPostRequest();
+
+	this->request->GetRequestObject()->SetStringField(TEXT("login_method"), TEXT("normal"));
+	this->request->GetRequestObject()->SetStringField(TEXT("emailusername"), UserName);
+	this->request->GetRequestObject()->SetStringField(TEXT("password"), Password);
+
+	this->request->ProcessURL(this->GetRestURL().Append(TEXT("/authentication/session")));
+
+	LoginRequestWasSend = true;
 }
 
 void UStomtAPI::SendStomtLabels(UStomt * stomt)
@@ -239,6 +254,11 @@ UStomtRestJsonObject* UStomtAPI::ReadStomtConfAsJson()
 	return jsonObj;
 }
 
+bool UStomtAPI::WriteStomtConfAsJson(UStomtRestJsonObject * StomtConf)
+{
+	return this->WriteFile(StomtConf->EncodeJson(), configName, configFolder, true);
+}
+
 void UStomtAPI::DeleteStomtConf()
 {
 	FString file = this->configFolder + this->configName;
@@ -319,17 +339,43 @@ void UStomtAPI::SendEMail(FString EMail)
 
 void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
 {
-	
 
 	// Wrong access token
 	if (Request->GetResponseCode() == 403 || Request->GetResponseCode() == 419)
 	{
-		this->DeleteStomtConf();
+		LoginRequestWasSend = false;
+
+		UStomtRestJsonObject* stomtconf = this->ReadStomtConfAsJson();
+		stomtconf->RemoveField(accesstoken);
+		WriteStomtConfAsJson(stomtconf);
+
 		this->accesstoken.Empty();
 		this->SendStomt(StomtToSend);
 	}
-	
 
+	if (LoginRequestWasSend)
+	{
+		if (Request->GetResponseCode() == 404)
+		{
+			LoginRequestWasSend = false;
+		}
+		else
+		{
+			if (Request->GetResponseObject()->HasField(TEXT("data")))
+			{
+				if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("accesstoken")))
+				{
+					this->accesstoken = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetStringField(TEXT("accesstoken"));
+					this->SaveAccesstoken(this->accesstoken);
+					LoginRequestWasSend = false;
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Login did not work"));
+				}
+			}
+		}
+	}
 
 	if (LogFileWasSend)
 	{
@@ -342,7 +388,6 @@ void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
 				{
 					this->accesstoken = Request->GetResponseObject()->GetObjectField(TEXT("meta"))->GetStringField(TEXT("accesstoken"));
 					this->SaveAccesstoken(this->accesstoken);
-					//UE_LOG(LogTemp, Warning, TEXT("saved token! %s "), *this->accesstoken);
 				}
 			}
 		}
@@ -359,22 +404,33 @@ void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
 		}
 	}
 
-
 	if (EMailFlagWasSend)
 	{
-		if (Request->GetResponseObject()->HasField(TEXT("data")))
+		if (! (Request->GetResponseCode() == 400))
 		{
-			if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("success")))
+			if (Request->GetResponseObject()->HasField(TEXT("data")))
 			{
-				this->SaveFlag(TEXT("email"), true);
+				if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("success")))
+				{
+					this->SaveFlag(TEXT("email"), true);
+				}
+				else
+				{
+					this->SaveFlag(TEXT("email"), false);
+				}
 			}
-			else
-			{
-				this->SaveFlag(TEXT("email"), false);
-			}
+			
 		}
+		else
+		{
+			this->SaveFlag(TEXT("email"), true);
+		}
+
 		EMailFlagWasSend = false;
 	}
+
+
+
 }
 
 bool UStomtAPI::CaptureComponent2D_SaveImage(USceneCaptureComponent2D * Target, const FString ImagePath, const FLinearColor ClearColour)
