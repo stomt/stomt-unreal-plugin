@@ -45,8 +45,6 @@ UStomtAPI::~UStomtAPI()
 
 void UStomtAPI::SendStomt(UStomt* stomt)
 {
-	SendLoginRequest(TEXT("daniel.schukies@gmail.com"), TEXT("leinadD1"));
-
 	this->SetupNewPostRequest();
 
 	// Fields
@@ -350,7 +348,12 @@ void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
 		WriteStomtConfAsJson(stomtconf);
 
 		this->accesstoken.Empty();
-		this->SendStomt(StomtToSend);
+
+		if (LogFileWasSend && StomtToSend != NULL)
+		{
+			this->SendStomt(StomtToSend);
+		}
+		
 	}
 
 	if (LoginRequestWasSend)

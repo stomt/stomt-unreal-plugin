@@ -64,7 +64,7 @@ void UStomtPluginWidget::OnSubmitLogin()
 {
 	if (!this->UserName.IsEmpty() && !this->UserPassword.IsEmpty())
 	{
-		this->api->SendLoginRequest(this->EMail, this->UserPassword);
+		this->api->SendLoginRequest(this->UserName, this->UserPassword);
 	}
 }
 
