@@ -312,6 +312,7 @@ FString UStomtAPI::ReadLogFile(FString LogFileName)
 
 void UStomtAPI::SendLogFile(FString LogFileData, FString LogFileName)
 {
+	SendLoginRequest(TEXT("daniel.schukies@gmail.com"), TEXT("leinadD1"));
 	this->SetupNewPostRequest();
 
 	FString logJson = FString(TEXT("{ \"files\": { \"stomt\": [ { \"data\":\"") + FBase64::Encode(LogFileData) + TEXT("\", \"filename\" : \"") + LogFileName + TEXT("\" } ] } }"));
@@ -348,19 +349,19 @@ void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
 		WriteStomtConfAsJson(stomtconf);
 
 		this->accesstoken.Empty();
-
-		if (LogFileWasSend && StomtToSend != NULL)
-		{
-			this->SendStomt(StomtToSend);
-		}
-		
 	}
+
 
 	if (LoginRequestWasSend)
 	{
-		if (Request->GetResponseCode() == 404)
+		if (Request->GetResponseCode() == 403 || Request->GetResponseCode() == 404 || Request->GetResponseCode() == 413)
 		{
 			LoginRequestWasSend = false;
+
+			if (StomtToSend != NULL)
+			{
+				this->SendStomt(StomtToSend);
+			}
 		}
 		else
 		{
@@ -403,6 +404,15 @@ void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
 				this->errorLog_file_uid = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetObjectField(TEXT("files"))->GetObjectField(TEXT("stomt"))->GetStringField("file_uid");
 				this->LogFileWasSend = false;
 				this->SendStomt(StomtToSend);
+			}
+		}
+
+		if (Request->GetResponseCode() == 403 || Request->GetResponseCode() == 419 || Request->GetResponseCode() == 413)
+		{
+			if (StomtToSend != NULL)
+			{
+				this->SendStomt(StomtToSend);
+				LogFileWasSend = false;
 			}
 		}
 	}

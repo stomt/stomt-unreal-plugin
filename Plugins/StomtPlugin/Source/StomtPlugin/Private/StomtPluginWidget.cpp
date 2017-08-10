@@ -11,6 +11,7 @@
 
 UStomtPluginWidget::~UStomtPluginWidget()
 {
+	this->LoginErrorCode = 0;
 }
 
 void UStomtPluginWidget::OnMessageChanged(FString text)
@@ -66,6 +67,7 @@ void UStomtPluginWidget::OnSubmitLogin()
 	{
 		this->api->SendLoginRequest(this->UserName, this->UserPassword);
 	}
+
 }
 
 void UStomtPluginWidget::OnSubmitEMail()
@@ -116,6 +118,11 @@ void UStomtPluginWidget::OnReceiving(UStomtRestRequest * Request)
 			this->ImageURL = this->api->GetImageURL();
 
 		}
+	}
+
+	if (Request->GetResponseCode() == 403 || Request->GetResponseCode() == 404)
+	{
+		this->LoginErrorCode = Request->GetResponseCode();
 	}
 }
 

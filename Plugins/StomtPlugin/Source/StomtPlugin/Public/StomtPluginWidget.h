@@ -92,6 +92,12 @@ public:
 	bool IsEMailAlreadyKnown;
 
 	/**
+	*	Error-Code whether the user login worked. (0: OK, 403: wrong password, 404: account does not exist. )
+	*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
+	int LoginErrorCode;
+
+	/**
 	*	The labels which will be appended to the stomt.
 	*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
