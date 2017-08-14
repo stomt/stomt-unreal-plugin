@@ -11,6 +11,7 @@
 
 UStomtPluginWidget::~UStomtPluginWidget()
 {
+	this->LoginErrorCode = 0;
 }
 
 void UStomtPluginWidget::OnMessageChanged(FString text)
@@ -45,12 +46,47 @@ void UStomtPluginWidget::OnSubmit()
 	}
 }
 
+void UStomtPluginWidget::OnSubmitLastLayer()
+{
+	/*
+	if (!this->EMail.IsEmpty() && !this->UserPassword.IsEmpty())
+	{
+		this->api->SendLoginRequest(this->EMail, this->UserPassword);
+	}
+
+	if (!this->EMail.IsEmpty())
+	{
+		this->api->SendEMail(this->EMail);
+	}
+	*/
+}
+
+void UStomtPluginWidget::OnSubmitLogin()
+{
+	if (!this->UserName.IsEmpty() && !this->UserPassword.IsEmpty())
+	{
+		this->api->SendLoginRequest(this->UserName, this->UserPassword);
+	}
+
+}
+
+void UStomtPluginWidget::OnSubmitEMail()
+{
+	if (!this->EMail.IsEmpty())
+	{
+		this->api->SendEMail(this->EMail);
+	}
+}
+
 void UStomtPluginWidget::OnConstruction(FString TargetID, FString RestURL, FString AppID)
 {
+	// Create API Object
 	if (api == NULL)
 	{
 		api = UStomtAPI::ConstructRequest(TargetID, RestURL, AppID);
 	}
+
+	// Request Target Name
 	this->api->SetAppID(AppID);
 	this->api->SetTargetID(TargetID);
 	this->api->SetRestURL(RestURL);
@@ -59,7 +95,11 @@ void UStomtPluginWidget::OnConstruction(FString TargetID, FString RestURL, FStri
 
 	this->api->RequestTarget(TargetID);
 	this->api->GetRequest()->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnReceiving);
+
+	//Lookup EMail
+	this->IsEMailAlreadyKnown = this->api->ReadFlag(TEXT("email"));
 }
+
 
 void UStomtPluginWidget::OnReceiving(UStomtRestRequest * Request)
 {
@@ -78,6 +118,11 @@ void UStomtPluginWidget::OnReceiving(UStomtRestRequest * Request)
 			this->ImageURL = this->api->GetImageURL();
 
 		}
+	}
+
+	if (Request->GetResponseCode() == 403 || Request->GetResponseCode() == 404)
+	{
+		this->LoginErrorCode = Request->GetResponseCode();
 	}
 }
 

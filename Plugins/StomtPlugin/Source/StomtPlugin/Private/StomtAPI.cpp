@@ -26,16 +26,17 @@ UStomtAPI* UStomtAPI::ConstructRequest(FString TargetID, FString RestURL, FStrin
 
 UStomtAPI::UStomtAPI()
 {
-	this->configFolder = FString(TEXT("/stomt"));
+	this->configFolder = FString(TEXT("/stomt/"));
 	this->configName = FString(TEXT("stomt.conf.json"));
 	this->accesstoken = FString(TEXT(""));
-	ReadAccesstoken();
+	ReadStomtConf(TEXT("accesstoken"));
 
 	this->request = NewObject<UStomtRestRequest>();
 
 	this->request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnReceiving);
 
 	LogFileWasSend = false;
+	EMailFlagWasSend = false;
 }
 
 UStomtAPI::~UStomtAPI()
@@ -76,6 +77,19 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 	}
 	
 	this->request->ProcessURL( this->GetRestURL().Append(TEXT("/stomts")) );
+}
+
+void UStomtAPI::SendLoginRequest(FString UserName, FString Password)
+{
+	this->SetupNewPostRequest();
+
+	this->request->GetRequestObject()->SetStringField(TEXT("login_method"), TEXT("normal"));
+	this->request->GetRequestObject()->SetStringField(TEXT("emailusername"), UserName);
+	this->request->GetRequestObject()->SetStringField(TEXT("password"), Password);
+
+	this->request->ProcessURL(this->GetRestURL().Append(TEXT("/authentication/session")));
+
+	LoginRequestWasSend = true;
 }
 
 void UStomtAPI::SendStomtLabels(UStomt * stomt)
@@ -167,30 +181,85 @@ UStomtRestRequest * UStomtAPI::GetRequest()
 
 bool UStomtAPI::SaveAccesstoken(FString accesstoken)
 {
-	UStomtRestJsonObject* jsonObj = UStomtRestJsonObject::ConstructJsonObject(this);
-
-	jsonObj->SetStringField(TEXT("accesstoken"), accesstoken);
-
-	return this->WriteFile(jsonObj->EncodeJson(), TEXT("stomt.conf.json"), TEXT("/stomt"), true);
+	return SaveValueToStomtConf(TEXT("accesstoken"), accesstoken);
 }
 
-FString UStomtAPI::ReadAccesstoken()
+bool UStomtAPI::SaveValueToStomtConf(FString FieldName, FString FieldValue)
+{
+	UStomtRestJsonObject* jsonObj = ReadStomtConfAsJson();
+
+	if (jsonObj->HasField(FieldName))
+	{
+		if (jsonObj->GetStringField(FieldName).Equals(FieldValue))
+		{
+			return false;
+		}	
+
+		jsonObj->RemoveField(FieldName);
+	}
+	
+	jsonObj->SetStringField(FieldName, FieldValue);
+
+	return this->WriteFile(jsonObj->EncodeJson(), configName, configFolder, true);
+}
+
+
+
+bool UStomtAPI::SaveFlag(FString FlagName, bool FlagState)
+{
+	return SaveValueToStomtConf(FlagName, FlagState ? TEXT("true") : TEXT("false"));
+}
+
+FString UStomtAPI::ReadStomtConf(FString FieldName)
 {
 	FString result;
 
-	if (this->ReadFile(result, TEXT("stomt.conf.json"), TEXT("/stomt/")))
+	if (this->ReadFile(result, configName, configFolder))
 	{
 		UStomtRestJsonObject* jsonObj = UStomtRestJsonObject::ConstructJsonObject(this);
 		jsonObj->DecodeJson(result);
-		this->accesstoken = jsonObj->GetField(TEXT("accesstoken"))->AsString();
+		this->accesstoken = jsonObj->GetField(FieldName)->AsString();
 	}
 
 	return result;
 }
 
+bool UStomtAPI::ReadFlag(FString FlagName)
+{
+	FString result;
+	bool FlagState = false;
+
+	if (this->ReadFile(result, configName, configFolder))
+	{
+		UStomtRestJsonObject* jsonObj = UStomtRestJsonObject::ConstructJsonObject(this);
+		jsonObj->DecodeJson(result);
+		FlagState = jsonObj->GetField(FlagName)->AsBool();
+	}
+
+	return FlagState;
+}
+
+UStomtRestJsonObject* UStomtAPI::ReadStomtConfAsJson()
+{
+	FString result;
+	UStomtRestJsonObject* jsonObj = UStomtRestJsonObject::ConstructJsonObject(this);
+
+	if (this->ReadFile(result, configName, configFolder))
+	{
+		jsonObj->DecodeJson(result);
+	}
+
+	return jsonObj;
+}
+
+bool UStomtAPI::WriteStomtConfAsJson(UStomtRestJsonObject * StomtConf)
+{
+	return this->WriteFile(StomtConf->EncodeJson(), configName, configFolder, true);
+}
+
 void UStomtAPI::DeleteStomtConf()
 {
-	FString file = this->configFolder + "/" + this->configName;
+	FString file = this->configFolder + this->configName;
 	if (!FPlatformFileManager::Get().GetPlatformFile().DeleteFile(*file))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Could not delete stomt.conf.json: %s"), *file);
@@ -243,6 +312,7 @@ FString UStomtAPI::ReadLogFile(FString LogFileName)
 
 void UStomtAPI::SendLogFile(FString LogFileData, FString LogFileName)
 {
+	SendLoginRequest(TEXT("daniel.schukies@gmail.com"), TEXT("leinadD1"));
 	this->SetupNewPostRequest();
 
 	FString logJson = FString(TEXT("{ \"files\": { \"stomt\": [ { \"data\":\"") + FBase64::Encode(LogFileData) + TEXT("\", \"filename\" : \"") + LogFileName + TEXT("\" } ] } }"));
@@ -255,19 +325,61 @@ void UStomtAPI::SendLogFile(FString LogFileData, FString LogFileName)
 	LogFileWasSend = true;
 }
 
+void UStomtAPI::SendEMail(FString EMail)
+{
+	this->SetupNewPostRequest();
+
+	this->request->GetRequestObject()->SetStringField(TEXT("email"), EMail);
+
+	this->request->ProcessURL(this->GetRestURL().Append(TEXT("/authentication/subscribe")));
+
+	this->EMailFlagWasSend = true;
+}
+
 void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
 {
-	
 
 	// Wrong access token
 	if (Request->GetResponseCode() == 403 || Request->GetResponseCode() == 419)
 	{
-		this->DeleteStomtConf();
-		this->accesstoken.Empty();
-		this->SendStomt(StomtToSend);
-	}
-	
+		LoginRequestWasSend = false;
 
+		UStomtRestJsonObject* stomtconf = this->ReadStomtConfAsJson();
+		stomtconf->RemoveField(accesstoken);
+		WriteStomtConfAsJson(stomtconf);
+
+		this->accesstoken.Empty();
+	}
+
+
+	if (LoginRequestWasSend)
+	{
+		if (Request->GetResponseCode() == 403 || Request->GetResponseCode() == 404 || Request->GetResponseCode() == 413)
+		{
+			LoginRequestWasSend = false;
+
+			if (StomtToSend != NULL)
+			{
+				this->SendStomt(StomtToSend);
+			}
+		}
+		else
+		{
+			if (Request->GetResponseObject()->HasField(TEXT("data")))
+			{
+				if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("accesstoken")))
+				{
+					this->accesstoken = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetStringField(TEXT("accesstoken"));
+					this->SaveAccesstoken(this->accesstoken);
+					LoginRequestWasSend = false;
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Login did not work"));
+				}
+			}
+		}
+	}
 
 	if (LogFileWasSend)
 	{
@@ -280,7 +392,6 @@ void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
 				{
 					this->accesstoken = Request->GetResponseObject()->GetObjectField(TEXT("meta"))->GetStringField(TEXT("accesstoken"));
 					this->SaveAccesstoken(this->accesstoken);
-					//UE_LOG(LogTemp, Warning, TEXT("saved token! %s "), *this->accesstoken);
 				}
 			}
 		}
@@ -295,7 +406,44 @@ void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
 				this->SendStomt(StomtToSend);
 			}
 		}
+
+		if (Request->GetResponseCode() == 403 || Request->GetResponseCode() == 419 || Request->GetResponseCode() == 413)
+		{
+			if (StomtToSend != NULL)
+			{
+				this->SendStomt(StomtToSend);
+				LogFileWasSend = false;
+			}
+		}
 	}
+
+	if (EMailFlagWasSend)
+	{
+		if (! (Request->GetResponseCode() == 400))
+		{
+			if (Request->GetResponseObject()->HasField(TEXT("data")))
+			{
+				if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("success")))
+				{
+					this->SaveFlag(TEXT("email"), true);
+				}
+				else
+				{
+					this->SaveFlag(TEXT("email"), false);
+				}
+			}
+			
+		}
+		else
+		{
+			this->SaveFlag(TEXT("email"), true);
+		}
+
+		EMailFlagWasSend = false;
+	}
+
+
+
 }
 
 bool UStomtAPI::CaptureComponent2D_SaveImage(USceneCaptureComponent2D * Target, const FString ImagePath, const FLinearColor ClearColour)
@@ -398,6 +546,7 @@ bool UStomtAPI::WriteFile(FString TextToSave, FString FileName, FString SaveDire
 		// Allow overwriting or file doesn't already exist
 		if (AllowOverwriting || !FPaths::FileExists(*AbsoluteFilePath))
 		{
+			//Use " FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), EFileWrite::FILEWRITE_Append);" for append
 			return FFileHelper::SaveStringToFile(TextToSave, *AbsoluteFilePath);
 		}
 		else
@@ -424,7 +573,7 @@ bool UStomtAPI::ReadFile(FString& Result, FString FileName, FString SaveDirector
 
 	if (!FPaths::FileExists(path))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("File does not exist: %s "), *path);
+		UE_LOG(LogTemp, Warning, TEXT("File with this path does not exist: %s "), *path);
 	}
 
 	return FFileHelper::LoadFileToString( Result, *path);

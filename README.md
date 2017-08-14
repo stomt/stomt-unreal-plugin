@@ -8,6 +8,13 @@ This SDK allows the easy integration of the feedback solution [www.stomt.com](ht
 
 STOMT allows you to collect simple and constructive feedback in-game and [also from your website](https://github.com/stomt/stomt-javascript-sdk) and collect it at one central place where you manage it and where your community can vote and comment on the feedback of others. (see use-cases below)
 
+## Features
+
+* Collect constructive feedback in-game
+* Append error-logs
+* Label the feedback automatically (e.g. with the game version number)
+* All feedback is collected at your STOMT profile ([Example](https://www.stomt.com/empires-of-the-undergrowth)) where you can manage and react to the feedback
+
 ## Some Use-Cases // What will the result look like? // Example Games that use our widget
 
 [Empires of the Undergrowth](https://www.stomt.com/empires-of-the-undergrowth)      
@@ -23,7 +30,7 @@ STOMT allows you to collect simple and constructive feedback in-game and [also f
 6. Add the StomtPlugin to your projects PublicDependencyModuleNames in the projects build.cs if you have c++ code included.
 7. IF you do not have c++ code, use the Add New button in the editor and add a blank c++ class to your project.
 8. Copy the ProjectName/Content/Stomt folder into your content folder.
-9. Place the StomtActor in your scene and press play.
+9. Place the StomtActor in your scene and press play. (Press 'E' to toggle the widget on/off)
 10. Enter the AppId you obtained in the second step and your target username into the ```StomtWidgetBP``` Blueprint.
 
 ## Use our Sandbox!
