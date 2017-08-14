@@ -533,6 +533,8 @@ void UStomtAPI::SaveRenderTargetToDisk(UTextureRenderTarget2D* InRenderTarget, F
 
 bool UStomtAPI::WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting)
 {
+	SaveDirectory = FPaths::GameSavedDir() + SaveDirectory;
+
 	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
 
 	// CreateDirectoryTree returns true if the destination
@@ -561,9 +563,8 @@ bool UStomtAPI::WriteFile(FString TextToSave, FString FileName, FString SaveDire
 }
 
 bool UStomtAPI::ReadFile(FString& Result, FString FileName, FString SaveDirectory)
-{	
-
-	FString path = SaveDirectory + FileName;
+{
+	FString path = FPaths::GameSavedDir() + SaveDirectory + FileName;
 
 /*
 	if (SaveDirectory.GetCharArray()[SaveDirectory.Len() - 2] == '/')
