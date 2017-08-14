@@ -26,7 +26,7 @@ UStomtAPI* UStomtAPI::ConstructRequest(FString TargetID, FString RestURL, FStrin
 
 UStomtAPI::UStomtAPI()
 {
-	this->configFolder = FString(TEXT("/stomt/"));
+	this->configFolder = FString(TEXT("/.stomt/"));
 	this->configName = FString(TEXT("stomt.conf.json"));
 	this->accesstoken = FString(TEXT(""));
 	ReadStomtConf(TEXT("accesstoken"));
@@ -312,7 +312,6 @@ FString UStomtAPI::ReadLogFile(FString LogFileName)
 
 void UStomtAPI::SendLogFile(FString LogFileData, FString LogFileName)
 {
-	SendLoginRequest(TEXT("daniel.schukies@gmail.com"), TEXT("leinadD1"));
 	this->SetupNewPostRequest();
 
 	FString logJson = FString(TEXT("{ \"files\": { \"stomt\": [ { \"data\":\"") + FBase64::Encode(LogFileData) + TEXT("\", \"filename\" : \"") + LogFileName + TEXT("\" } ] } }"));
