@@ -124,9 +124,10 @@ public:
 
 	/**
 	*	Once the user finishes the login.
+	*	@return Wether the login request was send.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
-	void OnSubmitLogin();
+	bool OnSubmitLogin();
 
 
 	/**

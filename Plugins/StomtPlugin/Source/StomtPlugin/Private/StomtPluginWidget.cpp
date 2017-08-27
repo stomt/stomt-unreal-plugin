@@ -61,11 +61,16 @@ void UStomtPluginWidget::OnSubmitLastLayer()
 	*/
 }
 
-void UStomtPluginWidget::OnSubmitLogin()
+bool UStomtPluginWidget::OnSubmitLogin()
 {
 	if (!this->UserName.IsEmpty() && !this->UserPassword.IsEmpty())
 	{
 		this->api->SendLoginRequest(this->UserName, this->UserPassword);
+		return true;
+	}
+	else
+	{
+		return false;
 	}
 
 }
