@@ -26,7 +26,8 @@ UStomtAPI* UStomtAPI::ConstructRequest(FString TargetID, FString RestURL, FStrin
 
 UStomtAPI::UStomtAPI()
 {
-	this->configFolder = FString(TEXT("/.stomt/"));
+	this->configFolder = FPaths::EngineUserDir() + FString(TEXT("Saved/Config/stomt/"));
+	//UE_LOG(LogTemp, Warning, TEXT("configfolder: %s"), *this->configFolder);
 	this->configName = FString(TEXT("stomt.conf.json"));
 	this->accesstoken = FString(TEXT(""));
 	ReadStomtConf(TEXT("accesstoken"));
