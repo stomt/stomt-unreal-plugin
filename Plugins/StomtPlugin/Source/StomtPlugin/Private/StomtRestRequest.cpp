@@ -10,6 +10,7 @@
 UStomtRestRequest::UStomtRestRequest()
 {
 	this->useStaticJsonString = false;
+	this->UseRequestLogging(true);
 	ResponseJsonObj = NULL;
 	RequestJsonObj = NULL;
 
@@ -162,15 +163,23 @@ void UStomtRestRequest::ProcessRequest(TSharedRef<IHttpRequest> HttpRequest)
 		HttpRequest->SetContentAsString(OutputString);
 	}
 	
-	if (OutputString.Len() > 256)
+	if (this->RequestLogging)
 	{
-		FString shortContent = OutputString.LeftChop(OutputString.Len() - 256);
-		UE_LOG(LogTemp, Log, TEXT("Request (json): %s %s | truncated-content(256): %s"), *HttpRequest->GetVerb(), *HttpRequest->GetURL(), *shortContent);
+		if (OutputString.Len() > 256)
+		{
+			FString shortContent = OutputString.LeftChop(OutputString.Len() - 256);
+			UE_LOG(LogTemp, Log, TEXT("Request (json): %s %s | truncated-content(256): %s"), *HttpRequest->GetVerb(), *HttpRequest->GetURL(), *shortContent);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Log, TEXT("Request (json): %s %s %s"), *HttpRequest->GetVerb(), *HttpRequest->GetURL(), *OutputString);
+		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Log, TEXT("Request (json): %s %s %s"), *HttpRequest->GetVerb(), *HttpRequest->GetURL(), *OutputString);
+		UE_LOG(LogTemp, Log, TEXT("Request (json): %s %s | did not log (contains user data)"), *HttpRequest->GetVerb(), *HttpRequest->GetURL());
 	}
+
 	
 
 	// Apply additional headers
@@ -274,6 +283,11 @@ void UStomtRestRequest::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpR
 void UStomtRestRequest::UseStaticJsonString(bool use)
 {
 	this->useStaticJsonString = use;
+}
+
+void UStomtRestRequest::UseRequestLogging(bool use)
+{
+	this->RequestLogging = use;
 }
 
 void UStomtRestRequest::SetStaticJsonString(FString JsonString)

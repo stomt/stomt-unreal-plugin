@@ -82,6 +82,7 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 void UStomtAPI::SendLoginRequest(FString UserName, FString Password)
 {
 	this->SetupNewPostRequest();
+	this->request->UseRequestLogging(false);
 
 	this->request->GetRequestObject()->SetStringField(TEXT("login_method"), TEXT("normal"));
 	this->request->GetRequestObject()->SetStringField(TEXT("emailusername"), UserName);
@@ -90,6 +91,7 @@ void UStomtAPI::SendLoginRequest(FString UserName, FString Password)
 	this->request->ProcessURL(this->GetRestURL().Append(TEXT("/authentication/session")));
 
 	LoginRequestWasSend = true;
+	this->request->UseRequestLogging(true);
 }
 
 void UStomtAPI::SendStomtLabels(UStomt * stomt)
