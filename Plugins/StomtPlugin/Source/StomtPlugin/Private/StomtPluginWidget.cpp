@@ -43,6 +43,11 @@ void UStomtPluginWidget::OnSubmit()
 		FString LogFileName = FApp::GetGameName() + FString(TEXT(".log"));
 
 		this->api->SendLogFile(this->api->ReadLogFile(LogFileName), LogFileName);
+
+		// Check EMail
+		this->IsEMailAlreadyKnown = this->api->ReadFlag(TEXT("email"));
+
+		//UE_LOG(LogTemp, Warning, TEXT("email: %s"), this->IsEMailAlreadyKnown ? TEXT("true") : TEXT("false"));
 	}
 }
 

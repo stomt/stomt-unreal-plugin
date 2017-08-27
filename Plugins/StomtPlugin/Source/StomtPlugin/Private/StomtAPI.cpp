@@ -372,6 +372,7 @@ void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
 				{
 					this->accesstoken = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetStringField(TEXT("accesstoken"));
 					this->SaveAccesstoken(this->accesstoken);
+					this->SaveFlag(TEXT("email"), true);
 					LoginRequestWasSend = false;
 				}
 				else
