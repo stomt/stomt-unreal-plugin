@@ -34,7 +34,7 @@ void UStomtPluginWidget::OnConstruction(FString TargetID, FString RestURL, FStri
 	UStomtRestRequest* request = this->api->RequestTarget(TargetID);
 	request->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnTargetResponse);
 
-	this->api->GetRequest()->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnReceiving);
+	this->api->GetRequest()->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnLoginRequestResponse);
 
 	//Lookup EMail
 	this->IsEMailAlreadyKnown = this->api->ReadFlag(TEXT("email"));
@@ -97,7 +97,8 @@ bool UStomtPluginWidget::OnSubmitLogin()
 {
 	if (!this->UserName.IsEmpty() && !this->UserPassword.IsEmpty())
 	{
-		this->api->SendLoginRequest(this->UserName, this->UserPassword);
+		UStomtRestRequest* request = this->api->SendLoginRequest(this->UserName, this->UserPassword);
+		request->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnLoginRequestResponse);
 		this->LoginErrorCode = 0;
 		return true;
 	}
@@ -116,11 +117,11 @@ void UStomtPluginWidget::OnSubmitEMail()
 	}
 }
 
-void UStomtPluginWidget::OnReceiving(UStomtRestRequest * Request)
+void UStomtPluginWidget::OnLoginRequestResponse(UStomtRestRequest * LoginRequest)
 {
 	if (Request->GetResponseCode() == 403 || Request->GetResponseCode() == 404)
 	{
-		this->LoginErrorCode = Request->GetResponseCode();
+		this->LoginErrorCode = LoginRequest->GetResponseCode();
 	}
 }
 

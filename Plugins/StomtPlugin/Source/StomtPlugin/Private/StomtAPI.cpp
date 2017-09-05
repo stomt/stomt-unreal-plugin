@@ -46,7 +46,7 @@ UStomtAPI::~UStomtAPI()
 
 void UStomtAPI::SendStomt(UStomt* stomt)
 {
-	this->SetupNewPostRequest();
+	this->SetupAndResetRequest();
 
 	// Fields
 	this->Request->GetRequestObject()->SetField(TEXT("target_id"),	UStomtJsonValue::ConstructJsonValueString(	this, stomt->GetTargetID()	));
@@ -80,19 +80,51 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 	this->Request->ProcessURL( this->GetRestURL().Append(TEXT("/stomts")) );
 }
 
-void UStomtAPI::SendLoginRequest(FString UserName, FString Password)
+UStomtRestRequest* UStomtAPI::SendLoginRequest(FString UserName, FString Password)
 {
-	this->SetupNewPostRequest();
-	this->Request->UseRequestLogging(false);
+	UStomtRestRequest* request = this->SetupNewPostRequest();
+	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnLoginRequestResponse);
 
-	this->Request->GetRequestObject()->SetStringField(TEXT("login_method"), TEXT("normal"));
-	this->Request->GetRequestObject()->SetStringField(TEXT("emailusername"), UserName);
-	this->Request->GetRequestObject()->SetStringField(TEXT("password"), Password);
+	request->UseRequestLogging(false);
 
-	this->Request->ProcessURL(this->GetRestURL().Append(TEXT("/authentication/session")));
+	request->GetRequestObject()->SetStringField(TEXT("login_method"), TEXT("normal"));
+	request->GetRequestObject()->SetStringField(TEXT("emailusername"), UserName);
+	request->GetRequestObject()->SetStringField(TEXT("password"), Password);
 
-	LoginRequestWasSend = true;
-	this->Request->UseRequestLogging(true);
+	request->ProcessURL(this->GetRestURL().Append(TEXT("/authentication/session")));
+
+	request->UseRequestLogging(true);
+
+	return request;
+}
+
+void UStomtAPI::OnLoginRequestResponse(UStomtRestRequest * Request)
+{
+	if (Request->GetResponseCode() == 403 || Request->GetResponseCode() == 404 || Request->GetResponseCode() == 413)
+	{
+		if (StomtToSend != NULL)
+		{
+			this->SendStomt(StomtToSend);
+		}
+	}
+	else
+	{
+		if (Request->GetResponseObject()->HasField(TEXT("data")))
+		{
+			if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("accesstoken")))
+			{
+				this->Accesstoken = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetStringField(TEXT("accesstoken"));
+				this->SaveAccesstoken(this->Accesstoken);
+				this->SaveFlag(TEXT("email"), true);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Login did not work"));
+			}
+		}
+	}
+
+	OnLoginRequestComplete.Broadcast(Request);
 }
 
 void UStomtAPI::SendStomtLabels(UStomt * stomt)
@@ -134,8 +166,6 @@ UStomtRestRequest* UStomtAPI::RequestTarget(FString TargetID)
 
 void UStomtAPI::OnRequestTargetResponse(UStomtRestRequest * Request)
 {
-	UE_LOG(LogTemp, Warning, TEXT("UStomtAPI::OnRequestTargetResponse"));
-
 	if (Request->GetResponseCode() != 200) return;
 
 	if (!Request->GetResponseObject()->HasField(TEXT("data"))) return;
@@ -148,8 +178,6 @@ void UStomtAPI::OnRequestTargetResponse(UStomtRestRequest * Request)
 		->GetObjectField(TEXT("images"))
 		->GetObjectField(TEXT("profile"))
 		->GetStringField(TEXT("url")));
-
-	UE_LOG(LogTemp, Warning, TEXT("UStomtAPI TargetImage: %s"), *this->GetImageURL());
 }
 
 void UStomtAPI::SetRestURL(FString URL)
@@ -340,7 +368,7 @@ FString UStomtAPI::ReadLogFile(FString LogFileName)
 
 void UStomtAPI::SendLogFile(FString LogFileData, FString LogFileName)
 {
-	this->SetupNewPostRequest();
+	this->SetupAndResetRequest();
 
 	FString logJson = FString(TEXT("{ \"files\": { \"stomt\": [ { \"data\":\"") + FBase64::Encode(LogFileData) + TEXT("\", \"filename\" : \"") + LogFileName + TEXT("\" } ] } }"));
 
@@ -354,14 +382,38 @@ void UStomtAPI::SendLogFile(FString LogFileData, FString LogFileName)
 
 void UStomtAPI::SendEMail(FString EMail)
 {
-	this->SetupNewPostRequest();
+	UStomtRestRequest* request = this->SetupNewPostRequest();
+	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::UStomtAPI::OnSendEMailResponse);
 
-	this->Request->GetRequestObject()->SetStringField(TEXT("email"), EMail);
+	request->GetRequestObject()->SetStringField(TEXT("email"), EMail);
 
-	this->Request->ProcessURL(this->GetRestURL().Append(TEXT("/authentication/subscribe")));
-
-	this->EMailFlagWasSend = true;
+	request->ProcessURL(this->GetRestURL().Append(TEXT("/authentication/subscribe")));
 }
+
+
+void UStomtAPI::OnSendEMailResponse(UStomtRestRequest * Request)
+{
+	if (Request->GetResponseCode() != 400)
+	{
+		if (Request->GetResponseObject()->HasField(TEXT("data")))
+		{
+			if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("success")))
+			{
+				this->SaveFlag(TEXT("email"), true);
+			}
+			else
+			{
+				this->SaveFlag(TEXT("email"), false);
+			}
+		}
+	}
+	else
+	{
+		this->SaveFlag(TEXT("email"), true);
+	}
+}
+
+
 
 void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
 {
@@ -460,7 +512,6 @@ void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
 					this->SaveFlag(TEXT("email"), false);
 				}
 			}
-			
 		}
 		else
 		{
@@ -469,9 +520,6 @@ void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
 
 		EMailFlagWasSend = false;
 	}
-
-
-
 }
 
 bool UStomtAPI::CaptureComponent2D_SaveImage(USceneCaptureComponent2D * Target, const FString ImagePath, const FLinearColor ClearColour)
@@ -608,7 +656,7 @@ bool UStomtAPI::ReadFile(FString& Result, FString FileName, FString SaveDirector
 
 }
 
-inline void UStomtAPI::SetupNewPostRequest()
+inline void UStomtAPI::SetupAndResetRequest()
 {
 	//Reset Request
 	this->Request->ResetResponseData();
@@ -621,6 +669,21 @@ inline void UStomtAPI::SetupNewPostRequest()
 	{
 		this->Request->SetHeader(TEXT("accesstoken"), this->Accesstoken);
 	}
+}
+
+UStomtRestRequest* UStomtAPI::SetupNewPostRequest()
+{
+	UStomtRestRequest* request = NewObject<UStomtRestRequest>();
+
+	request->SetVerb(ERequestVerb::POST);
+	request->SetHeader(TEXT("appid"), this->GetAppID());
+
+	if (!this->Accesstoken.IsEmpty())
+	{
+		request->SetHeader(TEXT("accesstoken"), this->Accesstoken);
+	}
+
+	return request;
 }
 
 

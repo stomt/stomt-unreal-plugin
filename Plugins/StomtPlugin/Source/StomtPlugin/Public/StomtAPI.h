@@ -9,6 +9,8 @@
 #include "StomtAPI.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetRequestComplete, class UStomtRestRequest*, Request);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLoginRequestComplete, class UStomtRestRequest*, Request);
+
 
 
 /**
@@ -33,7 +35,10 @@ public:
 	void SendStomt(UStomt* stomt);
 
 
-	void SendLoginRequest(FString UserName, FString Password);
+	UStomtRestRequest* SendLoginRequest(FString UserName, FString Password);
+
+	UFUNCTION()
+	void OnLoginRequestResponse(UStomtRestRequest * Request);
 
 	/**
 	* Sends stomt labels. (deprecated)
@@ -44,7 +49,7 @@ public:
 	/**
 	* Sends an REST Request for a stomt target.
 	* To receive the respose it is necessary to add a event delegate function.
-	* For example: api->GetRequest()->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnReceiving).
+	* For example: api->GetRequest()->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnLoginRequestResponse).
 	* @param TargetID - ID of the requested stomt target.
 	*/
 	UStomtRestRequest* RequestTarget(FString targetID);
@@ -153,6 +158,9 @@ bool WriteStomtConfAsJson(UStomtRestJsonObject* StomtConf);
 	void SendEMail(FString EMail);
 
 	UFUNCTION()
+	void OnSendEMailResponse(UStomtRestRequest * Request);
+
+	UFUNCTION()
 	void OnReceiving(UStomtRestRequest* Request);
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
@@ -170,6 +178,10 @@ public:
 	FOnTargetRequestComplete OnTargetRequestComplete; 
 
 	/** Event occured when the Request has been completed */
+	UPROPERTY(BlueprintAssignable, Category = "Stomt|Event")
+	FOnLoginRequestComplete OnLoginRequestComplete;
+
+	/** Event occured when the Request has been completed */
 	//UPROPERTY(BlueprintAssignable, Category = "Stomt|Event")
 	//FOnRequestComplete OnRequestComplete; // ToDo Trigger this
 
@@ -183,7 +195,9 @@ public:
 private:
 	bool WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting);
 	bool ReadFile(FString& Result, FString FileName, FString SaveDirectory);
-	void SetupNewPostRequest();
+	void SetupAndResetRequest();
+
+	UStomtRestRequest* SetupNewPostRequest();
 
 	UPROPERTY()
 	UStomtRestRequest*	Request;
