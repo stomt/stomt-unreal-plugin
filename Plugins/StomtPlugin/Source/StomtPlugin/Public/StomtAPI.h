@@ -8,6 +8,8 @@
 #include "Runtime/Engine/Classes/Engine/TextureRenderTarget2D.h"
 #include "StomtAPI.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetRequestComplete, class UStomtRestRequest*, Request);
+
 
 /**
  * 
@@ -18,7 +20,7 @@ class UStomtAPI : public UObject
 	GENERATED_BODY()
 public:
 
-	static UStomtAPI* ConstructRequest(FString TargetID, FString RestURL, FString AppID);
+	static UStomtAPI* ConstructStomtAPI(FString TargetID, FString RestURL, FString AppID);
 
 	UStomtAPI();
 
@@ -40,12 +42,15 @@ public:
 	void SendStomtLabels(UStomt* stomt);
 
 	/**
-	* Sends an REST request for a stomt target.
+	* Sends an REST Request for a stomt target.
 	* To receive the respose it is necessary to add a event delegate function.
 	* For example: api->GetRequest()->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnReceiving).
-	* @param targetID - ID of the requested stomt target.
+	* @param TargetID - ID of the requested stomt target.
 	*/
-	void RequestTarget(FString targetID);
+	UStomtRestRequest* RequestTarget(FString targetID);
+
+	UFUNCTION()
+	void OnRequestTargetResponse(UStomtRestRequest * Request);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Data accessors
@@ -61,7 +66,7 @@ public:
 	/**
 	* Sets the Stomt App ID.
 	* That was created here: https://www.stomt.com/dev/my-apps
-	* @param appID - Stomt APP ID
+	* @param AppID - Stomt APP ID
 	*/
 	void	SetAppID(FString appID);
 	FString GetAppID();
@@ -74,7 +79,7 @@ public:
 
 	/**
 	* Sets a Stomt Target
-	* @param targetID - ID of Stomt Target
+	* @param TargetID - ID of Stomt Target
 	*/
 	void	SetTargetID(FString targetID);
 	FString	GetTargetID();
@@ -89,7 +94,7 @@ public:
 	void SetStomtToSend(UStomt* stomt);
 
 	/**
-	* Gets the request object that contains request/response information.
+	* Gets the Request object that contains Request/response information.
 	*/
 	UStomtRestRequest* GetRequest();
 
@@ -156,7 +161,21 @@ bool WriteStomtConfAsJson(UStomtRestJsonObject* StomtConf);
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	void SaveRenderTargetToDisk(UTextureRenderTarget2D* InRenderTarget, FString Filename);
 
+	//////////////////////////////////////////////////////////////////////////
+	// Request callbacks
 
+public:
+	/** Event occured when the Request has been completed */
+	UPROPERTY(BlueprintAssignable, Category = "Stomt|Event")
+	FOnTargetRequestComplete OnTargetRequestComplete; 
+
+	/** Event occured when the Request has been completed */
+	//UPROPERTY(BlueprintAssignable, Category = "Stomt|Event")
+	//FOnRequestComplete OnRequestComplete; // ToDo Trigger this
+
+	/** Event occured when the Request wasn't successfull */
+	//UPROPERTY(BlueprintAssignable, Category = "Stomt|Event")
+	//FOnRequestFail OnRequestFail; // ToDo Trigger this
 
 	//////////////////////////////////////////////////////////////////////////
 	// Data
@@ -167,10 +186,10 @@ private:
 	void SetupNewPostRequest();
 
 	UPROPERTY()
-	UStomtRestRequest*	request;
-	FString				accesstoken;
-	FString				configFolder;
-	FString				configName;
+	UStomtRestRequest*	Request;
+	FString				Accesstoken;
+	FString				ConfigFolder;
+	FString				ConfigName;
 
 	FString				errorLog_file_uid;
 
@@ -179,10 +198,10 @@ private:
 	bool				LogFileWasSend;
 	UStomt*				StomtToSend;
 
-	FString				restURL;
-	FString				targetName;
-	FString				targetID;
-	FString				appID;
-	FString				imageURL;
+	FString				RestURL;
+	FString				TargetName;
+	FString				TargetID;
+	FString				AppID;
+	FString				ImageURL;
 
 };

@@ -13,7 +13,7 @@
 #include "Runtime/Core/Public/Misc/App.h"
 #include "StomtJsonObject.h"
 
-UStomtAPI* UStomtAPI::ConstructRequest(FString TargetID, FString RestURL, FString AppID)
+UStomtAPI* UStomtAPI::ConstructStomtAPI(FString TargetID, FString RestURL, FString AppID)
 {
 	UStomtAPI* api = NewObject<UStomtAPI>();
 	api->SetAppID(AppID);
@@ -26,15 +26,15 @@ UStomtAPI* UStomtAPI::ConstructRequest(FString TargetID, FString RestURL, FStrin
 
 UStomtAPI::UStomtAPI()
 {
-	this->configFolder = FPaths::EngineUserDir() + FString(TEXT("Saved/Config/stomt/"));
-	//UE_LOG(LogTemp, Warning, TEXT("configfolder: %s"), *this->configFolder);
-	this->configName = FString(TEXT("stomt.conf.json"));
-	this->accesstoken = FString(TEXT(""));
+	this->ConfigFolder = FPaths::EngineUserDir() + FString(TEXT("Saved/Config/stomt/"));
+	//UE_LOG(LogTemp, Warning, TEXT("configfolder: %s"), *this->ConfigFolder);
+	this->ConfigName = FString(TEXT("stomt.conf.json"));
+	this->Accesstoken = FString(TEXT(""));
 	ReadStomtConf(TEXT("accesstoken"));
 
-	this->request = NewObject<UStomtRestRequest>();
+	this->Request = NewObject<UStomtRestRequest>();
 
-	this->request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnReceiving);
+	this->Request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnReceiving);
 
 	LogFileWasSend = false;
 	EMailFlagWasSend = false;
@@ -49,10 +49,10 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 	this->SetupNewPostRequest();
 
 	// Fields
-	this->request->GetRequestObject()->SetField(TEXT("target_id"),	UStomtJsonValue::ConstructJsonValueString(	this, stomt->GetTargetID()	));
-	this->request->GetRequestObject()->SetField(TEXT("positive"),	UStomtJsonValue::ConstructJsonValueBool(	this, stomt->GetPositive()	));
-	this->request->GetRequestObject()->SetField(TEXT("text"),		UStomtJsonValue::ConstructJsonValueString(	this, stomt->GetText()		));
-	this->request->GetRequestObject()->SetField(TEXT("anonym"),		UStomtJsonValue::ConstructJsonValueBool(	this, stomt->GetAnonym()	));
+	this->Request->GetRequestObject()->SetField(TEXT("target_id"),	UStomtJsonValue::ConstructJsonValueString(	this, stomt->GetTargetID()	));
+	this->Request->GetRequestObject()->SetField(TEXT("positive"),	UStomtJsonValue::ConstructJsonValueBool(	this, stomt->GetPositive()	));
+	this->Request->GetRequestObject()->SetField(TEXT("text"),		UStomtJsonValue::ConstructJsonValueString(	this, stomt->GetText()		));
+	this->Request->GetRequestObject()->SetField(TEXT("anonym"),		UStomtJsonValue::ConstructJsonValueBool(	this, stomt->GetAnonym()	));
 	
 	//Labels
 	UStomtRestJsonObject* jObjExtraData = UStomtRestJsonObject::ConstructJsonObject(this);
@@ -64,7 +64,7 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 	}
 
 	jObjExtraData->SetArrayField(TEXT("labels"), labels);
-	this->request->GetRequestObject()->SetObjectField(TEXT("extradata"), jObjExtraData);
+	this->Request->GetRequestObject()->SetObjectField(TEXT("extradata"), jObjExtraData);
 
 	// Error Logs
 	if (!this->errorLog_file_uid.IsEmpty())
@@ -74,25 +74,25 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 		jObjFileContext->SetField(TEXT("file_uid"), UStomtJsonValue::ConstructJsonValueString(this, this->errorLog_file_uid));
 
 		jObjFile->SetObjectField(TEXT("stomt"), jObjFileContext);
-		this->request->GetRequestObject()->SetObjectField(TEXT("files"), jObjFile);
+		this->Request->GetRequestObject()->SetObjectField(TEXT("files"), jObjFile);
 	}
 	
-	this->request->ProcessURL( this->GetRestURL().Append(TEXT("/stomts")) );
+	this->Request->ProcessURL( this->GetRestURL().Append(TEXT("/stomts")) );
 }
 
 void UStomtAPI::SendLoginRequest(FString UserName, FString Password)
 {
 	this->SetupNewPostRequest();
-	this->request->UseRequestLogging(false);
+	this->Request->UseRequestLogging(false);
 
-	this->request->GetRequestObject()->SetStringField(TEXT("login_method"), TEXT("normal"));
-	this->request->GetRequestObject()->SetStringField(TEXT("emailusername"), UserName);
-	this->request->GetRequestObject()->SetStringField(TEXT("password"), Password);
+	this->Request->GetRequestObject()->SetStringField(TEXT("login_method"), TEXT("normal"));
+	this->Request->GetRequestObject()->SetStringField(TEXT("emailusername"), UserName);
+	this->Request->GetRequestObject()->SetStringField(TEXT("password"), Password);
 
-	this->request->ProcessURL(this->GetRestURL().Append(TEXT("/authentication/session")));
+	this->Request->ProcessURL(this->GetRestURL().Append(TEXT("/authentication/session")));
 
 	LoginRequestWasSend = true;
-	this->request->UseRequestLogging(true);
+	this->Request->UseRequestLogging(true);
 }
 
 void UStomtAPI::SendStomtLabels(UStomt * stomt)
@@ -104,72 +104,97 @@ void UStomtAPI::SendStomtLabels(UStomt * stomt)
 	if (!stomt->GetServersideID().IsEmpty() && stomt->GetLabels().Max() > 0)
 	{
 		//Reset Request
-		this->request->ResetResponseData();
-		this->request->ResetRequestData();
+		this->Request->ResetResponseData();
+		this->Request->ResetRequestData();
 
 		UE_LOG(LogTemp, Warning, TEXT("nice1"));
-		this->request->SetVerb(ERequestVerb::POST);
-		this->request->SetHeader(TEXT("appid"), this->GetAppID() );
+		this->Request->SetVerb(ERequestVerb::POST);
+		this->Request->SetHeader(TEXT("appid"), this->GetAppID() );
 
-		this->request->GetRequestObject()->SetField(TEXT("name"),	UStomtJsonValue::ConstructJsonValueString(	this, TEXT("newlabeltest")	));
-		this->request->GetRequestObject()->SetField(TEXT("as_target_owner"), UStomtJsonValue::ConstructJsonValueString(this, TEXT("true")));
+		this->Request->GetRequestObject()->SetField(TEXT("name"),	UStomtJsonValue::ConstructJsonValueString(	this, TEXT("newlabeltest")	));
+		this->Request->GetRequestObject()->SetField(TEXT("as_target_owner"), UStomtJsonValue::ConstructJsonValueString(this, TEXT("true")));
 
-		this->request->ProcessURL( this->GetRestURL().Append(TEXT("/stomts/")).Append(stomt->GetServersideID()).Append(TEXT("/labels") ) );
+		this->Request->ProcessURL( this->GetRestURL().Append(TEXT("/stomts/")).Append(stomt->GetServersideID()).Append(TEXT("/labels") ) );
 	}
 	*/
 }
 
-void UStomtAPI::RequestTarget(FString targetID)
+UStomtRestRequest* UStomtAPI::RequestTarget(FString TargetID)
 {
-	this->request->SetVerb(ERequestVerb::GET);
-	this->request->SetHeader(TEXT("appid"), this->GetAppID() );
+	UStomtRestRequest* request = NewObject<UStomtRestRequest>();
+	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnRequestTargetResponse);
 
-	this->request->ProcessURL( this->GetRestURL().Append("/targets/").Append( this->GetTargetID() ).Append("?target_id=").Append( this->GetTargetID() ) );
+	request->SetVerb(ERequestVerb::GET);
+	request->SetHeader(TEXT("appid"), this->GetAppID() );
+
+	request->ProcessURL( this->GetRestURL().Append("/targets/").Append(TargetID) );
+
+	return request;
+}
+
+void UStomtAPI::OnRequestTargetResponse(UStomtRestRequest * Request)
+{
+	UE_LOG(LogTemp, Warning, TEXT("UStomtAPI::OnRequestTargetResponse"));
+
+	if (Request->GetResponseCode() != 200) return;
+
+	if (!Request->GetResponseObject()->HasField(TEXT("data"))) return;
+	
+	if (!Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("displayname"))) return;
+	
+	this->TargetName = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetStringField(TEXT("displayname"));
+	this->SetImageURL(Request->GetResponseObject()
+		->GetObjectField(TEXT("data"))
+		->GetObjectField(TEXT("images"))
+		->GetObjectField(TEXT("profile"))
+		->GetStringField(TEXT("url")));
+
+	UE_LOG(LogTemp, Warning, TEXT("UStomtAPI TargetImage: %s"), *this->GetImageURL());
 }
 
 void UStomtAPI::SetRestURL(FString URL)
 {
-	this->restURL = URL;
+	this->RestURL = URL;
 }
 
 FString UStomtAPI::GetRestURL()
 {
-	return this->restURL;
+	return this->RestURL;
 }
 
 void UStomtAPI::SetAppID(FString appID)
 {
-	this->appID = appID;
+	this->AppID = appID;
 }
 
 FString UStomtAPI::GetAppID()
 {
-	return this->appID;
+	return this->AppID;
 }
 
 FString UStomtAPI::GetTargetName()
 {
-	return this->targetName;
+	return this->TargetName;
 }
 
 void UStomtAPI::SetTargetID(FString targetID)
 {
-	this->targetID = targetID;
+	this->TargetID = targetID;
 }
 
 FString UStomtAPI::GetTargetID()
 {
-	return this->targetID;
+	return this->TargetID;
 }
 
 void UStomtAPI::SetImageURL(FString URL)
 {
-	this->imageURL = URL;
+	this->ImageURL = URL;
 }
 
 FString UStomtAPI::GetImageURL()
 {
-	return this->imageURL;
+	return this->ImageURL;
 }
 
 void UStomtAPI::SetStomtToSend(UStomt * stomt)
@@ -179,7 +204,7 @@ void UStomtAPI::SetStomtToSend(UStomt * stomt)
 
 UStomtRestRequest * UStomtAPI::GetRequest()
 {
-	return this->request;
+	return this->Request;
 }
 
 bool UStomtAPI::SaveAccesstoken(FString accesstoken)
@@ -203,7 +228,7 @@ bool UStomtAPI::SaveValueToStomtConf(FString FieldName, FString FieldValue)
 	
 	jsonObj->SetStringField(FieldName, FieldValue);
 
-	return this->WriteFile(jsonObj->EncodeJson(), configName, configFolder, true);
+	return this->WriteFile(jsonObj->EncodeJson(), ConfigName, ConfigFolder, true);
 }
 
 
@@ -217,11 +242,11 @@ FString UStomtAPI::ReadStomtConf(FString FieldName)
 {
 	FString result;
 
-	if (this->ReadFile(result, configName, configFolder))
+	if (this->ReadFile(result, ConfigName, ConfigFolder))
 	{
 		UStomtRestJsonObject* jsonObj = UStomtRestJsonObject::ConstructJsonObject(this);
 		jsonObj->DecodeJson(result);
-		this->accesstoken = jsonObj->GetField(FieldName)->AsString();
+		this->Accesstoken = jsonObj->GetField(FieldName)->AsString();
 	}
 
 	return result;
@@ -232,7 +257,7 @@ bool UStomtAPI::ReadFlag(FString FlagName)
 	FString result;
 	bool FlagState = false;
 
-	if (this->ReadFile(result, configName, configFolder))
+	if (this->ReadFile(result, ConfigName, ConfigFolder))
 	{
 		UStomtRestJsonObject* jsonObj = UStomtRestJsonObject::ConstructJsonObject(this);
 		jsonObj->DecodeJson(result);
@@ -247,7 +272,7 @@ UStomtRestJsonObject* UStomtAPI::ReadStomtConfAsJson()
 	FString result;
 	UStomtRestJsonObject* jsonObj = UStomtRestJsonObject::ConstructJsonObject(this);
 
-	if (this->ReadFile(result, configName, configFolder))
+	if (this->ReadFile(result, ConfigName, ConfigFolder))
 	{
 		jsonObj->DecodeJson(result);
 	}
@@ -257,12 +282,12 @@ UStomtRestJsonObject* UStomtAPI::ReadStomtConfAsJson()
 
 bool UStomtAPI::WriteStomtConfAsJson(UStomtRestJsonObject * StomtConf)
 {
-	return this->WriteFile(StomtConf->EncodeJson(), configName, configFolder, true);
+	return this->WriteFile(StomtConf->EncodeJson(), ConfigName, ConfigFolder, true);
 }
 
 void UStomtAPI::DeleteStomtConf()
 {
-	FString file = this->configFolder + this->configName;
+	FString file = this->ConfigFolder + this->ConfigName;
 	if (!FPlatformFileManager::Get().GetPlatformFile().DeleteFile(*file))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Could not delete stomt.conf.json: %s"), *file);
@@ -319,10 +344,10 @@ void UStomtAPI::SendLogFile(FString LogFileData, FString LogFileName)
 
 	FString logJson = FString(TEXT("{ \"files\": { \"stomt\": [ { \"data\":\"") + FBase64::Encode(LogFileData) + TEXT("\", \"filename\" : \"") + LogFileName + TEXT("\" } ] } }"));
 
-	this->request->UseStaticJsonString(true);
-	this->request->SetStaticJsonString(logJson);
+	this->Request->UseStaticJsonString(true);
+	this->Request->SetStaticJsonString(logJson);
 
-	this->request->ProcessURL(this->GetRestURL().Append(TEXT("/files")));
+	this->Request->ProcessURL(this->GetRestURL().Append(TEXT("/files")));
 
 	LogFileWasSend = true;
 }
@@ -331,9 +356,9 @@ void UStomtAPI::SendEMail(FString EMail)
 {
 	this->SetupNewPostRequest();
 
-	this->request->GetRequestObject()->SetStringField(TEXT("email"), EMail);
+	this->Request->GetRequestObject()->SetStringField(TEXT("email"), EMail);
 
-	this->request->ProcessURL(this->GetRestURL().Append(TEXT("/authentication/subscribe")));
+	this->Request->ProcessURL(this->GetRestURL().Append(TEXT("/authentication/subscribe")));
 
 	this->EMailFlagWasSend = true;
 }
@@ -347,10 +372,10 @@ void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
 		LoginRequestWasSend = false;
 
 		UStomtRestJsonObject* stomtconf = this->ReadStomtConfAsJson();
-		stomtconf->RemoveField(accesstoken);
+		stomtconf->RemoveField(Accesstoken);
 		WriteStomtConfAsJson(stomtconf);
 
-		this->accesstoken.Empty();
+		this->Accesstoken.Empty();
 	}
 
 
@@ -371,8 +396,8 @@ void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
 			{
 				if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("accesstoken")))
 				{
-					this->accesstoken = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetStringField(TEXT("accesstoken"));
-					this->SaveAccesstoken(this->accesstoken);
+					this->Accesstoken = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetStringField(TEXT("accesstoken"));
+					this->SaveAccesstoken(this->Accesstoken);
 					this->SaveFlag(TEXT("email"), true);
 					LoginRequestWasSend = false;
 				}
@@ -387,14 +412,14 @@ void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
 	if (LogFileWasSend)
 	{
 		// Request access token
-		if (this->accesstoken.IsEmpty())
+		if (this->Accesstoken.IsEmpty())
 		{
 			if (Request->GetResponseObject()->HasField(TEXT("meta")))
 			{
 				if (Request->GetResponseObject()->GetObjectField(TEXT("meta"))->HasField(TEXT("accesstoken")))
 				{
-					this->accesstoken = Request->GetResponseObject()->GetObjectField(TEXT("meta"))->GetStringField(TEXT("accesstoken"));
-					this->SaveAccesstoken(this->accesstoken);
+					this->Accesstoken = Request->GetResponseObject()->GetObjectField(TEXT("meta"))->GetStringField(TEXT("accesstoken"));
+					this->SaveAccesstoken(this->Accesstoken);
 				}
 			}
 		}
@@ -586,15 +611,15 @@ bool UStomtAPI::ReadFile(FString& Result, FString FileName, FString SaveDirector
 inline void UStomtAPI::SetupNewPostRequest()
 {
 	//Reset Request
-	this->request->ResetResponseData();
-	this->request->ResetRequestData();
+	this->Request->ResetResponseData();
+	this->Request->ResetRequestData();
 
-	this->request->SetVerb(ERequestVerb::POST);
-	this->request->SetHeader(TEXT("appid"), this->GetAppID());
+	this->Request->SetVerb(ERequestVerb::POST);
+	this->Request->SetHeader(TEXT("appid"), this->GetAppID());
 
-	if (!this->accesstoken.IsEmpty())
+	if (!this->Accesstoken.IsEmpty())
 	{
-		this->request->SetHeader(TEXT("accesstoken"), this->accesstoken);
+		this->Request->SetHeader(TEXT("accesstoken"), this->Accesstoken);
 	}
 }
 

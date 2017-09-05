@@ -191,7 +191,7 @@ void UStomtRestRequest::ProcessRequest(TSharedRef<IHttpRequest> HttpRequest)
 	// Bind event
 	HttpRequest->OnProcessRequestComplete().BindUObject(this, &UStomtRestRequest::OnProcessRequestComplete);
 
-	// Execute the request
+	// Execute the Request
 	HttpRequest->ProcessRequest();
 }
 
@@ -249,7 +249,7 @@ void UStomtRestRequest::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpR
 	TSharedRef<TJsonReader<TCHAR>> JsonReader = TJsonReaderFactory<TCHAR>::Create(ResponseContent);
 	FJsonSerializer::Deserialize(JsonReader, ResponseJsonObj->GetRootObject());
 
-	// Decide whether the request was successful
+	// Decide whether the Request was successful
 	bIsValidJsonResponse = bWasSuccessful && ResponseJsonObj->GetRootObject().IsValid();
 
 	// Log errors

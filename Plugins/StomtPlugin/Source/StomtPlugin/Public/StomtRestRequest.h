@@ -94,7 +94,7 @@ public:
 
 	static UStomtRestRequest* ConstructRequest();
 
-	/** Set verb to the request */
+	/** Set verb to the Request */
 	void SetVerb(ERequestVerb::Type Verb);
 
 	/** Sets header info */
@@ -111,7 +111,7 @@ public:
 	/** Reset all internal saved data */
 	void ResetData();
 
-	/** Reset saved request data */
+	/** Reset saved Request data */
 	void ResetRequestData();
 
 	/** Reset saved response data */
@@ -156,7 +156,7 @@ public:
 	/** Open URL with current setup */
 	virtual void ProcessURL(const FString& Url = TEXT("http://alyamkin.com"));
 
-	/** Apply current internal setup to request and process it */
+	/** Apply current internal setup to Request and process it */
 	void ProcessRequest(TSharedRef<IHttpRequest> HttpRequest);
 
 
@@ -168,11 +168,11 @@ private:
 	void OnProcessRequestComplete(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 
 public:
-	/** Event occured when the request has been completed */
+	/** Event occured when the Request has been completed */
 	UPROPERTY(BlueprintAssignable, Category = "Stomt|Event")
 	FOnRequestComplete OnRequestComplete;
 
-	/** Event occured when the request wasn't successfull */
+	/** Event occured when the Request wasn't successfull */
 	UPROPERTY(BlueprintAssignable, Category = "Stomt|Event")
 	FOnRequestFail OnRequestFail;
 	
@@ -199,7 +199,7 @@ protected:
 	/** Wether to use a static json string instead of JsonObjects */
 	bool useStaticJsonString;
 
-	/** Wether to use a log output for the request */
+	/** Wether to use a log output for the Request */
 	bool RequestLogging;
 
 	/** Static json string that will be used instead of json objects */
@@ -208,7 +208,7 @@ protected:
 	/** Latent action helper */
 	FVaRestLatentAction <UStomtRestJsonObject*> *ContinueAction;
 
-	/** Internal request data stored as JSON */
+	/** Internal Request data stored as JSON */
 	UPROPERTY()
 	UStomtRestJsonObject* RequestJsonObj;
 
@@ -216,13 +216,13 @@ protected:
 	UPROPERTY()
 	UStomtRestJsonObject* ResponseJsonObj;
 
-	/** Verb for making request (GET,POST,etc) */
+	/** Verb for making Request (GET,POST,etc) */
 	ERequestVerb::Type RequestVerb;
 
-	/** Mapping of header section to values. Used to generate final header string for request */
+	/** Mapping of header section to values. Used to generate final header string for Request */
 	TMap<FString, FString> RequestHeaders;
 
-	/** Cached key/value header pairs. Parsed once request completes */
+	/** Cached key/value header pairs. Parsed once Request completes */
 	TMap<FString, FString> ResponseHeaders;
 
 	/** Http Response code */
