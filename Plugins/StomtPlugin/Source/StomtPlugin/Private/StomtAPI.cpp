@@ -46,13 +46,14 @@ UStomtAPI::~UStomtAPI()
 
 void UStomtAPI::SendStomt(UStomt* stomt)
 {
-	this->SetupAndResetRequest();
+	UStomtRestRequest* request = this->SetupNewPostRequest();
+	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnSendStomtRequestResponse);
 
 	// Fields
-	this->Request->GetRequestObject()->SetField(TEXT("target_id"),	UStomtJsonValue::ConstructJsonValueString(	this, stomt->GetTargetID()	));
-	this->Request->GetRequestObject()->SetField(TEXT("positive"),	UStomtJsonValue::ConstructJsonValueBool(	this, stomt->GetPositive()	));
-	this->Request->GetRequestObject()->SetField(TEXT("text"),		UStomtJsonValue::ConstructJsonValueString(	this, stomt->GetText()		));
-	this->Request->GetRequestObject()->SetField(TEXT("anonym"),		UStomtJsonValue::ConstructJsonValueBool(	this, stomt->GetAnonym()	));
+	request->GetRequestObject()->SetField(TEXT("target_id"),	UStomtJsonValue::ConstructJsonValueString(	this, stomt->GetTargetID()	));
+	request->GetRequestObject()->SetField(TEXT("positive"),	UStomtJsonValue::ConstructJsonValueBool(	this, stomt->GetPositive()	));
+	request->GetRequestObject()->SetField(TEXT("text"),		UStomtJsonValue::ConstructJsonValueString(	this, stomt->GetText()		));
+	request->GetRequestObject()->SetField(TEXT("anonym"),		UStomtJsonValue::ConstructJsonValueBool(	this, stomt->GetAnonym()	));
 	
 	//Labels
 	UStomtRestJsonObject* jObjExtraData = UStomtRestJsonObject::ConstructJsonObject(this);
@@ -64,7 +65,7 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 	}
 
 	jObjExtraData->SetArrayField(TEXT("labels"), labels);
-	this->Request->GetRequestObject()->SetObjectField(TEXT("extradata"), jObjExtraData);
+	request->GetRequestObject()->SetObjectField(TEXT("extradata"), jObjExtraData);
 
 	// Error Logs
 	if (!this->errorLog_file_uid.IsEmpty())
@@ -74,10 +75,15 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 		jObjFileContext->SetField(TEXT("file_uid"), UStomtJsonValue::ConstructJsonValueString(this, this->errorLog_file_uid));
 
 		jObjFile->SetObjectField(TEXT("stomt"), jObjFileContext);
-		this->Request->GetRequestObject()->SetObjectField(TEXT("files"), jObjFile);
+		request->GetRequestObject()->SetObjectField(TEXT("files"), jObjFile);
 	}
 	
-	this->Request->ProcessURL( this->GetRestURL().Append(TEXT("/stomts")) );
+	request->ProcessURL( this->GetRestURL().Append(TEXT("/stomts")) );
+}
+
+void UStomtAPI::OnSendStomtRequestResponse(UStomtRestRequest * Request)
+{
+	// DoTo react to this
 }
 
 UStomtRestRequest* UStomtAPI::SendLoginRequest(FString UserName, FString Password)

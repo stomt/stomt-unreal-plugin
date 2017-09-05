@@ -34,6 +34,9 @@ public:
 	*/
 	void SendStomt(UStomt* stomt);
 
+	UFUNCTION()
+	void OnSendStomtRequestResponse(UStomtRestRequest * Request);
+
 
 	UStomtRestRequest* SendLoginRequest(FString UserName, FString Password);
 
