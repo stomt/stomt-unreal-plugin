@@ -106,6 +106,9 @@ public:
 	*/
 	UStomtRestRequest* GetRequest();
 
+	//////////////////////////////////////////////////////////////////////////
+	// Stomt Config
+
 	/** 
 	* Saves the access token in /stomt/stomt.conf.json
 	*/
@@ -152,6 +155,9 @@ bool WriteStomtConfAsJson(UStomtRestJsonObject* StomtConf);
 	* @param LogFileName - Log File Name.
 	*/
 	FString ReadLogFile(FString LogFileName);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Network
 
 	/**
 	* Sends the LogFileData to stomt.com server.

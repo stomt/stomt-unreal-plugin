@@ -20,9 +20,195 @@ UStomtConfig* UStomtConfig::ConstructStomtConfig()
 
 UStomtConfig::UStomtConfig()
 {
-
+	this->ConfigFolder = FPaths::EngineUserDir() + FString(TEXT("Saved/Config/stomt/"));
+	//UE_LOG(LogTemp, Warning, TEXT("configfolder: %s"), *this->ConfigFolder);
+	this->ConfigName = FString(TEXT("stomt.conf.json"));
+	this->Accesstoken = FString(TEXT(""));
 }
 
 UStomtConfig::~UStomtConfig()
 {
+}
+
+
+bool UStomtConfig::SaveAccesstoken(FString accesstoken)
+{
+	return SaveValueToStomtConf(TEXT("accesstoken"), accesstoken);
+}
+
+bool UStomtConfig::SaveValueToStomtConf(FString FieldName, FString FieldValue)
+{
+	UStomtRestJsonObject* jsonObj = ReadStomtConfAsJson();
+
+	if (jsonObj->HasField(FieldName))
+	{
+		if (jsonObj->GetStringField(FieldName).Equals(FieldValue))
+		{
+			return false;
+		}
+
+		jsonObj->RemoveField(FieldName);
+	}
+
+	jsonObj->SetStringField(FieldName, FieldValue);
+
+	return this->WriteFile(jsonObj->EncodeJson(), ConfigName, ConfigFolder, true);
+}
+
+
+
+bool UStomtConfig::SaveFlag(FString FlagName, bool FlagState)
+{
+	return SaveValueToStomtConf(FlagName, FlagState ? TEXT("true") : TEXT("false"));
+}
+
+FString UStomtConfig::ReadStomtConf(FString FieldName)
+{
+	FString result;
+
+	if (this->ReadFile(result, ConfigName, ConfigFolder))
+	{
+		UStomtRestJsonObject* jsonObj = UStomtRestJsonObject::ConstructJsonObject(this);
+		jsonObj->DecodeJson(result);
+		this->Accesstoken = jsonObj->GetField(FieldName)->AsString();
+	}
+
+	return result;
+}
+
+bool UStomtConfig::ReadFlag(FString FlagName)
+{
+	FString result;
+	bool FlagState = false;
+
+	if (this->ReadFile(result, ConfigName, ConfigFolder))
+	{
+		UStomtRestJsonObject* jsonObj = UStomtRestJsonObject::ConstructJsonObject(this);
+		jsonObj->DecodeJson(result);
+		FlagState = jsonObj->GetField(FlagName)->AsBool();
+	}
+
+	return FlagState;
+}
+
+UStomtRestJsonObject* UStomtConfig::ReadStomtConfAsJson()
+{
+	FString result;
+	UStomtRestJsonObject* jsonObj = UStomtRestJsonObject::ConstructJsonObject(this);
+
+	if (this->ReadFile(result, ConfigName, ConfigFolder))
+	{
+		jsonObj->DecodeJson(result);
+	}
+
+	return jsonObj;
+}
+
+bool UStomtConfig::WriteStomtConfAsJson(UStomtRestJsonObject * StomtConf)
+{
+	return this->WriteFile(StomtConf->EncodeJson(), ConfigName, ConfigFolder, true);
+}
+
+void UStomtConfig::DeleteStomtConf()
+{
+	FString file = this->ConfigFolder + this->ConfigName;
+	if (!FPlatformFileManager::Get().GetPlatformFile().DeleteFile(*file))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Could not delete stomt.conf.json: %s"), *file);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Deleted stomt.conf.json because of wrong access token Path: %s"), *file);
+	}
+}
+
+
+FString UStomtConfig::ReadLogFile(FString LogFileName)
+{
+	FString errorLog;
+
+	FString LogFilePath = FPaths::GameLogDir() + LogFileName;
+	FString LogFileCopyPath = FPaths::GameLogDir() + LogFileName + TEXT("Copy.log");
+	FString LogFileCopyName = LogFileName + TEXT("Copy.log");
+
+	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
+	PlatformFile.BypassSecurity(true);
+
+	// Copy LogFileData
+	if (!PlatformFile.CopyFile(*LogFileCopyPath, *LogFilePath, EPlatformFileRead::AllowWrite, EPlatformFileWrite::AllowRead))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("LogFile Copy did not work FromFile: %s | ToFile %s"), *LogFilePath, *LogFileCopyPath);
+	}
+
+	// Read LogFileCopy from Disk
+	if (!this->ReadFile(errorLog, LogFileCopyName, FPaths::GameLogDir()))
+	{
+		if (FPaths::FileExists(FPaths::GameLogDir() + LogFileCopyName))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Could not read LogFile %s, but it exists"), *LogFileCopyName);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Could not read LogFile %s, because it does not exist"), *LogFileCopyName);
+		}
+	}
+
+	// Delete LogFileCopy
+	if (!PlatformFile.DeleteFile(*LogFileCopyPath))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Could not delete LogFileCopy %s"), *LogFileCopyPath);
+	}
+
+	return errorLog;
+}
+
+
+
+bool UStomtConfig::WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting)
+{
+	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
+
+	// CreateDirectoryTree returns true if the destination
+	// directory existed prior to call or has been created
+	// during the call.
+	if (PlatformFile.CreateDirectoryTree(*SaveDirectory))
+	{
+		// Get absolute file path
+		FString AbsoluteFilePath = SaveDirectory + "/" + FileName;
+
+		// Allow overwriting or file doesn't already exist
+		if (AllowOverwriting || !FPaths::FileExists(*AbsoluteFilePath))
+		{
+			//Use " FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), EFileWrite::FILEWRITE_Append);" for append
+			return FFileHelper::SaveStringToFile(TextToSave, *AbsoluteFilePath);
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool UStomtConfig::ReadFile(FString& Result, FString FileName, FString SaveDirectory)
+{
+
+	FString path = SaveDirectory + FileName;
+
+	/*
+	if (SaveDirectory.GetCharArray()[SaveDirectory.Len() - 2] == '/')
+	{
+	UE_LOG(LogTemp, Warning, TEXT(" / am enden: %s "), *path);
+	}*/
+
+	if (!FPaths::FileExists(path))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("File with this path does not exist: %s "), *path);
+	}
+
+	return FFileHelper::LoadFileToString(Result, *path);
+
 }
