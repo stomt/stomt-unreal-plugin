@@ -39,6 +39,15 @@ If you want to test the integration please feel free to do what you want on [tes
 * Just go through the installation steps again on [test.stomt.com](https://test.stomt.com/)
 * Enter "https://test.rest.stomt.com" as Rest Server URL in the widget.
 
+## Events
+
+The STOMT Widget supports a variety of callback events.
+
+This shows how you can access them:
+
+<img alt="Events" src="http://schukies.io/images/stomt/example.PNG" />
+
+
 ## Common Issues
 
 * none
