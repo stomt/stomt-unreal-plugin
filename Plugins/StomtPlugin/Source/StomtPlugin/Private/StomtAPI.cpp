@@ -374,16 +374,53 @@ FString UStomtAPI::ReadLogFile(FString LogFileName)
 
 void UStomtAPI::SendLogFile(FString LogFileData, FString LogFileName)
 {
-	this->SetupAndResetRequest();
+	UStomtRestRequest* request = this->SetupNewPostRequest();
+	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnSendLogFileResponse);
 
 	FString logJson = FString(TEXT("{ \"files\": { \"stomt\": [ { \"data\":\"") + FBase64::Encode(LogFileData) + TEXT("\", \"filename\" : \"") + LogFileName + TEXT("\" } ] } }"));
 
-	this->Request->UseStaticJsonString(true);
-	this->Request->SetStaticJsonString(logJson);
+	request->UseStaticJsonString(true);
+	request->SetStaticJsonString(logJson);
 
-	this->Request->ProcessURL(this->GetRestURL().Append(TEXT("/files")));
+	request->ProcessURL(this->GetRestURL().Append(TEXT("/files")));
 
 	LogFileWasSend = true;
+}
+
+void UStomtAPI::OnSendLogFileResponse(UStomtRestRequest * Request)
+{
+	// Request access token
+	if (this->Accesstoken.IsEmpty())
+	{
+		if (Request->GetResponseObject()->HasField(TEXT("meta")))
+		{
+			if (Request->GetResponseObject()->GetObjectField(TEXT("meta"))->HasField(TEXT("accesstoken")))
+			{
+				this->Accesstoken = Request->GetResponseObject()->GetObjectField(TEXT("meta"))->GetStringField(TEXT("accesstoken"));
+				this->SaveAccesstoken(this->Accesstoken);
+			}
+		}
+	}
+
+	// Get File uid of the error log and send stomt
+	if (Request->GetResponseObject()->HasField(TEXT("data")))
+	{
+		if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("files")))
+		{
+			this->errorLog_file_uid = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetObjectField(TEXT("files"))->GetObjectField(TEXT("stomt"))->GetStringField("file_uid");
+			this->LogFileWasSend = false;
+			this->SendStomt(StomtToSend);
+		}
+	}
+
+	if (Request->GetResponseCode() == 403 || Request->GetResponseCode() == 419 || Request->GetResponseCode() == 413)
+	{
+		if (StomtToSend != NULL)
+		{
+			this->SendStomt(StomtToSend);
+			LogFileWasSend = false;
+		}
+	}
 }
 
 void UStomtAPI::SendEMail(FString EMail)
@@ -423,7 +460,7 @@ void UStomtAPI::OnSendEMailResponse(UStomtRestRequest * Request)
 
 void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
 {
-
+	UE_LOG(LogTemp, Warning, TEXT("Should not be called!"));
 	// Wrong access token
 	if (Request->GetResponseCode() == 403 || Request->GetResponseCode() == 419)
 	{

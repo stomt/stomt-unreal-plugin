@@ -158,6 +158,9 @@ bool WriteStomtConfAsJson(UStomtRestJsonObject* StomtConf);
 	*/
 	void SendLogFile(FString LogFileData, FString LogFileName);
 
+	UFUNCTION()
+	void OnSendLogFileResponse(UStomtRestRequest * Request);
+
 	void SendEMail(FString EMail);
 
 	UFUNCTION()
