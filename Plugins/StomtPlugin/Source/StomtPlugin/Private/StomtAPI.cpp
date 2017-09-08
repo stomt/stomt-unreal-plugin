@@ -38,6 +38,8 @@ UStomtAPI::UStomtAPI()
 
 	LogFileWasSend = false;
 	EMailFlagWasSend = false;
+
+	this->Config = UStomtConfig::ConstructStomtConfig();
 }
 
 UStomtAPI::~UStomtAPI()
@@ -119,9 +121,10 @@ void UStomtAPI::OnLoginRequestResponse(UStomtRestRequest * Request)
 		{
 			if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("accesstoken")))
 			{
-				this->Accesstoken = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetStringField(TEXT("accesstoken"));
-				this->SaveAccesstoken(this->Accesstoken);
-				this->SaveFlag(TEXT("email"), true);
+				FString Accesstoken = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetStringField(TEXT("accesstoken"));
+				this->Config->SetAccessToken(Accesstoken);
+				this->Config->SetSubscribed(true);
+				this->Config->SetLoggedIn(true);
 			}
 			else
 			{
@@ -390,14 +393,14 @@ void UStomtAPI::SendLogFile(FString LogFileData, FString LogFileName)
 void UStomtAPI::OnSendLogFileResponse(UStomtRestRequest * Request)
 {
 	// Request access token
-	if (this->Accesstoken.IsEmpty())
+	if (this->Config->GetAccessToken().IsEmpty())
 	{
 		if (Request->GetResponseObject()->HasField(TEXT("meta")))
 		{
 			if (Request->GetResponseObject()->GetObjectField(TEXT("meta"))->HasField(TEXT("accesstoken")))
 			{
-				this->Accesstoken = Request->GetResponseObject()->GetObjectField(TEXT("meta"))->GetStringField(TEXT("accesstoken"));
-				this->SaveAccesstoken(this->Accesstoken);
+				FString Accesstoken = Request->GetResponseObject()->GetObjectField(TEXT("meta"))->GetStringField(TEXT("accesstoken"));
+				this->Config->SetAccessToken(Accesstoken);
 			}
 		}
 	}
@@ -442,17 +445,17 @@ void UStomtAPI::OnSendEMailResponse(UStomtRestRequest * Request)
 		{
 			if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("success")))
 			{
-				this->SaveFlag(TEXT("email"), true);
+				this->Config->SetSubscribed(true);
 			}
 			else
 			{
-				this->SaveFlag(TEXT("email"), false);
+				this->Config->SetSubscribed(false);
 			}
 		}
 	}
 	else
 	{
-		this->SaveFlag(TEXT("email"), true);
+		this->Config->SetSubscribed(true);
 	}
 }
 
@@ -708,9 +711,9 @@ inline void UStomtAPI::SetupAndResetRequest()
 	this->Request->SetVerb(ERequestVerb::POST);
 	this->Request->SetHeader(TEXT("appid"), this->GetAppID());
 
-	if (!this->Accesstoken.IsEmpty())
+	if (!this->Config->GetAccessToken().IsEmpty())
 	{
-		this->Request->SetHeader(TEXT("accesstoken"), this->Accesstoken);
+		this->Request->SetHeader(TEXT("accesstoken"), this->Config->GetAccessToken());
 	}
 }
 
@@ -721,9 +724,9 @@ UStomtRestRequest* UStomtAPI::SetupNewPostRequest()
 	request->SetVerb(ERequestVerb::POST);
 	request->SetHeader(TEXT("appid"), this->GetAppID());
 
-	if (!this->Accesstoken.IsEmpty())
+	if (!this->Config->GetAccessToken().IsEmpty())
 	{
-		request->SetHeader(TEXT("accesstoken"), this->Accesstoken);
+		request->SetHeader(TEXT("accesstoken"), this->Config->GetAccessToken());
 	}
 
 	return request;

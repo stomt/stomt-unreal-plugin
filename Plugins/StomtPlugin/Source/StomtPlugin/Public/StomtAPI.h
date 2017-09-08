@@ -1,10 +1,11 @@
-// Copyright 2016 Daniel Schukies. All Rights Reserved.
+// Copyright 2017 Daniel Schukies. All Rights Reserved.
 
 
 #pragma once
 #include "StomtPluginPrivatePCH.h"
 #include "StomtRestRequest.h"
 #include "Stomt.h"
+#include "StomtConfig.h"
 #include "Runtime/Engine/Classes/Engine/TextureRenderTarget2D.h"
 #include "StomtAPI.generated.h"
 
@@ -142,7 +143,7 @@ public:
 	/**
 	* Loads the access token from disk.
 	*/
-bool WriteStomtConfAsJson(UStomtRestJsonObject* StomtConf);
+	bool WriteStomtConfAsJson(UStomtRestJsonObject* StomtConf);
 
 
 	/**
@@ -203,6 +204,10 @@ public:
 
 	//////////////////////////////////////////////////////////////////////////
 	// Data
+public:
+
+	UPROPERTY()
+	UStomtConfig*		Config;
 
 private:
 	bool WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting);
@@ -213,6 +218,8 @@ private:
 
 	UPROPERTY()
 	UStomtRestRequest*	Request;
+
+
 	FString				Accesstoken;
 	FString				ConfigFolder;
 	FString				ConfigName;

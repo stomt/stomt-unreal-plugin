@@ -12,7 +12,7 @@
 UStomtConfig* UStomtConfig::ConstructStomtConfig()
 {
 	UStomtConfig* config = NewObject<UStomtConfig>();
-
+	config->Load();
 
 	return config;
 }
@@ -32,6 +32,7 @@ UStomtConfig::UStomtConfig()
 
 UStomtConfig::~UStomtConfig()
 {
+
 }
 
 void UStomtConfig::Load()
@@ -60,7 +61,6 @@ void UStomtConfig::Load()
 	{
 		this->LoggedIn = false;
 	}
-
 }
 
 void UStomtConfig::Delete()
@@ -88,18 +88,14 @@ void UStomtConfig::SetAccessToken(FString AccessToken)
 }
 
 bool UStomtConfig::GetSubscribed()
-{
-	if (this->Subscribed == NULL)
-	{
-		this->ReadFlag(this->SubscribedFieldName);
-	}
-	
+{	
 	return this->Subscribed;
 }
 
 void UStomtConfig::SetSubscribed(bool Subscribed)
 {
 	if (this->Subscribed == Subscribed) return;
+	
 
 	this->Subscribed = Subscribed;
 
@@ -285,7 +281,6 @@ bool UStomtConfig::WriteFile(FString TextToSave, FString FileName, FString SaveD
 
 bool UStomtConfig::ReadFile(FString& Result, FString FileName, FString SaveDirectory)
 {
-
 	FString path = SaveDirectory + FileName;
 
 	/*
@@ -300,5 +295,4 @@ bool UStomtConfig::ReadFile(FString& Result, FString FileName, FString SaveDirec
 	}
 
 	return FFileHelper::LoadFileToString(Result, *path);
-
 }

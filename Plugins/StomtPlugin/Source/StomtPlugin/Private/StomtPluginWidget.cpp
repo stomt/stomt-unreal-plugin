@@ -37,7 +37,8 @@ void UStomtPluginWidget::OnConstruction(FString TargetID, FString RestURL, FStri
 	this->api->GetRequest()->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnLoginRequestResponse);
 
 	//Lookup EMail
-	this->IsEMailAlreadyKnown = this->api->ReadFlag(TEXT("email"));
+	this->IsEMailAlreadyKnown = this->api->Config->GetSubscribed();
+	this->IsUserLoggedIn = this->api->Config->GetLoggedIn();
 }
 
 void UStomtPluginWidget::OnMessageChanged(FString text)
@@ -72,7 +73,7 @@ void UStomtPluginWidget::OnSubmit()
 		this->api->SendLogFile(this->api->ReadLogFile(LogFileName), LogFileName);
 
 		// Check EMail
-		this->IsEMailAlreadyKnown = this->api->ReadFlag(TEXT("email"));
+		this->IsEMailAlreadyKnown = this->api->Config->GetSubscribed();
 
 		//UE_LOG(LogTemp, Warning, TEXT("email: %s"), this->IsEMailAlreadyKnown ? TEXT("true") : TEXT("false"));
 	}
@@ -121,8 +122,7 @@ void UStomtPluginWidget::OnLoginRequestResponse(UStomtRestRequest * LoginRequest
 {
 
 	this->LoginErrorCode = LoginRequest->GetResponseCode();
-
-
+	this->IsUserLoggedIn = this->api->Config->GetLoggedIn();
 	this->api->OnLoginRequestComplete.Broadcast(LoginRequest);
 }
 
