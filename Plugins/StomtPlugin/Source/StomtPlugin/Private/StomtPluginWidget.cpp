@@ -119,10 +119,11 @@ void UStomtPluginWidget::OnSubmitEMail()
 
 void UStomtPluginWidget::OnLoginRequestResponse(UStomtRestRequest * LoginRequest)
 {
-	if (Request->GetResponseCode() == 403 || Request->GetResponseCode() == 404)
-	{
-		this->LoginErrorCode = LoginRequest->GetResponseCode();
-	}
+
+	this->LoginErrorCode = LoginRequest->GetResponseCode();
+
+
+	this->api->OnLoginRequestComplete.Broadcast(LoginRequest);
 }
 
 void UStomtPluginWidget::OnTargetResponse(UStomtRestRequest * TargetRequest)
