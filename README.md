@@ -14,6 +14,10 @@ STOMT allows you to collect simple and constructive feedback in-game and [also f
 * Append error-logs
 * Label the feedback automatically (e.g. with the game version number)
 * All feedback is collected at your STOMT profile ([Example](https://www.stomt.com/empires-of-the-undergrowth)) where you can manage and react to the feedback
+* Login with a STOMT account or anonymously
+* Leave EMail after writing a stomt.
+* Persistent Login across all unreal games.
+
 
 ## Some Use-Cases // What will the result look like? // Example Games that use our widget
 
@@ -31,13 +35,14 @@ If you use an older unreal engine version please check out the UE/<version> bran
 3. Go to [Settings > My Apps](https://www.stomt.com/dev/my-apps) and create an application.
 4. Clone Or Download Zip and extract this repository to a folder.
 5. Copy the Plugins folder from the repository into your project directory. 
-6. Add the StomtPlugin to your projects PublicDependencyModuleNames in the projects build.cs (/Source/<ProjectName>/<ProjectName>.Build.cs) if you have c++ code included.
+6. Add the StomtPlugin to your projects PublicDependencyModuleNames in the projects build.cs ```/Source/ProjectName/ProjectName.Build.cs``` if you have c++ code included.
 7. IF you do not have c++ code, use the Add New button in the editor and add a blank c++ class to your project.
-8. Copy the <ProjectName>/Content/Stomt folder into your content folder.
+8. Copy the ```ProjectName/Content/Stomt``` folder into your content folder.
 9. Place the StomtActor in your scene and press play. (Press 'E' to toggle the widget on/off)
 10. Enter the AppId you obtained in the second step and your target username into the ```StomtWidgetBP``` Blueprint.
 
 You can enter the configuration directly into the blueprint or access the variables.
+
 <img alt="STOMT Plugin configuraton" src="http://schukies.io/images/stomt/enter-config.PNG" />
 
 ## Use our Sandbox!
@@ -51,6 +56,7 @@ If you want to test the integration please feel free to do what you want on [tes
 The STOMT Widget supports a variety of callback events.
 
 This shows how you can access them:
+
 <img alt="Events" src="http://schukies.io/images/stomt/example.PNG" />
 
 
