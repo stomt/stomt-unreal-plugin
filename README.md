@@ -15,8 +15,8 @@ STOMT allows you to collect simple and constructive feedback in-game and [also f
 * Label the feedback automatically (e.g. with the game version number)
 * All feedback is collected at your STOMT profile ([Example](https://www.stomt.com/empires-of-the-undergrowth)) where you can manage and react to the feedback
 * Login with a STOMT account or anonymously
-* Leave EMail after writing a stomt.
-* Persistent Login across all unreal games.
+* Leave EMail after writing a stomt
+* Persistent Login across all unreal games
 
 
 ## Some Use-Cases // What will the result look like? // Example Games that use our widget
@@ -64,7 +64,7 @@ This shows how you can access them:
 
 * none
 
-Don't hesitate to [contact] (https://www.stomt.com/stomt-unreal-engine-plugin) us if you have any problems or need help.
+Don't hesitate to [contact](https://www.stomt.com/stomt-unreal-engine-plugin) us if you have any problems or need help.
 
 ## Contribution
 
