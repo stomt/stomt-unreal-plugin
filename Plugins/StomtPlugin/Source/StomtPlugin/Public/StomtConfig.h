@@ -6,6 +6,8 @@
 #include "StomtRestRequest.h"
 #include "StomtConfig.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnConfigUpdated, class UStomtConfig*, Config);
+
 
 /**
  * 
@@ -21,6 +23,26 @@ public:
 	UStomtConfig();
 
 	~UStomtConfig();
+	//////////////////////////////////////////////////////////////////////////
+	// Public
+
+	void Load();
+	void Delete();
+
+	FString GetAccessToken();
+	void	SetAccessToken(FString AccessToken);
+
+	bool	GetSubscribed();
+	void	SetSubscribed(bool Subscribed);
+
+	bool	GetLoggedIn();
+	void	SetLoggedIn(bool LoggedIn);
+
+
+	FOnConfigUpdated OnConfigUpdated;
+
+
+
 
 
 	//////////////////////////////////////////////////////////////////////////
@@ -86,7 +108,8 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// Data
 
-
+	bool				Subscribed;
+	bool				LoggedIn;
 	FString				Accesstoken;
 	FString				ConfigFolder;
 	FString				ConfigName;

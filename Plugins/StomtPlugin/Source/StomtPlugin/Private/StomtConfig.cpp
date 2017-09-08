@@ -30,6 +30,41 @@ UStomtConfig::~UStomtConfig()
 {
 }
 
+void UStomtConfig::Load()
+{
+}
+
+void UStomtConfig::Delete()
+{
+}
+
+FString UStomtConfig::GetAccessToken()
+{
+	return FString();
+}
+
+void UStomtConfig::SetAccessToken(FString AccessToken)
+{
+}
+
+bool UStomtConfig::GetSubscribed()
+{
+	return false;
+}
+
+void UStomtConfig::SetSubscribed(bool Subscribed)
+{
+}
+
+bool UStomtConfig::GetLoggedIn()
+{
+	return false;
+}
+
+void UStomtConfig::SetLoggedIn(bool LoggedIn)
+{
+}
+
 
 bool UStomtConfig::SaveAccesstoken(FString accesstoken)
 {
