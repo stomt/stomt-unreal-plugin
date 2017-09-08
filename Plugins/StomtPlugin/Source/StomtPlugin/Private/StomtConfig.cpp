@@ -22,8 +22,12 @@ UStomtConfig::UStomtConfig()
 {
 	this->ConfigFolder = FPaths::EngineUserDir() + FString(TEXT("Saved/Config/stomt/"));
 	//UE_LOG(LogTemp, Warning, TEXT("configfolder: %s"), *this->ConfigFolder);
+
 	this->ConfigName = FString(TEXT("stomt.conf.json"));
 	this->Accesstoken = FString(TEXT(""));
+	this->LoggedInFieldName = FString(TEXT("loggedin"));
+	this->SubscribedFieldName = FString(TEXT("email"));
+	this->AccessTokenFieldName = FString(TEXT("accesstoken"));
 }
 
 UStomtConfig::~UStomtConfig()
@@ -32,37 +36,88 @@ UStomtConfig::~UStomtConfig()
 
 void UStomtConfig::Load()
 {
+	UStomtRestJsonObject* configJsonObj = ReadStomtConfAsJson();
+
+	if (configJsonObj->HasField(this->SubscribedFieldName))
+	{
+		this->Accesstoken = configJsonObj->GetStringField(this->AccessTokenFieldName);
+	}
+
+	if (configJsonObj->HasField(this->SubscribedFieldName))
+	{
+		this->Subscribed = configJsonObj->GetBoolField(this->SubscribedFieldName);
+	}
+	else
+	{
+		this->Subscribed = false;
+	}
+
+	if (configJsonObj->HasField(this->LoggedInFieldName))
+	{
+		this->LoggedIn = configJsonObj->GetBoolField(this->LoggedInFieldName);
+	}
+	else
+	{
+		this->LoggedIn = false;
+	}
+
 }
 
 void UStomtConfig::Delete()
 {
+	this->DeleteStomtConf();
 }
 
 FString UStomtConfig::GetAccessToken()
 {
-	return FString();
+	if (this->Accesstoken.IsEmpty())
+	{
+		this->Accesstoken = ReadStomtConf(this->AccessTokenFieldName);
+	}
+
+	return this->Accesstoken;
 }
 
 void UStomtConfig::SetAccessToken(FString AccessToken)
 {
+	if (this->Accesstoken.Equals(AccessToken)) return;
+
+	this->Accesstoken = AccessToken;
+
+	this->SaveAccesstoken(this->Accesstoken);
 }
 
 bool UStomtConfig::GetSubscribed()
 {
-	return false;
+	if (this->Subscribed == NULL)
+	{
+		this->ReadFlag(this->SubscribedFieldName);
+	}
+	
+	return this->Subscribed;
 }
 
 void UStomtConfig::SetSubscribed(bool Subscribed)
 {
+	if (this->Subscribed == Subscribed) return;
+
+	this->Subscribed = Subscribed;
+
+	this->SaveFlag(this->SubscribedFieldName, this->Subscribed);
 }
 
 bool UStomtConfig::GetLoggedIn()
 {
-	return false;
+	return this->LoggedIn;
 }
 
 void UStomtConfig::SetLoggedIn(bool LoggedIn)
 {
+	if (this->LoggedIn == LoggedIn) return;
+
+	this->LoggedIn = LoggedIn;
+
+	this->SaveFlag(this->LoggedInFieldName, this->LoggedIn);
 }
 
 

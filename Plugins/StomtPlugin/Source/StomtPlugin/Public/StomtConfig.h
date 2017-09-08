@@ -26,7 +26,14 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	// Public
 
+	/**
+	*	checks if a config file exists, creates one or reads it
+	**/
 	void Load();
+
+	/**
+	*	deletes to current config file
+	**/
 	void Delete();
 
 	FString GetAccessToken();
@@ -110,6 +117,11 @@ private:
 
 	bool				Subscribed;
 	bool				LoggedIn;
+
+	FString				SubscribedFieldName;
+	FString				LoggedInFieldName;
+	FString				AccessTokenFieldName;
+
 	FString				Accesstoken;
 	FString				ConfigFolder;
 	FString				ConfigName;
