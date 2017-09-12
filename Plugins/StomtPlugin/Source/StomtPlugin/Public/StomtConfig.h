@@ -49,12 +49,10 @@ public:
 	FOnConfigUpdated OnConfigUpdated;
 
 
-
-
-
 	//////////////////////////////////////////////////////////////////////////
 	// Read Config
 
+private:
 
 	/**
 	* Loads the access token from disk.
@@ -72,10 +70,10 @@ public:
 	UStomtRestJsonObject* ReadStomtConfAsJson();
 
 
-
 	//////////////////////////////////////////////////////////////////////////
 	// Write Config
 
+private:
 
 	/**
 	* Saves the access token in /stomt/stomt.conf.json
@@ -109,6 +107,7 @@ public:
 	FString ReadLogFile(FString LogFileName);
 
 private:
+
 	bool WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting);
 	bool ReadFile(FString& Result, FString FileName, FString SaveDirectory);
 
