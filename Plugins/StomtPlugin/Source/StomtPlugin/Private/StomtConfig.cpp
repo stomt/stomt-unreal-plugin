@@ -128,7 +128,7 @@ void UStomtConfig::SetLoggedIn(bool LoggedIn)
 
 bool UStomtConfig::SaveAccesstoken(FString accesstoken)
 {
-	return SaveValueToStomtConf(TEXT("accesstoken"), accesstoken);
+	return SaveValueToStomtConf(this->AccessTokenFieldName, accesstoken);
 }
 
 bool UStomtConfig::SaveValueToStomtConf(FString FieldName, FString FieldValue)
