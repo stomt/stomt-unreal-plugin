@@ -28,7 +28,7 @@ STOMT allows you to collect simple and constructive feedback in-game and [also f
 
 This repository contains a complete Unreal-Project with the stomt plugin already integrated.
 You can integrate it into your game by following the steps below.
-If you use an older unreal engine version please check out the UE/[version] branch.
+If you use an older unreal engine version please check out the `UE/[version]` branch.
 
 1. Register on [www.stomt.com](https://www.stomt.com/) 
 2. [Create a target page on STOMT](https://www.stomt.com/createTarget).
@@ -37,6 +37,9 @@ If you use an older unreal engine version please check out the UE/[version] bran
 5. Copy the Plugins folder from the repository into your project directory. 
 7. IF you do not have c++ code, use the Add New button in the editor and add a blank c++ class to your project.
 6. Add the StomtPlugin to your projects PublicDependencyModuleNames in the projects build.cs ```/Source/ProjectName/ProjectName.Build.cs``` if you have c++ code included.
+``` c++
+PublicDependencyModuleNames.AddRange(new string[] { "StomtPlugin" }); //Add "StomtPlugin" String
+```
 8. Copy the repository```/Content/Stomt``` folder into your content folder.
 9. Place the StomtActor in your scene and press play. (Press 'E' to toggle the widget on/off)
 10. Enter the AppId you obtained in the second step and your target username into the ```StomtWidgetBP``` Blueprint.
