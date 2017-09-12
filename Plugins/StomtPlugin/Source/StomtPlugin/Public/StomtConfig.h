@@ -45,7 +45,7 @@ public:
 	bool	GetLoggedIn();
 	void	SetLoggedIn(bool LoggedIn);
 
-
+	UPROPERTY(BlueprintAssignable, Category = "Stomt|Event")
 	FOnConfigUpdated OnConfigUpdated;
 
 
@@ -68,6 +68,11 @@ private:
 	* Loads the access token from disk.
 	*/
 	UStomtRestJsonObject* ReadStomtConfAsJson();
+
+	/**
+	* Loads the access token from disk.
+	*/
+	FString ReadAccesstoken();
 
 
 	//////////////////////////////////////////////////////////////////////////

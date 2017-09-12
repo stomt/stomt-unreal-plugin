@@ -61,18 +61,21 @@ void UStomtConfig::Load()
 	{
 		this->LoggedIn = false;
 	}
+
+	OnConfigUpdated.Broadcast(this);
 }
 
 void UStomtConfig::Delete()
 {
 	this->DeleteStomtConf();
+	this->Load();
 }
 
 FString UStomtConfig::GetAccessToken()
 {
 	if (this->Accesstoken.IsEmpty())
 	{
-		this->Accesstoken = ReadStomtConf(this->AccessTokenFieldName);
+		this->Accesstoken = this->ReadAccesstoken();
 	}
 
 	return this->Accesstoken;
@@ -85,6 +88,8 @@ void UStomtConfig::SetAccessToken(FString AccessToken)
 	this->Accesstoken = AccessToken;
 
 	this->SaveAccesstoken(this->Accesstoken);
+
+	OnConfigUpdated.Broadcast(this);
 }
 
 bool UStomtConfig::GetSubscribed()
@@ -100,6 +105,8 @@ void UStomtConfig::SetSubscribed(bool Subscribed)
 	this->Subscribed = Subscribed;
 
 	this->SaveFlag(this->SubscribedFieldName, this->Subscribed);
+
+	OnConfigUpdated.Broadcast(this);
 }
 
 bool UStomtConfig::GetLoggedIn()
@@ -114,6 +121,8 @@ void UStomtConfig::SetLoggedIn(bool LoggedIn)
 	this->LoggedIn = LoggedIn;
 
 	this->SaveFlag(this->LoggedInFieldName, this->LoggedIn);
+
+	OnConfigUpdated.Broadcast(this);
 }
 
 
@@ -188,6 +197,18 @@ UStomtRestJsonObject* UStomtConfig::ReadStomtConfAsJson()
 	}
 
 	return jsonObj;
+}
+
+FString UStomtConfig::ReadAccesstoken()
+{
+	UStomtRestJsonObject* StomtConfigJson = this->ReadStomtConfAsJson();
+
+	if (StomtConfigJson->HasField(this->AccessTokenFieldName))
+	{
+		return StomtConfigJson->GetStringField(this->AccessTokenFieldName);
+	}
+
+	return FString(TEXT(""));
 }
 
 bool UStomtConfig::WriteStomtConfAsJson(UStomtRestJsonObject * StomtConf)
