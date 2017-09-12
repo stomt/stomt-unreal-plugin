@@ -39,9 +39,11 @@ public:
 	FString GetAccessToken();
 	void	SetAccessToken(FString AccessToken);
 
+	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	bool	GetSubscribed();
 	void	SetSubscribed(bool Subscribed);
 
+	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	bool	GetLoggedIn();
 	void	SetLoggedIn(bool LoggedIn);
 

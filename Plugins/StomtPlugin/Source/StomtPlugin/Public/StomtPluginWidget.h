@@ -13,6 +13,7 @@
 #include "StomtRestRequest.h"
 #include "Stomt.h"
 #include "StomtAPI.h"
+#include "StomtConfig.h"
 
 #include "StomtPluginWidget.generated.h"
 
@@ -80,6 +81,13 @@ public:
 	UStomtAPI* api;
 
 	/**
+	*	STOMT Config.
+	*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
+	UStomtConfig* Config;
+
+
+	/**
 	*	Whether the stomt is not positive (a wish).
 	*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
@@ -144,6 +152,13 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	void OnSubmitEMail();
+
+
+	/**
+	*	Once the user logs out.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
+	void OnLogout();
 
 
 

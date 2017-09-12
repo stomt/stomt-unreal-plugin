@@ -29,6 +29,7 @@ void UStomtPluginWidget::OnConstruction(FString TargetID, FString RestURL, FStri
 	}
 
 	this->Request = this->api->GetRequest();
+	this->Config = this->api->Config;
 
 	// Request Target Name
 	UStomtRestRequest* request = this->api->RequestTarget(TargetID);
@@ -116,6 +117,11 @@ void UStomtPluginWidget::OnSubmitEMail()
 	{
 		this->api->SendEMail(this->EMail);
 	}
+}
+
+void UStomtPluginWidget::OnLogout()
+{
+	this->api->SendLogoutRequest();
 }
 
 void UStomtPluginWidget::OnLoginRequestResponse(UStomtRestRequest * LoginRequest)

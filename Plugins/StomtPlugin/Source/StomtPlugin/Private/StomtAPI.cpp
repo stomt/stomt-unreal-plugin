@@ -347,7 +347,10 @@ void UStomtAPI::OnSendEMailResponse(UStomtRestRequest * Request)
 		{
 			if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("success")))
 			{
-				this->Config->SetSubscribed(true);
+				if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetBoolField("success"))
+				{
+					this->Config->SetSubscribed(true);
+				}
 			}
 			else
 			{
@@ -359,6 +362,35 @@ void UStomtAPI::OnSendEMailResponse(UStomtRestRequest * Request)
 	{
 		this->Config->SetSubscribed(true);
 	}
+}
+
+void UStomtAPI::SendLogoutRequest()
+{
+	UStomtRestRequest* request = this->SetupNewDeleteRequest();
+	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::UStomtAPI::OnSendLogoutResponse);
+
+	request->ProcessURL(this->GetRestURL().Append(TEXT("/authentication/session")));
+}
+
+void UStomtAPI::OnSendLogoutResponse(UStomtRestRequest * Request)
+{
+	if (Request->GetResponseCode() != 400)
+	{
+		if (Request->GetResponseObject()->HasField(TEXT("data")))
+		{
+			if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("success")))
+			{
+				if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetBoolField("success"))
+				{
+					this->Config->SetAccessToken(TEXT(""));
+					this->Config->SetLoggedIn(false);
+					return;
+				}	
+			}
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Logout failed | accesstoken: %s "), *this->Config->GetAccessToken());
 }
 
 
@@ -519,12 +551,30 @@ UStomtRestRequest* UStomtAPI::SetupNewPostRequest()
 	request->SetVerb(ERequestVerb::POST);
 	request->SetHeader(TEXT("appid"), this->GetAppID());
 
-	if (!this->Config->GetAccessToken().IsEmpty())
-	{
-		request->SetHeader(TEXT("accesstoken"), this->Config->GetAccessToken());
-	}
+	this->AddAccesstokenToRequest(request);
 
 	return request;
+}
+
+UStomtRestRequest * UStomtAPI::SetupNewDeleteRequest()
+{
+	UStomtRestRequest* request = NewObject<UStomtRestRequest>();
+
+	request->SetVerb(ERequestVerb::DEL);
+	request->SetHeader(TEXT("appid"), this->GetAppID());
+
+	this->AddAccesstokenToRequest(request);
+
+	return request;
+}
+
+void UStomtAPI::AddAccesstokenToRequest(UStomtRestRequest * Request)
+{
+	if (!this->Config->GetAccessToken().IsEmpty())
+	{
+		Request->SetHeader(TEXT("accesstoken"), this->Config->GetAccessToken());
+		UE_LOG(LogTemp, Warning, TEXT("AddAccesstoken: %s "), *this->Config->GetAccessToken());
+	}
 }
 
 

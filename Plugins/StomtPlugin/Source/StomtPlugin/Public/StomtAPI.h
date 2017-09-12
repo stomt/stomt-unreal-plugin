@@ -131,11 +131,21 @@ public:
 	UFUNCTION()
 	void OnSendEMailResponse(UStomtRestRequest * Request);
 
+	void SendLogoutRequest();
+
+	UFUNCTION()
+	void OnSendLogoutResponse(UStomtRestRequest * Request);
+
+
+	//////////////////////////////////////////////////////////////////////////
+	// Screenshot
+
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	bool CaptureComponent2D_SaveImage(class USceneCaptureComponent2D* Target, const FString ImagePath, const FLinearColor ClearColour);
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	void SaveRenderTargetToDisk(UTextureRenderTarget2D* InRenderTarget, FString Filename);
+
 
 	//////////////////////////////////////////////////////////////////////////
 	// Request callbacks
@@ -169,7 +179,9 @@ private:
 	bool ReadFile(FString& Result, FString FileName, FString SaveDirectory);
 	void SetupAndResetRequest();
 
-	UStomtRestRequest* SetupNewPostRequest();
+	UStomtRestRequest*	SetupNewPostRequest();
+	UStomtRestRequest*	SetupNewDeleteRequest();
+	void				AddAccesstokenToRequest(UStomtRestRequest* Request);
 
 	UPROPERTY()
 	UStomtRestRequest*	Request;
