@@ -108,48 +108,7 @@ public:
 	UStomtRestRequest* GetRequest();
 
 	//////////////////////////////////////////////////////////////////////////
-	// Stomt Config
-
-	/** 
-	* Saves the access token in /stomt/stomt.conf.json
-	*/
-	bool SaveAccesstoken(FString accesstoken);
-
-	/**
-	* Saves the a value in /stomt/stomt.conf.json
-	*/
-	bool SaveValueToStomtConf(FString FieldName, FString FieldValue);
-
-	/**
-	* Saves the flag in /stomt/stomt.conf.json
-	*/
-	bool SaveFlag(FString FlagName, bool FlagState);
-
-	/**
-	* Loads the access token from disk.
-	*/
-	FString ReadStomtConf(FString FieldName);
-
-	/**
-	* Loads the flag from disk.
-	*/
-	bool ReadFlag(FString FlagName);
-
-	/**
-	* Loads the access token from disk.
-	*/
-	UStomtRestJsonObject* ReadStomtConfAsJson();
-
-	/**
-	* Loads the access token from disk.
-	*/
-	bool WriteStomtConfAsJson(UStomtRestJsonObject* StomtConf);
-
-
-	/**
-	* Delete stomt.conf.json
-	*/
-	void DeleteStomtConf();
+	// Stomt File Access
 
 	/**
 	* Loads an Log file from disk.
@@ -172,9 +131,6 @@ public:
 
 	UFUNCTION()
 	void OnSendEMailResponse(UStomtRestRequest * Request);
-
-	UFUNCTION()
-	void OnReceiving(UStomtRestRequest* Request);
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	bool CaptureComponent2D_SaveImage(class USceneCaptureComponent2D* Target, const FString ImagePath, const FLinearColor ClearColour);
@@ -219,11 +175,6 @@ private:
 	UPROPERTY()
 	UStomtRestRequest*	Request;
 
-
-	FString				Accesstoken;
-	FString				ConfigFolder;
-	FString				ConfigName;
-
 	FString				errorLog_file_uid;
 
 	bool				LoginRequestWasSend;
@@ -236,5 +187,4 @@ private:
 	FString				TargetID;
 	FString				AppID;
 	FString				ImageURL;
-
 };
