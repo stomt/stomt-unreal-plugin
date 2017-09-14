@@ -26,8 +26,6 @@ UStomtAPI* UStomtAPI::ConstructStomtAPI(FString TargetID, FString RestURL, FStri
 
 UStomtAPI::UStomtAPI()
 {
-	this->Request = NewObject<UStomtRestRequest>();
-
 	LogFileWasSend = false;
 	EMailFlagWasSend = false;
 
@@ -229,11 +227,6 @@ FString UStomtAPI::GetImageURL()
 void UStomtAPI::SetStomtToSend(UStomt * stomt)
 {
 	this->StomtToSend = stomt;
-}
-
-UStomtRestRequest * UStomtAPI::GetRequest()
-{
-	return this->Request;
 }
 
 
@@ -527,21 +520,6 @@ bool UStomtAPI::ReadFile(FString& Result, FString FileName, FString SaveDirector
 
 	return FFileHelper::LoadFileToString( Result, *path);
 
-}
-
-inline void UStomtAPI::SetupAndResetRequest()
-{
-	//Reset Request
-	this->Request->ResetResponseData();
-	this->Request->ResetRequestData();
-
-	this->Request->SetVerb(ERequestVerb::POST);
-	this->Request->SetHeader(TEXT("appid"), this->GetAppID());
-
-	if (!this->Config->GetAccessToken().IsEmpty())
-	{
-		this->Request->SetHeader(TEXT("accesstoken"), this->Config->GetAccessToken());
-	}
 }
 
 UStomtRestRequest* UStomtAPI::SetupNewPostRequest()

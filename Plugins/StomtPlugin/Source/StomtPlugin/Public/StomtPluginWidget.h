@@ -69,12 +69,6 @@ public:
 	FString	ImageURL;
 
 	/**
-	*	REST Request to send stomt.
-	*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
-	UStomtRestRequest* Request;
-
-	/**
 	*	STOMT API.
 	*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")

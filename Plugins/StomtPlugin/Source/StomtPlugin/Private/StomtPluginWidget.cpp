@@ -28,14 +28,11 @@ void UStomtPluginWidget::OnConstruction(FString TargetID, FString RestURL, FStri
 		this->api->SetRestURL(RestURL);
 	}
 
-	this->Request = this->api->GetRequest();
 	this->Config = this->api->Config;
 
 	// Request Target Name
 	UStomtRestRequest* request = this->api->RequestTarget(TargetID);
 	request->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnTargetResponse);
-
-	this->api->GetRequest()->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnLoginRequestResponse);
 
 	//Lookup EMail
 	this->IsEMailAlreadyKnown = this->api->Config->GetSubscribed();
@@ -137,7 +134,7 @@ void UStomtPluginWidget::OnTargetResponse(UStomtRestRequest * TargetRequest)
 	this->TargetName = this->api->GetTargetName();
 	this->ImageURL = this->api->GetImageURL();
 
-	this->api->OnTargetRequestComplete.Broadcast(Request);
+	this->api->OnTargetRequestComplete.Broadcast(TargetRequest);
 }
 
 void UStomtPluginWidget::TakeScreenshot()

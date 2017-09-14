@@ -183,9 +183,6 @@ private:
 	UStomtRestRequest*	SetupNewDeleteRequest();
 	void				AddAccesstokenToRequest(UStomtRestRequest* Request);
 
-	UPROPERTY()
-	UStomtRestRequest*	Request;
-
 	FString				errorLog_file_uid;
 
 	bool				LoginRequestWasSend;
