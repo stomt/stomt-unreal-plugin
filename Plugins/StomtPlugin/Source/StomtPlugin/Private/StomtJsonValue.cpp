@@ -253,5 +253,5 @@ TArray<UStomtJsonValue*> UStomtJsonValue::AsArray() const
 //
 void UStomtJsonValue::ErrorMessage(const FString& InType) const
 {
-	UE_LOG(LogTemp, Error, TEXT("Json Value of type '%s' used as a '%s'."), *GetTypeString(), *InType);
+	UE_LOG(Stomt, Error, TEXT("Json Value of type '%s' used as a '%s'."), *GetTypeString(), *InType);
 }

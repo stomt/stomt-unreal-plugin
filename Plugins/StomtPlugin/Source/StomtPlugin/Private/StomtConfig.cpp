@@ -21,7 +21,7 @@ UStomtConfig* UStomtConfig::ConstructStomtConfig()
 UStomtConfig::UStomtConfig()
 {
 	this->ConfigFolder = FPaths::EngineUserDir() + FString(TEXT("Saved/Config/stomt/"));
-	//UE_LOG(LogTemp, Warning, TEXT("configfolder: %s"), *this->ConfigFolder);
+	UE_LOG(StomtInit, Log, TEXT("Config-Folder: %s"), *this->ConfigFolder);
 
 	this->ConfigName = FString(TEXT("stomt.conf.json"));
 	this->Accesstoken = FString(TEXT(""));
@@ -221,11 +221,11 @@ void UStomtConfig::DeleteStomtConf()
 	FString file = this->ConfigFolder + this->ConfigName;
 	if (!FPlatformFileManager::Get().GetPlatformFile().DeleteFile(*file))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Could not delete stomt.conf.json: %s"), *file);
+		UE_LOG(StomtFileAccess, Warning, TEXT("Could not delete stomt.conf.json: %s"), *file);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Deleted stomt.conf.json because of wrong access token Path: %s"), *file);
+		UE_LOG(StomtFileAccess, Warning, TEXT("Deleted stomt.conf.json because of wrong access token Path: %s"), *file);
 	}
 }
 
@@ -244,7 +244,7 @@ FString UStomtConfig::ReadLogFile(FString LogFileName)
 	// Copy LogFileData
 	if (!PlatformFile.CopyFile(*LogFileCopyPath, *LogFilePath, EPlatformFileRead::AllowWrite, EPlatformFileWrite::AllowRead))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("LogFile Copy did not work FromFile: %s | ToFile %s"), *LogFilePath, *LogFileCopyPath);
+		UE_LOG(StomtFileAccess, Warning, TEXT("LogFile Copy did not work FromFile: %s | ToFile %s"), *LogFilePath, *LogFileCopyPath);
 	}
 
 	// Read LogFileCopy from Disk
@@ -252,18 +252,18 @@ FString UStomtConfig::ReadLogFile(FString LogFileName)
 	{
 		if (FPaths::FileExists(FPaths::GameLogDir() + LogFileCopyName))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Could not read LogFile %s, but it exists"), *LogFileCopyName);
+			UE_LOG(StomtFileAccess, Warning, TEXT("Could not read LogFile %s, but it exists"), *LogFileCopyName);
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Could not read LogFile %s, because it does not exist"), *LogFileCopyName);
+			UE_LOG(StomtFileAccess, Warning, TEXT("Could not read LogFile %s, because it does not exist"), *LogFileCopyName);
 		}
 	}
 
 	// Delete LogFileCopy
 	if (!PlatformFile.DeleteFile(*LogFileCopyPath))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Could not delete LogFileCopy %s"), *LogFileCopyPath);
+		UE_LOG(StomtFileAccess, Warning, TEXT("Could not delete LogFileCopy %s"), *LogFileCopyPath);
 	}
 
 	return errorLog;
@@ -312,7 +312,7 @@ bool UStomtConfig::ReadFile(FString& Result, FString FileName, FString SaveDirec
 
 	if (!FPaths::FileExists(path))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("File with this path does not exist: %s "), *path);
+		UE_LOG(StomtFileAccess, Warning, TEXT("File with this path does not exist: %s "), *path);
 	}
 
 	return FFileHelper::LoadFileToString(Result, *path);

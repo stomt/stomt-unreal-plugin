@@ -73,7 +73,7 @@ void UStomtPluginWidget::OnSubmit()
 		// Check EMail
 		this->IsEMailAlreadyKnown = this->api->Config->GetSubscribed();
 
-		//UE_LOG(LogTemp, Warning, TEXT("email: %s"), this->IsEMailAlreadyKnown ? TEXT("true") : TEXT("false"));
+		UE_LOG(Stomt, Log, TEXT("Is EMail Already Known: %s"), this->IsEMailAlreadyKnown ? TEXT("true") : TEXT("false"));
 	}
 }
 

@@ -43,7 +43,7 @@ void UStomtRestRequest::OnResponseReceived(FHttpRequestPtr Request, FHttpRespons
 	// Check we have result to process futher
 	if (!bWasSuccessful)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Request failed: %s ResponseCode: %d "), *Request->GetURL(), *Response->GetContentAsString());
+		UE_LOG(StomtNetwork, Error, TEXT("Request failed: %s ResponseCode: %d "), *Request->GetURL(), *Response->GetContentAsString());
 		
 		
 		
@@ -55,12 +55,12 @@ void UStomtRestRequest::OnResponseReceived(FHttpRequestPtr Request, FHttpRespons
 
 	if (EHttpResponseCodes::IsOk(Response->GetResponseCode())) 
 	{
-		UE_LOG(LogTemp, Warning, TEXT("EHttpResponseCodes::IsOk"));
-		UE_LOG(LogTemp, Warning, TEXT("Content: %s"), *Response->GetContentAsString() );
+		UE_LOG(StomtNetwork, Log, TEXT("EHttpResponseCodes::IsOk"));
+		UE_LOG(StomtNetwork, Log, TEXT("Content: %s"), *Response->GetContentAsString() );
 	}
 	else 
 	{
-		UE_LOG(LogTemp, Warning, TEXT( "not successful: %s"), *Response->GetContentAsString() );
+		UE_LOG(StomtNetwork, Warning, TEXT( "not successful: %s"), *Response->GetContentAsString() );
 	}
 
 	return;
@@ -168,16 +168,16 @@ void UStomtRestRequest::ProcessRequest(TSharedRef<IHttpRequest> HttpRequest)
 		if (OutputString.Len() > 256)
 		{
 			FString shortContent = OutputString.LeftChop(OutputString.Len() - 256);
-			UE_LOG(LogTemp, Log, TEXT("Request (json): %s %s | truncated-content(256): %s"), *HttpRequest->GetVerb(), *HttpRequest->GetURL(), *shortContent);
+			UE_LOG(StomtNetwork, Log, TEXT("Request (json): %s %s | truncated-content(256): %s"), *HttpRequest->GetVerb(), *HttpRequest->GetURL(), *shortContent);
 		}
 		else
 		{
-			UE_LOG(LogTemp, Log, TEXT("Request (json): %s %s %s"), *HttpRequest->GetVerb(), *HttpRequest->GetURL(), *OutputString);
+			UE_LOG(StomtNetwork, Log, TEXT("Request (json): %s %s %s"), *HttpRequest->GetVerb(), *HttpRequest->GetURL(), *OutputString);
 		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Log, TEXT("Request (json): %s %s | did not log (contains user data)"), *HttpRequest->GetVerb(), *HttpRequest->GetURL());
+		UE_LOG(StomtNetwork, Log, TEXT("Request (json): %s %s | did not log (contains user data)"), *HttpRequest->GetVerb(), *HttpRequest->GetURL());
 	}
 
 	
@@ -207,7 +207,7 @@ void UStomtRestRequest::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpR
 	// Check we have result to process futher
 	if (!bWasSuccessful)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Request failed: %s"), *Request->GetURL());
+		UE_LOG(StomtNetwork, Error, TEXT("Request failed: %s"), *Request->GetURL());
 
 		// Broadcast the result event
 		OnRequestFail.Broadcast(this);
@@ -225,11 +225,11 @@ void UStomtRestRequest::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpR
 	if (Response->GetContentAsString().Len() > 256)
 	{
 		FString shortContent = Response->GetContentAsString().LeftChop(Response->GetContentAsString().Len() - 256);
-		UE_LOG(LogTemp, Log, TEXT("Response (%d): Content(truncated 256):  %s"), Response->GetResponseCode(), *shortContent);
+		UE_LOG(StomtNetwork, Log, TEXT("Response (%d): Content(truncated 256):  %s"), Response->GetResponseCode(), *shortContent);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Log, TEXT("Response (%d): %s"), Response->GetResponseCode(), *Response->GetContentAsString());
+		UE_LOG(StomtNetwork, Log, TEXT("Response (%d): %s"), Response->GetResponseCode(), *Response->GetContentAsString());
 	}
 
 
@@ -259,7 +259,7 @@ void UStomtRestRequest::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpR
 		{
 			// As we assume it's recommended way to use current class, but not the only one,
 			// it will be the warning instead of error
-			UE_LOG(LogTemp, Warning, TEXT("JSON could not be decoded!"));
+			UE_LOG(StomtNetwork, Warning, TEXT("JSON could not be decoded!"));
 		}
 	}
 

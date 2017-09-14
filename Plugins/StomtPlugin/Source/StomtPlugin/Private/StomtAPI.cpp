@@ -13,12 +13,18 @@
 #include "Runtime/Core/Public/Misc/App.h"
 #include "StomtJsonObject.h"
 
+
 UStomtAPI* UStomtAPI::ConstructStomtAPI(FString TargetID, FString RestURL, FString AppID)
 {
 	UStomtAPI* api = NewObject<UStomtAPI>();
 	api->SetAppID(AppID);
 	api->SetTargetID(TargetID);
 	api->SetRestURL(RestURL);
+
+	UE_LOG(StomtInit, Log, TEXT("Construct Stomt API"));
+	UE_LOG(StomtInit, Log, TEXT("AppID: %s "), *api->GetAppID());
+	UE_LOG(StomtInit, Log, TEXT("TargetID: %s "), *api->GetTargetID());
+	UE_LOG(StomtInit, Log, TEXT("RestURL: %s "), *api->GetRestURL());
 
 	return api;
 }
@@ -118,7 +124,7 @@ void UStomtAPI::OnLoginRequestResponse(UStomtRestRequest * Request)
 			}
 			else
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Login did not work"));
+				UE_LOG(StomtNetwork, Warning, TEXT("Login did not work"));
 			}
 		}
 	}
@@ -246,7 +252,7 @@ FString UStomtAPI::ReadLogFile(FString LogFileName)
 	// Copy LogFileData
 	if (!PlatformFile.CopyFile(*LogFileCopyPath, *LogFilePath, EPlatformFileRead::AllowWrite, EPlatformFileWrite::AllowRead))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("LogFile Copy did not work FromFile: %s | ToFile %s"), *LogFilePath, *LogFileCopyPath);
+		UE_LOG(StomtFileAccess, Error, TEXT("LogFile Copy did not work FromFile: %s | ToFile %s"), *LogFilePath, *LogFileCopyPath);
 	}
 
 	// Read LogFileCopy from Disk
@@ -254,18 +260,18 @@ FString UStomtAPI::ReadLogFile(FString LogFileName)
 	{
 		if (FPaths::FileExists(FPaths::GameLogDir() + LogFileCopyName))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Could not read LogFile %s, but it exists"), *LogFileCopyName);
+			UE_LOG(StomtFileAccess, Warning, TEXT("Could not read LogFile %s, but it exists"), *LogFileCopyName);
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Could not read LogFile %s, because it does not exist"), *LogFileCopyName);
+			UE_LOG(StomtFileAccess, Warning, TEXT("Could not read LogFile %s, because it does not exist"), *LogFileCopyName);
 		}
 	}
 
 	// Delete LogFileCopy
 	if (!PlatformFile.DeleteFile(*LogFileCopyPath))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Could not delete LogFileCopy %s"), *LogFileCopyPath);
+		UE_LOG(StomtFileAccess, Warning, TEXT("Could not delete LogFileCopy %s"), *LogFileCopyPath);
 	}
 
 	return errorLog;
@@ -386,7 +392,7 @@ void UStomtAPI::OnSendLogoutResponse(UStomtRestRequest * Request)
 		}
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Logout failed | accesstoken: %s "), *this->Config->GetAccessToken());
+	UE_LOG(StomtNetwork, Warning, TEXT("Logout failed | accesstoken: %s "), *this->Config->GetAccessToken());
 }
 
 
@@ -523,7 +529,7 @@ bool UStomtAPI::ReadFile(FString& Result, FString FileName, FString SaveDirector
 
 	if (!FPaths::FileExists(path))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("File with this path does not exist: %s "), *path);
+		UE_LOG(StomtFileAccess, Warning, TEXT("File with this path does not exist: %s "), *path);
 	}
 
 	return FFileHelper::LoadFileToString( Result, *path);
@@ -561,7 +567,7 @@ void UStomtAPI::AddAccesstokenToRequest(UStomtRestRequest * Request)
 	if (!this->Config->GetAccessToken().IsEmpty())
 	{
 		Request->SetHeader(TEXT("accesstoken"), this->Config->GetAccessToken());
-		UE_LOG(LogTemp, Warning, TEXT("AddAccesstoken: %s "), *this->Config->GetAccessToken());
+		UE_LOG(StomtNetwork, Log , TEXT("AddAccesstoken: %s "), *this->Config->GetAccessToken());
 	}
 }
 
