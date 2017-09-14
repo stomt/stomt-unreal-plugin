@@ -1,12 +1,17 @@
-// Copyright 2016 Daniel Schukies. All Rights Reserved.
+// Copyright 2017 Daniel Schukies. All Rights Reserved.
 
 
 #pragma once
 #include "StomtPluginPrivatePCH.h"
 #include "StomtRestRequest.h"
 #include "Stomt.h"
+#include "StomtConfig.h"
 #include "Runtime/Engine/Classes/Engine/TextureRenderTarget2D.h"
 #include "StomtAPI.generated.h"
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetRequestComplete, class UStomtRestRequest*, Request);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLoginRequestComplete, class UStomtRestRequest*, Request);
+
 
 
 /**
@@ -18,7 +23,7 @@ class UStomtAPI : public UObject
 	GENERATED_BODY()
 public:
 
-	static UStomtAPI* ConstructRequest(FString TargetID, FString RestURL, FString AppID);
+	static UStomtAPI* ConstructStomtAPI(FString TargetID, FString RestURL, FString AppID);
 
 	UStomtAPI();
 
@@ -30,8 +35,13 @@ public:
 	*/
 	void SendStomt(UStomt* stomt);
 
+	UFUNCTION()
+	void OnSendStomtRequestResponse(UStomtRestRequest * Request);
 
-	void SendLoginRequest(FString UserName, FString Password);
+	UStomtRestRequest* SendLoginRequest(FString UserName, FString Password);
+
+	UFUNCTION()
+	void OnLoginRequestResponse(UStomtRestRequest * Request);
 
 	/**
 	* Sends stomt labels. (deprecated)
@@ -40,12 +50,15 @@ public:
 	void SendStomtLabels(UStomt* stomt);
 
 	/**
-	* Sends an REST request for a stomt target.
+	* Sends an REST Request for a stomt target.
 	* To receive the respose it is necessary to add a event delegate function.
-	* For example: api->GetRequest()->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnReceiving).
-	* @param targetID - ID of the requested stomt target.
+	* For example: api->GetRequest()->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnLoginRequestResponse).
+	* @param TargetID - ID of the requested stomt target.
 	*/
-	void RequestTarget(FString targetID);
+	UStomtRestRequest* RequestTarget(FString targetID);
+
+	UFUNCTION()
+	void OnRequestTargetResponse(UStomtRestRequest * Request);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Data accessors
@@ -61,7 +74,7 @@ public:
 	/**
 	* Sets the Stomt App ID.
 	* That was created here: https://www.stomt.com/dev/my-apps
-	* @param appID - Stomt APP ID
+	* @param AppID - Stomt APP ID
 	*/
 	void	SetAppID(FString appID);
 	FString GetAppID();
@@ -74,7 +87,7 @@ public:
 
 	/**
 	* Sets a Stomt Target
-	* @param targetID - ID of Stomt Target
+	* @param TargetID - ID of Stomt Target
 	*/
 	void	SetTargetID(FString targetID);
 	FString	GetTargetID();
@@ -89,50 +102,12 @@ public:
 	void SetStomtToSend(UStomt* stomt);
 
 	/**
-	* Gets the request object that contains request/response information.
+	* Gets the Request object that contains Request/response information.
 	*/
 	UStomtRestRequest* GetRequest();
 
-	/** 
-	* Saves the access token in /stomt/stomt.conf.json
-	*/
-	bool SaveAccesstoken(FString accesstoken);
-
-	/**
-	* Saves the a value in /stomt/stomt.conf.json
-	*/
-	bool SaveValueToStomtConf(FString FieldName, FString FieldValue);
-
-	/**
-	* Saves the flag in /stomt/stomt.conf.json
-	*/
-	bool SaveFlag(FString FlagName, bool FlagState);
-
-	/**
-	* Loads the access token from disk.
-	*/
-	FString ReadStomtConf(FString FieldName);
-
-	/**
-	* Loads the flag from disk.
-	*/
-	bool ReadFlag(FString FlagName);
-
-	/**
-	* Loads the access token from disk.
-	*/
-	UStomtRestJsonObject* ReadStomtConfAsJson();
-
-	/**
-	* Loads the access token from disk.
-	*/
-bool WriteStomtConfAsJson(UStomtRestJsonObject* StomtConf);
-
-
-	/**
-	* Delete stomt.conf.json
-	*/
-	void DeleteStomtConf();
+	//////////////////////////////////////////////////////////////////////////
+	// Stomt File Access
 
 	/**
 	* Loads an Log file from disk.
@@ -140,15 +115,30 @@ bool WriteStomtConfAsJson(UStomtRestJsonObject* StomtConf);
 	*/
 	FString ReadLogFile(FString LogFileName);
 
+	//////////////////////////////////////////////////////////////////////////
+	// Network
+
 	/**
 	* Sends the LogFileData to stomt.com server.
 	*/
 	void SendLogFile(FString LogFileData, FString LogFileName);
 
+	UFUNCTION()
+	void OnSendLogFileResponse(UStomtRestRequest * Request);
+
 	void SendEMail(FString EMail);
 
 	UFUNCTION()
-	void OnReceiving(UStomtRestRequest* Request);
+	void OnSendEMailResponse(UStomtRestRequest * Request);
+
+	void SendLogoutRequest();
+
+	UFUNCTION()
+	void OnSendLogoutResponse(UStomtRestRequest * Request);
+
+
+	//////////////////////////////////////////////////////////////////////////
+	// Screenshot
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	bool CaptureComponent2D_SaveImage(class USceneCaptureComponent2D* Target, const FString ImagePath, const FLinearColor ClearColour);
@@ -157,20 +147,41 @@ bool WriteStomtConfAsJson(UStomtRestJsonObject* StomtConf);
 	void SaveRenderTargetToDisk(UTextureRenderTarget2D* InRenderTarget, FString Filename);
 
 
+	//////////////////////////////////////////////////////////////////////////
+	// Request callbacks
+
+public:
+	/** Event occured when the Request has been completed */
+	UPROPERTY(BlueprintAssignable, Category = "Stomt|Event")
+	FOnTargetRequestComplete OnTargetRequestComplete; 
+
+	/** Event occured when the Request has been completed */
+	UPROPERTY(BlueprintAssignable, Category = "Stomt|Event")
+	FOnLoginRequestComplete OnLoginRequestComplete;
+
+	/** Event occured when the Request has been completed */
+	//UPROPERTY(BlueprintAssignable, Category = "Stomt|Event")
+	//FOnRequestComplete OnRequestComplete; // ToDo Trigger this
+
+	/** Event occured when the Request wasn't successfull */
+	//UPROPERTY(BlueprintAssignable, Category = "Stomt|Event")
+	//FOnRequestFail OnRequestFail; // ToDo Trigger this
 
 	//////////////////////////////////////////////////////////////////////////
 	// Data
+public:
+
+	UPROPERTY()
+	UStomtConfig*		Config;
 
 private:
 	bool WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting);
 	bool ReadFile(FString& Result, FString FileName, FString SaveDirectory);
-	void SetupNewPostRequest();
+	void SetupAndResetRequest();
 
-	UPROPERTY()
-	UStomtRestRequest*	request;
-	FString				accesstoken;
-	FString				configFolder;
-	FString				configName;
+	UStomtRestRequest*	SetupNewPostRequest();
+	UStomtRestRequest*	SetupNewDeleteRequest();
+	void				AddAccesstokenToRequest(UStomtRestRequest* Request);
 
 	FString				errorLog_file_uid;
 
@@ -179,10 +190,9 @@ private:
 	bool				LogFileWasSend;
 	UStomt*				StomtToSend;
 
-	FString				restURL;
-	FString				targetName;
-	FString				targetID;
-	FString				appID;
-	FString				imageURL;
-
+	FString				RestURL;
+	FString				TargetName;
+	FString				TargetID;
+	FString				AppID;
+	FString				ImageURL;
 };
