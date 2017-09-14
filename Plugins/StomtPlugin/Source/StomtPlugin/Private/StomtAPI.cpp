@@ -366,6 +366,7 @@ void UStomtAPI::SendLogoutRequest()
 
 	this->Config->SetAccessToken(TEXT(""));
 	this->Config->SetLoggedIn(false);
+	this->Config->SetSubscribed(false);
 }
 
 void UStomtAPI::OnSendLogoutResponse(UStomtRestRequest * Request)
