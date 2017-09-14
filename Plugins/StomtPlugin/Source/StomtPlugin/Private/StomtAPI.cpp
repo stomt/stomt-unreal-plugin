@@ -363,6 +363,9 @@ void UStomtAPI::SendLogoutRequest()
 	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::UStomtAPI::OnSendLogoutResponse);
 
 	request->ProcessURL(this->GetRestURL().Append(TEXT("/authentication/session")));
+
+	this->Config->SetAccessToken(TEXT(""));
+	this->Config->SetLoggedIn(false);
 }
 
 void UStomtAPI::OnSendLogoutResponse(UStomtRestRequest * Request)
@@ -375,9 +378,7 @@ void UStomtAPI::OnSendLogoutResponse(UStomtRestRequest * Request)
 			{
 				if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetBoolField("success"))
 				{
-					this->Config->SetAccessToken(TEXT(""));
-					this->Config->SetLoggedIn(false);
-					return;
+					return; // logout was successful
 				}	
 			}
 		}
