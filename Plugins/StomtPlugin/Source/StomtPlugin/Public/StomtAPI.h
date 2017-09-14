@@ -11,7 +11,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetRequestComplete, class UStomtRestRequest*, Request);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLoginRequestComplete, class UStomtRestRequest*, Request);
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRequestFailed, class UStomtRestRequest*, Request);
 
 
 /**
@@ -164,8 +164,11 @@ public:
 	//FOnRequestComplete OnRequestComplete; // ToDo Trigger this
 
 	/** Event occured when the Request wasn't successfull */
-	//UPROPERTY(BlueprintAssignable, Category = "Stomt|Event")
-	//FOnRequestFail OnRequestFail; // ToDo Trigger this
+	UPROPERTY(BlueprintAssignable, Category = "Stomt|Event")
+	FOnRequestFailed OnRequestFailed; 
+
+	UFUNCTION()
+	void OnARequestFailed(UStomtRestRequest* Request);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Data

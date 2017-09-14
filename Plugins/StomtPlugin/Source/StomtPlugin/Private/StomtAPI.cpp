@@ -154,6 +154,7 @@ UStomtRestRequest* UStomtAPI::RequestTarget(FString TargetID)
 {
 	UStomtRestRequest* request = NewObject<UStomtRestRequest>();
 	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnRequestTargetResponse);
+	request->OnRequestFail.AddDynamic(this, &UStomtAPI::OnARequestFailed);
 
 	request->SetVerb(ERequestVerb::GET);
 	request->SetHeader(TEXT("appid"), this->GetAppID() );
@@ -475,6 +476,11 @@ void UStomtAPI::SaveRenderTargetToDisk(UTextureRenderTarget2D* InRenderTarget, F
 	HighResScreenshotConfig.SaveImage(Filename, OutBMP, DestSize, &ResultPath);
 }
 
+void UStomtAPI::OnARequestFailed(UStomtRestRequest * Request)
+{
+	this->OnRequestFailed.Broadcast(Request);
+}
+
 bool UStomtAPI::WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting)
 {
 	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
@@ -527,6 +533,7 @@ bool UStomtAPI::ReadFile(FString& Result, FString FileName, FString SaveDirector
 UStomtRestRequest* UStomtAPI::SetupNewPostRequest()
 {
 	UStomtRestRequest* request = NewObject<UStomtRestRequest>();
+	request->OnRequestFail.AddDynamic(this, &UStomtAPI::OnARequestFailed);
 
 	request->SetVerb(ERequestVerb::POST);
 	request->SetHeader(TEXT("appid"), this->GetAppID());
@@ -539,6 +546,7 @@ UStomtRestRequest* UStomtAPI::SetupNewPostRequest()
 UStomtRestRequest * UStomtAPI::SetupNewDeleteRequest()
 {
 	UStomtRestRequest* request = NewObject<UStomtRestRequest>();
+	request->OnRequestFail.AddDynamic(this, &UStomtAPI::OnARequestFailed);
 
 	request->SetVerb(ERequestVerb::DEL);
 	request->SetHeader(TEXT("appid"), this->GetAppID());
