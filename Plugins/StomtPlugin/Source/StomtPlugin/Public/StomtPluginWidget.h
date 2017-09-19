@@ -177,7 +177,7 @@ public:
 
 	// Not ready yet.
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
-	void TakeScreenshot();
+	void UploadScreenshot();
 
 private:
 

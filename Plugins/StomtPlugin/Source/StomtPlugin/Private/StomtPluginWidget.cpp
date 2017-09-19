@@ -54,7 +54,7 @@ void UStomtPluginWidget::OnMessageChanged(FString text)
 
 void UStomtPluginWidget::OnSubmit()
 {
-	//TakeScreenshot();
+	//ReadScreenshot();
 
 	if (!this->Message.IsEmpty())
 	{
@@ -137,24 +137,8 @@ void UStomtPluginWidget::OnTargetResponse(UStomtRestRequest * TargetRequest)
 	this->api->OnTargetRequestComplete.Broadcast(TargetRequest);
 }
 
-void UStomtPluginWidget::TakeScreenshot()
+void UStomtPluginWidget::UploadScreenshot()
 {
-	USceneCaptureComponent2D* cap = NewObject<USceneCaptureComponent2D>();
-	UTextureRenderTarget2D* RenderTarget = NewObject<UTextureRenderTarget2D>();
-	RenderTarget->InitAutoFormat(1024, 1024);
-	//UMaterialInstanceDynamic* ScopeMat = UMaterialInstanceDynamic::Create(AssetScopeMat_Default, this);
-	cap->TextureTarget = RenderTarget;
-	if (!api->CaptureComponent2D_SaveImage(cap, FString("bild.png"), FLinearColor()))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("bad!"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("nice"));
-	}
-	/*
-	FTexureRenderTarget2DResource *Texture = (FTextureRenderTarget2DResource *)SceneCapture->TextureTarget->Resource;
-	TArray<FColor> ColorBuffer;
-	Texture->ReadPixels(ColorBuffer);*/
+	this->api->SendImageFile(this->api->ReadScreenshotAsBase64());
 }
 

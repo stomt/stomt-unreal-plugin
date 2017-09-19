@@ -36,6 +36,7 @@ UStomtAPI::UStomtAPI()
 	EMailFlagWasSend = false;
 
 	this->Config = UStomtConfig::ConstructStomtConfig();
+	DefaultScreenshotName = FString("HighresScreenshot00000.png");
 }
 
 UStomtAPI::~UStomtAPI()
@@ -65,6 +66,13 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 	jObjExtraData->SetArrayField(TEXT("labels"), labels);
 	request->GetRequestObject()->SetObjectField(TEXT("extradata"), jObjExtraData);
 
+	// Stomt Image
+	if (!this->ImageUploadName.IsEmpty())
+	{
+		request->GetRequestObject()->SetStringField(TEXT("img_name"), ImageUploadName);
+		UE_LOG(StomtNetwork, Log, TEXT("Append Image"));
+	}
+
 	// Error Logs
 	if (!this->errorLog_file_uid.IsEmpty())
 	{
@@ -75,6 +83,8 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 		jObjFile->SetObjectField(TEXT("stomt"), jObjFileContext);
 		request->GetRequestObject()->SetObjectField(TEXT("files"), jObjFile);
 	}
+
+
 	
 	request->ProcessURL( this->GetRestURL().Append(TEXT("/stomts")) );
 }
@@ -328,6 +338,55 @@ void UStomtAPI::OnSendLogFileResponse(UStomtRestRequest * Request)
 	}
 }
 
+void UStomtAPI::SendImageFile(FString ImageFileDataBase64)
+{
+	UStomtRestRequest* request = this->SetupNewPostRequest();
+	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnSendImageFileResponse);
+
+	FString ImageJson = FString(TEXT("{ \"images\": { \"stomt\": [ { \"data\":\"") + ImageFileDataBase64 + TEXT("\" } ] } }"));
+
+	request->UseStaticJsonString(true);
+	request->SetStaticJsonString(ImageJson);
+
+	request->ProcessURL(this->GetRestURL().Append(TEXT("/images")));
+
+}
+
+void UStomtAPI::OnSendImageFileResponse(UStomtRestRequest * Request)
+{
+	// Request access token
+	if (this->Config->GetAccessToken().IsEmpty())
+	{
+		if (Request->GetResponseObject()->HasField(TEXT("meta")))
+		{
+			if (Request->GetResponseObject()->GetObjectField(TEXT("meta"))->HasField(TEXT("accesstoken")))
+			{
+				FString Accesstoken = Request->GetResponseObject()->GetObjectField(TEXT("meta"))->GetStringField(TEXT("accesstoken"));
+				this->Config->SetAccessToken(Accesstoken);
+			}
+		}
+	}
+
+	// Get File uid of the error log and send stomt
+	if (Request->GetResponseObject()->HasField(TEXT("data")))
+	{
+		if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("images")))
+		{
+			this->ImageUploadName = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetObjectField(TEXT("images"))->GetObjectField(TEXT("stomt"))->GetStringField("name");
+			UE_LOG(StomtFileAccess, Warning, TEXT("Image Upload complete %s"), *this->ImageUploadName);
+		}
+	}
+
+	if (Request->GetResponseCode() == 403 || Request->GetResponseCode() == 419 || Request->GetResponseCode() == 413)
+	{
+		if (StomtToSend != NULL)
+		{
+			//this->SendStomt(StomtToSend);
+			//LogFileWasSend = false;
+		}
+	}
+}
+
 void UStomtAPI::SendEMail(FString EMail)
 {
 	UStomtRestRequest* request = this->SetupNewPostRequest();
@@ -396,6 +455,26 @@ void UStomtAPI::OnSendLogoutResponse(UStomtRestRequest * Request)
 }
 
 
+
+FString UStomtAPI::ReadScreenshotAsBase64()
+{
+	FString ScreenDir = FPaths::ScreenShotDir();
+	FString FilePath = ScreenDir + this->DefaultScreenshotName;
+
+	UE_LOG(Stomt, Log, TEXT("TakeScreenshot | FilePath: %s"), *FilePath);
+	UE_LOG(Stomt, Log, TEXT("Screenshot | AllocatedSize: %d"), this->ReadBinaryFile(FilePath).GetAllocatedSize());
+
+	TArray<uint8> file = this->ReadBinaryFile(FilePath);
+
+	//Delete Screenshot
+	FString AbsoluteFilePath = ScreenDir + this->DefaultScreenshotName;
+	if (!FPlatformFileManager::Get().GetPlatformFile().DeleteFile(*AbsoluteFilePath))
+	{
+		UE_LOG(StomtFileAccess, Warning, TEXT("Could Not Find Screenshot File") );
+	}
+
+	return FBase64::Encode(file);
+}
 
 bool UStomtAPI::CaptureComponent2D_SaveImage(USceneCaptureComponent2D * Target, const FString ImagePath, const FLinearColor ClearColour)
 {
@@ -534,6 +613,14 @@ bool UStomtAPI::ReadFile(FString& Result, FString FileName, FString SaveDirector
 
 	return FFileHelper::LoadFileToString( Result, *path);
 
+}
+
+TArray<uint8> UStomtAPI::ReadBinaryFile(FString FilePath)
+{
+	TArray<uint8> BufferArray;
+	FFileHelper::LoadFileToArray(BufferArray, *FilePath);
+	
+	return BufferArray;
 }
 
 UStomtRestRequest* UStomtAPI::SetupNewPostRequest()

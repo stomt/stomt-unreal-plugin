@@ -126,6 +126,14 @@ public:
 	UFUNCTION()
 	void OnSendLogFileResponse(UStomtRestRequest * Request);
 
+	/**
+	* Sends the Image to stomt.com server.
+	*/
+	void SendImageFile(FString ImageFileDataBase64);
+
+	UFUNCTION()
+	void OnSendImageFileResponse(UStomtRestRequest * Request);
+
 	void SendEMail(FString EMail);
 
 	UFUNCTION()
@@ -139,6 +147,9 @@ public:
 
 	//////////////////////////////////////////////////////////////////////////
 	// Screenshot
+
+	UFUNCTION()
+	FString ReadScreenshotAsBase64();
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	bool CaptureComponent2D_SaveImage(class USceneCaptureComponent2D* Target, const FString ImagePath, const FLinearColor ClearColour);
@@ -180,13 +191,15 @@ public:
 private:
 	bool WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting);
 	bool ReadFile(FString& Result, FString FileName, FString SaveDirectory);
-	void SetupAndResetRequest();
+	TArray<uint8> ReadBinaryFile(FString FilePath);
 
 	UStomtRestRequest*	SetupNewPostRequest();
 	UStomtRestRequest*	SetupNewDeleteRequest();
 	void				AddAccesstokenToRequest(UStomtRestRequest* Request);
 
 	FString				errorLog_file_uid;
+	FString				ImageUploadName;
+	FString				DefaultScreenshotName;
 
 	bool				LoginRequestWasSend;
 	bool				EMailFlagWasSend;
