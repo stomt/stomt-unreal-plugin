@@ -104,7 +104,7 @@ Append labels like for example your game-version or the player position.
 
 * none
 
-Don't hesitate to [contact](https://www.stomt.com/stomt-unreal-engine-plugin) us if you have any problems or need help.
+Don't hesitate to [contact](https://www.stomt.com/stomt-unreal-engine-plugin) us if you have any issues or need help.
 
 
 ## Contribution
