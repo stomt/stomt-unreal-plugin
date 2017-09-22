@@ -71,6 +71,7 @@ PublicDependencyModuleNames.AddRange(new string[] { "StomtPlugin" }); // Add "St
 * the production `Rest URL`: `https://rest.stomt.com`
 
 You can enter the configuration directly into the blueprint or access the variables.
+
 <img alt="STOMT Plugin configuraton" src="http://schukies.io/images/stomt/enter-config.PNG" />
 
 
@@ -93,12 +94,18 @@ This shows how you can access them:
 
 <img alt="Events" src="http://schukies.io/images/stomt/example.PNG" />
 
+## Labels
+
+Labels will help you track down user issues.
+Append labels like for example your game-version or the player position.
+
+<img alt="Events" src="http://schukies.io/images/stomt/label.PNG" />
 
 ## Common Issues
 
 * none
 
-Don't hesitate to [contact](https://www.stomt.com/stomt-unreal-engine-plugin) us if you have any problems or need help.
+Don't hesitate to [contact](https://www.stomt.com/stomt-unreal-engine-plugin) us if you have any issues or need help.
 
 
 ## Contribution
