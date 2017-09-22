@@ -71,6 +71,7 @@ PublicDependencyModuleNames.AddRange(new string[] { "StomtPlugin" }); // Add "St
 * the production `Rest URL`: `https://rest.stomt.com`
 
 You can enter the configuration directly into the blueprint or access the variables.
+
 <img alt="STOMT Plugin configuraton" src="http://schukies.io/images/stomt/enter-config.PNG" />
 
 
