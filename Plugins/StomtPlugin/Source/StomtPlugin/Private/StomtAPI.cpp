@@ -36,6 +36,7 @@ UStomtAPI::UStomtAPI()
 	EMailFlagWasSend = false;
 	IsImageUploadComplete = false;
 	IsLogUploadComplete = false;
+	UseImageUpload = true;
 
 	this->Config = UStomtConfig::ConstructStomtConfig();
 	DefaultScreenshotName = FString("HighresScreenshot00000.png");
@@ -69,10 +70,14 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 	request->GetRequestObject()->SetObjectField(TEXT("extradata"), jObjExtraData);
 
 	// Stomt Image
-	if (!this->ImageUploadName.IsEmpty())
+	if (!this->ImageUploadName.IsEmpty() && UseImageUpload)
 	{
 		request->GetRequestObject()->SetStringField(TEXT("img_name"), ImageUploadName);
 		UE_LOG(StomtNetwork, Log, TEXT("Append Image"));
+	}
+	else
+	{
+		UE_LOG(StomtNetwork, Log, TEXT("Append no Image (Don't use image upload)"));
 	}
 
 	// Error Logs
@@ -594,6 +599,11 @@ void UStomtAPI::OnARequestFailed(UStomtRestRequest * Request)
 bool UStomtAPI::DoesScreenshotFileExist()
 {
 	return FPaths::FileExists(FPaths::ScreenShotDir() + this->DefaultScreenshotName);
+}
+
+void UStomtAPI::UseScreenshotUpload(bool UseUpload)
+{
+	UseImageUpload = UseUpload;
 }
 
 bool UStomtAPI::WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting)

@@ -194,6 +194,8 @@ public:
 	FString			errorLog_file_uid;
 	FString			DefaultScreenshotName;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
+	bool			UseImageUpload;
 	bool			IsLogUploadComplete;
 	bool			IsImageUploadComplete;
 	bool			LoginRequestWasSend;
@@ -214,6 +216,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
 	bool DoesScreenshotFileExist();
+
+	UFUNCTION(BlueprintCallable, Category = "Stomt API")
+	void UseScreenshotUpload(bool UseUpload);
 	
 private:
 
