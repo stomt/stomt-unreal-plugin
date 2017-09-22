@@ -186,26 +186,26 @@ public:
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt API")
-	UStomtConfig*		Config;
+	UStomtConfig*	Config;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt API")
-	FString				ImageUploadName;
+	FString			ImageUploadName;
 
-	FString				errorLog_file_uid;
+	FString			errorLog_file_uid;
+	FString			DefaultScreenshotName;
 
+	bool			IsLogUploadComplete;
+	bool			IsImageUploadComplete;
+	bool			LoginRequestWasSend;
+	bool			EMailFlagWasSend;
+	bool			LogFileWasSend;
+	UStomt*			StomtToSend;
 
-	FString				DefaultScreenshotName;
-
-	bool				LoginRequestWasSend;
-	bool				EMailFlagWasSend;
-	bool				LogFileWasSend;
-	UStomt*				StomtToSend;
-
-	FString				RestURL;
-	FString				TargetName;
-	FString				TargetID;
-	FString				AppID;
-	FString				ImageURL;
+	FString			RestURL;
+	FString			TargetName;
+	FString			TargetID;
+	FString			AppID;
+	FString			ImageURL;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Helper Functions

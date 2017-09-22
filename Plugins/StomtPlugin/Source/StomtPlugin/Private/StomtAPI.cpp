@@ -34,6 +34,8 @@ UStomtAPI::UStomtAPI()
 {
 	LogFileWasSend = false;
 	EMailFlagWasSend = false;
+	IsImageUploadComplete = false;
+	IsLogUploadComplete = false;
 
 	this->Config = UStomtConfig::ConstructStomtConfig();
 	DefaultScreenshotName = FString("HighresScreenshot00000.png");
@@ -84,8 +86,6 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 		request->GetRequestObject()->SetObjectField(TEXT("files"), jObjFile);
 	}
 
-
-	
 	request->ProcessURL( this->GetRestURL().Append(TEXT("/stomts")) );
 }
 
@@ -246,8 +246,6 @@ void UStomtAPI::SetStomtToSend(UStomt * stomt)
 	this->StomtToSend = stomt;
 }
 
-
-
 FString UStomtAPI::ReadLogFile(FString LogFileName)
 {
 	FString errorLog;
@@ -324,7 +322,16 @@ void UStomtAPI::OnSendLogFileResponse(UStomtRestRequest * Request)
 		{
 			this->errorLog_file_uid = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetObjectField(TEXT("files"))->GetObjectField(TEXT("stomt"))->GetStringField("file_uid");
 			this->LogFileWasSend = false;
-			this->SendStomt(StomtToSend);
+
+			if (IsImageUploadComplete)
+			{
+				this->SendStomt(StomtToSend);
+				UE_LOG(StomtNetwork, Log, TEXT("Sent Stomt after sending log files"));
+			}
+			else
+			{
+				UE_LOG(StomtNetwork, Warning, TEXT("Did not send stomt | image upload not complete"));
+			}
 		}
 	}
 
@@ -336,6 +343,8 @@ void UStomtAPI::OnSendLogFileResponse(UStomtRestRequest * Request)
 			LogFileWasSend = false;
 		}
 	}
+
+	IsLogUploadComplete = true;
 }
 
 void UStomtAPI::SendImageFile(FString ImageFileDataBase64)
@@ -379,7 +388,7 @@ void UStomtAPI::OnSendImageFileResponse(UStomtRestRequest * Request)
 		if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("images")))
 		{
 			this->ImageUploadName = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetObjectField(TEXT("images"))->GetObjectField(TEXT("stomt"))->GetStringField("name");
-			UE_LOG(StomtFileAccess, Warning, TEXT("Image Upload complete %s"), *this->ImageUploadName);
+			UE_LOG(StomtFileAccess, Log, TEXT("Image Upload complete %s"), *this->ImageUploadName);
 		}
 	}
 
@@ -391,6 +400,18 @@ void UStomtAPI::OnSendImageFileResponse(UStomtRestRequest * Request)
 			//LogFileWasSend = false;
 		}
 	}
+
+	if (IsLogUploadComplete)
+	{
+		this->SendStomt(StomtToSend);
+		UE_LOG(StomtNetwork, Log, TEXT("Sent Stomt after sending screenshot file"));
+	}
+	else
+	{
+		UE_LOG(StomtNetwork, Warning, TEXT("Did not send stomt | log upload not complete"));
+	}
+
+	IsImageUploadComplete = true;
 }
 
 void UStomtAPI::SendEMail(FString EMail)
