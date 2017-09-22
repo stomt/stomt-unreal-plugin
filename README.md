@@ -97,7 +97,7 @@ This shows how you can access them:
 ## Labels
 
 Labels will help you track down user issues.
-Append labels, as for exmaple your game-version or the player position.
+Append labels, as for example your game-version or the player position.
 
 <img alt="Events" src="http://schukies.io/images/stomt/label.PNG" />
 
