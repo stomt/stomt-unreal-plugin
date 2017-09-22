@@ -340,6 +340,12 @@ void UStomtAPI::OnSendLogFileResponse(UStomtRestRequest * Request)
 
 void UStomtAPI::SendImageFile(FString ImageFileDataBase64)
 {
+	if (ImageFileDataBase64.IsEmpty())
+	{
+		UE_LOG(StomtNetwork, Warning, TEXT("Could not send stomt image | ImageFileDataBase64 was empty"));
+		return;
+	}
+
 	UStomtRestRequest* request = this->SetupNewPostRequest();
 	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnSendImageFileResponse);
 
@@ -468,7 +474,7 @@ FString UStomtAPI::ReadScreenshotAsBase64()
 	FString AbsoluteFilePath = ScreenDir + this->DefaultScreenshotName;
 	if (!FPlatformFileManager::Get().GetPlatformFile().DeleteFile(*AbsoluteFilePath))
 	{
-		UE_LOG(StomtFileAccess, Warning, TEXT("Could Not Find Screenshot File") );
+		UE_LOG(StomtFileAccess, Warning, TEXT("Could not delete old screenshot File (Could Not Find Screenshot File)") );
 	}
 
 	return FBase64::Encode(file);
