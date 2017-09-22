@@ -93,6 +93,12 @@ This shows how you can access them:
 
 <img alt="Events" src="http://schukies.io/images/stomt/example.PNG" />
 
+## Labels
+
+Labels will help you track down user issues.
+Append labels like for example your game-version or the player position.
+
+<img alt="Events" src="http://schukies.io/images/stomt/label.PNG" />
 
 ## Common Issues
 
