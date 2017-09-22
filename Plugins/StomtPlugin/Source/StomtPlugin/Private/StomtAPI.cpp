@@ -39,6 +39,7 @@ UStomtAPI::UStomtAPI()
 	UseImageUpload = true;
 
 	this->Config = UStomtConfig::ConstructStomtConfig();
+	this->Track = UStomtTrack::ConstructStomtTrack();
 	DefaultScreenshotName = FString("HighresScreenshot00000.png");
 }
 
@@ -97,6 +98,22 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 void UStomtAPI::OnSendStomtRequestResponse(UStomtRestRequest * Request)
 {
 	// DoTo react to this
+
+	if (Request->GetResponseObject()->HasField(TEXT("data")))
+	{
+		if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("id")))
+		{
+			FString id = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetStringField(TEXT("id"));
+			this->Track->SetStomtID(id);
+			this->Track->SetEventCategory("stomt");
+			this->Track->SetEventAction("submit");
+			this->SendTrack(this->Track);
+		}
+		else
+		{
+			UE_LOG(StomtNetwork, Warning, TEXT("Send Stomt did not work | OnSendStomtRequestResponse"));
+		}
+	}
 }
 
 UStomtRestRequest* UStomtAPI::SendLoginRequest(FString UserName, FString Password)
@@ -136,6 +153,10 @@ void UStomtAPI::OnLoginRequestResponse(UStomtRestRequest * Request)
 				this->Config->SetAccessToken(Accesstoken);
 				this->Config->SetSubscribed(true);
 				this->Config->SetLoggedIn(true);
+
+				this->Track->SetEventCategory("auth");
+				this->Track->SetEventAction("login");
+				this->SendTrack(this->Track);
 			}
 			else
 			{
@@ -441,6 +462,9 @@ void UStomtAPI::OnSendEMailResponse(UStomtRestRequest * Request)
 				if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetBoolField("success"))
 				{
 					this->Config->SetSubscribed(true);
+					this->Track->SetEventCategory("auth");
+					this->Track->SetEventAction("subscribed");
+					this->SendTrack(this->Track);
 				}
 			}
 			else
@@ -484,6 +508,18 @@ void UStomtAPI::OnSendLogoutResponse(UStomtRestRequest * Request)
 	}
 
 	UE_LOG(StomtNetwork, Warning, TEXT("Logout failed | accesstoken: %s "), *this->Config->GetAccessToken());
+}
+
+void UStomtAPI::SendTrack(UStomtTrack * Track)
+{
+	UStomtRestRequest* request = this->SetupNewPostRequest();
+
+	// Add target id
+	Track->SetTargetID(this->GetTargetID());
+
+	request->SetRequestObject(Track->GetAsJsonObject());
+
+	request->ProcessURL(this->GetRestURL().Append(TEXT("/track")));
 }
 
 FString UStomtAPI::ReadScreenshotAsBase64()

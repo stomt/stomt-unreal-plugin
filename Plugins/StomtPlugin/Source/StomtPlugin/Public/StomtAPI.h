@@ -6,6 +6,7 @@
 #include "StomtRestRequest.h"
 #include "Stomt.h"
 #include "StomtConfig.h"
+#include "StomtTrack.h"
 #include "Runtime/Engine/Classes/Engine/TextureRenderTarget2D.h"
 #include "StomtAPI.generated.h"
 
@@ -147,8 +148,8 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	// Track SDK Usage
 
-
-
+	UFUNCTION(BlueprintCallable, Category = "Stomt Track")
+	void SendTrack(UStomtTrack* Track);
 
 
 	//////////////////////////////////////////////////////////////////////////
@@ -195,6 +196,11 @@ public:
 	UStomtConfig*	Config;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt API")
+	UStomtTrack*	Track;
+
+	UStomt*			StomtToSend;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt API")
 	FString			ImageUploadName;
 
 	FString			errorLog_file_uid;
@@ -202,12 +208,13 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
 	bool			UseImageUpload;
+
 	bool			IsLogUploadComplete;
 	bool			IsImageUploadComplete;
+
 	bool			LoginRequestWasSend;
 	bool			EMailFlagWasSend;
 	bool			LogFileWasSend;
-	UStomt*			StomtToSend;
 
 	FString			RestURL;
 	FString			TargetName;
@@ -228,9 +235,9 @@ public:
 	
 private:
 
-	bool WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting);
-	bool ReadFile(FString& Result, FString FileName, FString SaveDirectory);
-	TArray<uint8> ReadBinaryFile(FString FilePath);
+	bool				WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting);
+	bool				ReadFile(FString& Result, FString FileName, FString SaveDirectory);
+	TArray<uint8>		ReadBinaryFile(FString FilePath);
 
 	UStomtRestRequest*	SetupNewPostRequest();
 	UStomtRestRequest*	SetupNewDeleteRequest();
