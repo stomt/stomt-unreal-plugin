@@ -185,20 +185,15 @@ public:
 	// Data
 public:
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt API")
 	UStomtConfig*		Config;
 
-private:
-	bool WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting);
-	bool ReadFile(FString& Result, FString FileName, FString SaveDirectory);
-	TArray<uint8> ReadBinaryFile(FString FilePath);
-
-	UStomtRestRequest*	SetupNewPostRequest();
-	UStomtRestRequest*	SetupNewDeleteRequest();
-	void				AddAccesstokenToRequest(UStomtRestRequest* Request);
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt API")
+	FString				ImageUploadName;
 
 	FString				errorLog_file_uid;
-	FString				ImageUploadName;
+
+
 	FString				DefaultScreenshotName;
 
 	bool				LoginRequestWasSend;
@@ -211,4 +206,22 @@ private:
 	FString				TargetID;
 	FString				AppID;
 	FString				ImageURL;
+
+	//////////////////////////////////////////////////////////////////////////
+	// Helper Functions
+
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "Stomt API")
+	bool DoesScreenshotFileExist();
+	
+private:
+
+	bool WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting);
+	bool ReadFile(FString& Result, FString FileName, FString SaveDirectory);
+	TArray<uint8> ReadBinaryFile(FString FilePath);
+
+	UStomtRestRequest*	SetupNewPostRequest();
+	UStomtRestRequest*	SetupNewDeleteRequest();
+	void				AddAccesstokenToRequest(UStomtRestRequest* Request);
 };

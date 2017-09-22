@@ -454,8 +454,6 @@ void UStomtAPI::OnSendLogoutResponse(UStomtRestRequest * Request)
 	UE_LOG(StomtNetwork, Warning, TEXT("Logout failed | accesstoken: %s "), *this->Config->GetAccessToken());
 }
 
-
-
 FString UStomtAPI::ReadScreenshotAsBase64()
 {
 	FString ScreenDir = FPaths::ScreenShotDir();
@@ -564,6 +562,11 @@ void UStomtAPI::SaveRenderTargetToDisk(UTextureRenderTarget2D* InRenderTarget, F
 void UStomtAPI::OnARequestFailed(UStomtRestRequest * Request)
 {
 	this->OnRequestFailed.Broadcast(Request);
+}
+
+bool UStomtAPI::DoesScreenshotFileExist()
+{
+	return FPaths::FileExists(FPaths::ScreenShotDir() + this->DefaultScreenshotName);
 }
 
 bool UStomtAPI::WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting)
