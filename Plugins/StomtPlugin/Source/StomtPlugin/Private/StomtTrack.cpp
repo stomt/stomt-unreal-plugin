@@ -16,22 +16,7 @@
 UStomtTrack* UStomtTrack::ConstructStomtTrack()
 {
 	UStomtTrack* track = NewObject<UStomtTrack>();
-	UE_LOG(StomtInit, Log, TEXT("Constuct Stomt SDK Track"));
 
-	track->SetDevicePlatform(UGameplayStatics::GetPlatformName());
-	UE_LOG(StomtInit, Log, TEXT("DevicePlatform: %"), *track->DevicePlatform);
-
-	track->SetDeviceID(FGenericPlatformProcess::ComputerName());
-	UE_LOG(StomtInit, Log, TEXT("DeviceID: %"), *track->DeviceID);
-
-	track->SetSDKType(FString("UnrealEngine") + UKismetSystemLibrary::GetEngineVersion());
-	UE_LOG(StomtInit, Log, TEXT("SDKType: %"), *track->SDKType);
-
-	track->SetSDKVersion("beta-2017");
-	UE_LOG(StomtInit, Log, TEXT("SDKVersion: %"), *track->SDKVersion);
-
-	track->SetSDKIntegration(UKismetSystemLibrary::GetGameName());
-	UE_LOG(StomtInit, Log, TEXT("SDKIntegration: %"), *track->SDKIntegration);
 
 	return track;
 }
@@ -39,7 +24,22 @@ UStomtTrack* UStomtTrack::ConstructStomtTrack()
 
 UStomtTrack::UStomtTrack()
 {
+	UE_LOG(StomtInit, Log, TEXT("Constuct Stomt SDK Track"));
 
+	this->SetDevicePlatform(UGameplayStatics::GetPlatformName());
+	UE_LOG(StomtInit, Log, TEXT("DevicePlatform: %s"), *this->DevicePlatform);
+
+	this->SetDeviceID(FGenericPlatformProcess::ComputerName());
+	UE_LOG(StomtInit, Log, TEXT("DeviceID: %s"), *this->DeviceID);
+
+	this->SetSDKType(FString("UnrealEngine") + UKismetSystemLibrary::GetEngineVersion());
+	UE_LOG(StomtInit, Log, TEXT("SDKType: %s"), *this->SDKType);
+
+	this->SetSDKVersion("beta-2017");
+	UE_LOG(StomtInit, Log, TEXT("SDKVersion: %s"), *this->SDKVersion);
+
+	this->SetSDKIntegration(UKismetSystemLibrary::GetGameName());
+	UE_LOG(StomtInit, Log, TEXT("SDKIntegration: %s"), *this->SDKIntegration);
 }
 
 UStomtTrack::~UStomtTrack()
