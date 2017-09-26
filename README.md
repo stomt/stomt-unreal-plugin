@@ -44,7 +44,7 @@ _If you use an older Unreal Engine version please check out the `UE/[version]` b
 
 2. Copy the `/Plugins/StomtPlugin` folder from the repository into your project `Plugins` directory. 
 
-3. **If you do not use c++ code in project:** use the Add New button in the editor and add a blank c++ class to your project.
+3. **If you do not use C++ code in project:** use the Add New button in the editor and add a blank C++ class to your project.
 
 4. Add the StomtPlugin to your projects PublicDependencyModuleNames in the projects build.cs.
 
