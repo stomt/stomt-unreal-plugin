@@ -356,7 +356,7 @@ void UStomtAPI::OnSendLogFileResponse(UStomtRestRequest * Request)
 			}
 			else
 			{
-				UE_LOG(StomtNetwork, Warning, TEXT("Did not send stomt | image upload not complete"));
+				UE_LOG(StomtNetwork, Log, TEXT("Did not send stomt | image upload not complete"));
 			}
 		}
 	}
@@ -434,7 +434,7 @@ void UStomtAPI::OnSendImageFileResponse(UStomtRestRequest * Request)
 	}
 	else
 	{
-		UE_LOG(StomtNetwork, Warning, TEXT("Did not send stomt | log upload not complete"));
+		UE_LOG(StomtNetwork, Log, TEXT("Did not send stomt | log upload not complete"));
 	}
 
 	IsImageUploadComplete = true;
