@@ -519,7 +519,7 @@ void UStomtAPI::SendTrack(UStomtTrack * Track)
 
 	request->SetRequestObject(Track->GetAsJsonObject());
 
-	request->ProcessURL(this->GetRestURL().Append(TEXT("/track")));
+	request->ProcessURL(this->GetRestURL().Append(TEXT("/tracks")));
 }
 
 FString UStomtAPI::ReadScreenshotAsBase64()
