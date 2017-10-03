@@ -37,32 +37,47 @@ UStomtConfig::~UStomtConfig()
 
 void UStomtConfig::Load()
 {
-	UStomtRestJsonObject* configJsonObj = ReadStomtConfAsJson();
-
-	if (configJsonObj->HasField(this->SubscribedFieldName))
+	if (FPaths::FileExists(this->ConfigFolder + this->ConfigName))
 	{
-		this->Accesstoken = configJsonObj->GetStringField(this->AccessTokenFieldName);
-	}
+		UStomtRestJsonObject* configJsonObj = ReadStomtConfAsJson();
 
-	if (configJsonObj->HasField(this->SubscribedFieldName))
-	{
-		this->Subscribed = configJsonObj->GetBoolField(this->SubscribedFieldName);
+		if (configJsonObj->HasField(this->SubscribedFieldName))
+		{
+			this->Accesstoken = configJsonObj->GetStringField(this->AccessTokenFieldName);
+		}
+
+		if (configJsonObj->HasField(this->SubscribedFieldName))
+		{
+			this->Subscribed = configJsonObj->GetBoolField(this->SubscribedFieldName);
+		}
+		else
+		{
+			this->Subscribed = false;
+		}
+
+		if (configJsonObj->HasField(this->LoggedInFieldName))
+		{
+			this->LoggedIn = configJsonObj->GetBoolField(this->LoggedInFieldName);
+		}
+		else
+		{
+			this->LoggedIn = false;
+		}
+
+		OnConfigUpdated.Broadcast(this);
 	}
 	else
 	{
-		this->Subscribed = false;
+		// Force to create config file
+		this->Subscribed = true;
+		this->LoggedIn = true;
+		this->SetSubscribed(false);
+		this->SetLoggedIn(false);
+
+		OnConfigUpdated.Broadcast(this);
 	}
 
-	if (configJsonObj->HasField(this->LoggedInFieldName))
-	{
-		this->LoggedIn = configJsonObj->GetBoolField(this->LoggedInFieldName);
-	}
-	else
-	{
-		this->LoggedIn = false;
-	}
 
-	OnConfigUpdated.Broadcast(this);
 }
 
 void UStomtConfig::Delete()
