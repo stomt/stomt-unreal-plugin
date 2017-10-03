@@ -64,11 +64,17 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 
 	for (int i = 0; i != stomt->GetLabels().Num(); ++i)
 	{
-		labels.Add(UStomtJsonValue::ConstructJsonValueString(this, stomt->GetLabels()[i]->GetName() ));
+		if (!stomt->GetLabels()[i]->GetName().IsEmpty())
+		{
+			labels.Add(UStomtJsonValue::ConstructJsonValueString(this, stomt->GetLabels()[i]->GetName()));
+		}
 	}
 
-	jObjExtraData->SetArrayField(TEXT("labels"), labels);
-	request->GetRequestObject()->SetObjectField(TEXT("extradata"), jObjExtraData);
+	if (labels.Num() > 0)
+	{
+		jObjExtraData->SetArrayField(TEXT("labels"), labels);
+		request->GetRequestObject()->SetObjectField(TEXT("extradata"), jObjExtraData);
+	}
 
 	// Stomt Image
 	if (!this->ImageUploadName.IsEmpty() && UseImageUpload)
