@@ -1,13 +1,13 @@
 {
     "FileVersion": 3,
 	
-    "FriendlyName": "Stomt Plugin",
+    "FriendlyName": "STOMT Plugin",
     "Version": 1,
     "VersionName": "1.0",
-    "Description": "Stomt Feedback",
+    "Description": "This Widget allows the easy integration of the feedback solution www.stomt.com in your game.",
     "Category": "Widgets",
     "CreatedBy": "Daniel Schukies",
-    "CreatedByUrl": "http://www.stomt.com",
+    "CreatedByUrl": "https://www.stomt.com",
 	
 	"Modules":
      [
