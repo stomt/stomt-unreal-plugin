@@ -17,6 +17,15 @@
 // add includes for headers that are used in most of your module's source files though.
 #include "ModuleManager.h"
 
-DECLARE_LOG_CATEGORY_EXTERN(LogStomt, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(Stomt, Log, All);
+
+//Logging during plugin startup
+DECLARE_LOG_CATEGORY_EXTERN(StomtInit, Log, All);
+
+//Logging during network communication
+DECLARE_LOG_CATEGORY_EXTERN(StomtNetwork, Log, All);
+
+//Logging during file access
+DECLARE_LOG_CATEGORY_EXTERN(StomtFileAccess, Log, All);
 #include "StomtPlugin.h"
 

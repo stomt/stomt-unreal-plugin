@@ -13,12 +13,18 @@
 #include "Runtime/Core/Public/Misc/App.h"
 #include "StomtJsonObject.h"
 
-UStomtAPI* UStomtAPI::ConstructRequest(FString TargetID, FString RestURL, FString AppID)
+
+UStomtAPI* UStomtAPI::ConstructStomtAPI(FString TargetID, FString RestURL, FString AppID)
 {
 	UStomtAPI* api = NewObject<UStomtAPI>();
 	api->SetAppID(AppID);
 	api->SetTargetID(TargetID);
 	api->SetRestURL(RestURL);
+
+	UE_LOG(StomtInit, Log, TEXT("Construct Stomt API"));
+	UE_LOG(StomtInit, Log, TEXT("AppID: %s "), *api->GetAppID());
+	UE_LOG(StomtInit, Log, TEXT("TargetID: %s "), *api->GetTargetID());
+	UE_LOG(StomtInit, Log, TEXT("RestURL: %s "), *api->GetRestURL());
 
 	return api;
 }
@@ -26,18 +32,15 @@ UStomtAPI* UStomtAPI::ConstructRequest(FString TargetID, FString RestURL, FStrin
 
 UStomtAPI::UStomtAPI()
 {
-	this->configFolder = FPaths::EngineUserDir() + FString(TEXT("Saved/Config/stomt/"));
-	//UE_LOG(LogTemp, Warning, TEXT("configfolder: %s"), *this->configFolder);
-	this->configName = FString(TEXT("stomt.conf.json"));
-	this->accesstoken = FString(TEXT(""));
-	ReadStomtConf(TEXT("accesstoken"));
-
-	this->request = NewObject<UStomtRestRequest>();
-
-	this->request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnReceiving);
-
 	LogFileWasSend = false;
 	EMailFlagWasSend = false;
+	IsImageUploadComplete = false;
+	IsLogUploadComplete = false;
+	UseImageUpload = true;
+
+	this->Config = UStomtConfig::ConstructStomtConfig();
+	this->Track = UStomtTrack::ConstructStomtTrack();
+	DefaultScreenshotName = FString("HighresScreenshot00000.png");
 }
 
 UStomtAPI::~UStomtAPI()
@@ -46,13 +49,14 @@ UStomtAPI::~UStomtAPI()
 
 void UStomtAPI::SendStomt(UStomt* stomt)
 {
-	this->SetupNewPostRequest();
+	UStomtRestRequest* request = this->SetupNewPostRequest();
+	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnSendStomtRequestResponse);
 
 	// Fields
-	this->request->GetRequestObject()->SetField(TEXT("target_id"),	UStomtJsonValue::ConstructJsonValueString(	this, stomt->GetTargetID()	));
-	this->request->GetRequestObject()->SetField(TEXT("positive"),	UStomtJsonValue::ConstructJsonValueBool(	this, stomt->GetPositive()	));
-	this->request->GetRequestObject()->SetField(TEXT("text"),		UStomtJsonValue::ConstructJsonValueString(	this, stomt->GetText()		));
-	this->request->GetRequestObject()->SetField(TEXT("anonym"),		UStomtJsonValue::ConstructJsonValueBool(	this, stomt->GetAnonym()	));
+	request->GetRequestObject()->SetField(TEXT("target_id"),	UStomtJsonValue::ConstructJsonValueString(	this, stomt->GetTargetID()	));
+	request->GetRequestObject()->SetField(TEXT("positive"),	UStomtJsonValue::ConstructJsonValueBool(	this, stomt->GetPositive()	));
+	request->GetRequestObject()->SetField(TEXT("text"),		UStomtJsonValue::ConstructJsonValueString(	this, stomt->GetText()		));
+	request->GetRequestObject()->SetField(TEXT("anonym"),		UStomtJsonValue::ConstructJsonValueBool(	this, stomt->GetAnonym()	));
 	
 	//Labels
 	UStomtRestJsonObject* jObjExtraData = UStomtRestJsonObject::ConstructJsonObject(this);
@@ -60,11 +64,28 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 
 	for (int i = 0; i != stomt->GetLabels().Num(); ++i)
 	{
-		labels.Add(UStomtJsonValue::ConstructJsonValueString(this, stomt->GetLabels()[i]->GetName() ));
+		if (!stomt->GetLabels()[i]->GetName().IsEmpty())
+		{
+			labels.Add(UStomtJsonValue::ConstructJsonValueString(this, stomt->GetLabels()[i]->GetName()));
+		}
 	}
 
-	jObjExtraData->SetArrayField(TEXT("labels"), labels);
-	this->request->GetRequestObject()->SetObjectField(TEXT("extradata"), jObjExtraData);
+	if (labels.Num() > 0)
+	{
+		jObjExtraData->SetArrayField(TEXT("labels"), labels);
+		request->GetRequestObject()->SetObjectField(TEXT("extradata"), jObjExtraData);
+	}
+
+	// Stomt Image
+	if (!this->ImageUploadName.IsEmpty() && UseImageUpload)
+	{
+		request->GetRequestObject()->SetStringField(TEXT("img_name"), ImageUploadName);
+		UE_LOG(StomtNetwork, Log, TEXT("Append Image"));
+	}
+	else
+	{
+		UE_LOG(StomtNetwork, Log, TEXT("Append no Image (Don't use image upload)"));
+	}
 
 	// Error Logs
 	if (!this->errorLog_file_uid.IsEmpty())
@@ -74,25 +95,83 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 		jObjFileContext->SetField(TEXT("file_uid"), UStomtJsonValue::ConstructJsonValueString(this, this->errorLog_file_uid));
 
 		jObjFile->SetObjectField(TEXT("stomt"), jObjFileContext);
-		this->request->GetRequestObject()->SetObjectField(TEXT("files"), jObjFile);
+		request->GetRequestObject()->SetObjectField(TEXT("files"), jObjFile);
 	}
-	
-	this->request->ProcessURL( this->GetRestURL().Append(TEXT("/stomts")) );
+
+	request->ProcessURL( this->GetRestURL().Append(TEXT("/stomts")) );
 }
 
-void UStomtAPI::SendLoginRequest(FString UserName, FString Password)
+void UStomtAPI::OnSendStomtRequestResponse(UStomtRestRequest * Request)
 {
-	this->SetupNewPostRequest();
-	this->request->UseRequestLogging(false);
+	// DoTo react to this
 
-	this->request->GetRequestObject()->SetStringField(TEXT("login_method"), TEXT("normal"));
-	this->request->GetRequestObject()->SetStringField(TEXT("emailusername"), UserName);
-	this->request->GetRequestObject()->SetStringField(TEXT("password"), Password);
+	if (Request->GetResponseObject()->HasField(TEXT("data")))
+	{
+		if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("id")))
+		{
+			FString id = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetStringField(TEXT("id"));
+			this->Track->SetStomtID(id);
+			this->Track->SetEventCategory("stomt");
+			this->Track->SetEventAction("submit");
+			this->SendTrack(this->Track);
+		}
+		else
+		{
+			UE_LOG(StomtNetwork, Warning, TEXT("Send Stomt did not work | OnSendStomtRequestResponse"));
+		}
+	}
+}
 
-	this->request->ProcessURL(this->GetRestURL().Append(TEXT("/authentication/session")));
+UStomtRestRequest* UStomtAPI::SendLoginRequest(FString UserName, FString Password)
+{
+	UStomtRestRequest* request = this->SetupNewPostRequest();
+	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnLoginRequestResponse);
 
-	LoginRequestWasSend = true;
-	this->request->UseRequestLogging(true);
+	request->UseRequestLogging(false);
+
+	request->GetRequestObject()->SetStringField(TEXT("login_method"), TEXT("normal"));
+	request->GetRequestObject()->SetStringField(TEXT("emailusername"), UserName);
+	request->GetRequestObject()->SetStringField(TEXT("password"), Password);
+
+	request->ProcessURL(this->GetRestURL().Append(TEXT("/authentication/session")));
+
+	request->UseRequestLogging(true);
+
+	return request;
+}
+
+void UStomtAPI::OnLoginRequestResponse(UStomtRestRequest * Request)
+{
+	if (Request->GetResponseCode() == 403 || Request->GetResponseCode() == 404 || Request->GetResponseCode() == 413)
+	{
+		if (StomtToSend != NULL)
+		{
+			this->SendStomt(StomtToSend);
+		}
+	}
+	else
+	{
+		if (Request->GetResponseObject()->HasField(TEXT("data")))
+		{
+			if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("accesstoken")))
+			{
+				FString Accesstoken = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetStringField(TEXT("accesstoken"));
+				this->Config->SetAccessToken(Accesstoken);
+				this->Config->SetSubscribed(true);
+				this->Config->SetLoggedIn(true);
+
+				this->Track->SetEventCategory("auth");
+				this->Track->SetEventAction("login");
+				this->SendTrack(this->Track);
+			}
+			else
+			{
+				UE_LOG(StomtNetwork, Warning, TEXT("Login did not work"));
+			}
+		}
+	}
+
+	OnLoginRequestComplete.Broadcast(Request);
 }
 
 void UStomtAPI::SendStomtLabels(UStomt * stomt)
@@ -104,175 +183,100 @@ void UStomtAPI::SendStomtLabels(UStomt * stomt)
 	if (!stomt->GetServersideID().IsEmpty() && stomt->GetLabels().Max() > 0)
 	{
 		//Reset Request
-		this->request->ResetResponseData();
-		this->request->ResetRequestData();
+		this->Request->ResetResponseData();
+		this->Request->ResetRequestData();
 
 		UE_LOG(LogTemp, Warning, TEXT("nice1"));
-		this->request->SetVerb(ERequestVerb::POST);
-		this->request->SetHeader(TEXT("appid"), this->GetAppID() );
+		this->Request->SetVerb(ERequestVerb::POST);
+		this->Request->SetHeader(TEXT("appid"), this->GetAppID() );
 
-		this->request->GetRequestObject()->SetField(TEXT("name"),	UStomtJsonValue::ConstructJsonValueString(	this, TEXT("newlabeltest")	));
-		this->request->GetRequestObject()->SetField(TEXT("as_target_owner"), UStomtJsonValue::ConstructJsonValueString(this, TEXT("true")));
+		this->Request->GetRequestObject()->SetField(TEXT("name"),	UStomtJsonValue::ConstructJsonValueString(	this, TEXT("newlabeltest")	));
+		this->Request->GetRequestObject()->SetField(TEXT("as_target_owner"), UStomtJsonValue::ConstructJsonValueString(this, TEXT("true")));
 
-		this->request->ProcessURL( this->GetRestURL().Append(TEXT("/stomts/")).Append(stomt->GetServersideID()).Append(TEXT("/labels") ) );
+		this->Request->ProcessURL( this->GetRestURL().Append(TEXT("/stomts/")).Append(stomt->GetServersideID()).Append(TEXT("/labels") ) );
 	}
 	*/
 }
 
-void UStomtAPI::RequestTarget(FString targetID)
+UStomtRestRequest* UStomtAPI::RequestTarget(FString TargetID)
 {
-	this->request->SetVerb(ERequestVerb::GET);
-	this->request->SetHeader(TEXT("appid"), this->GetAppID() );
+	UStomtRestRequest* request = NewObject<UStomtRestRequest>();
+	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnRequestTargetResponse);
+	request->OnRequestFail.AddDynamic(this, &UStomtAPI::OnARequestFailed);
 
-	this->request->ProcessURL( this->GetRestURL().Append("/targets/").Append( this->GetTargetID() ).Append("?target_id=").Append( this->GetTargetID() ) );
+	request->SetVerb(ERequestVerb::GET);
+	request->SetHeader(TEXT("appid"), this->GetAppID() );
+
+	request->ProcessURL( this->GetRestURL().Append("/targets/").Append(TargetID) );
+
+	return request;
+}
+
+void UStomtAPI::OnRequestTargetResponse(UStomtRestRequest * Request)
+{
+	if (Request->GetResponseCode() != 200) return;
+
+	if (!Request->GetResponseObject()->HasField(TEXT("data"))) return;
+	
+	if (!Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("displayname"))) return;
+	
+	this->TargetName = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetStringField(TEXT("displayname"));
+	this->SetImageURL(Request->GetResponseObject()
+		->GetObjectField(TEXT("data"))
+		->GetObjectField(TEXT("images"))
+		->GetObjectField(TEXT("profile"))
+		->GetStringField(TEXT("url")));
 }
 
 void UStomtAPI::SetRestURL(FString URL)
 {
-	this->restURL = URL;
+	this->RestURL = URL;
 }
 
 FString UStomtAPI::GetRestURL()
 {
-	return this->restURL;
+	return this->RestURL;
 }
 
 void UStomtAPI::SetAppID(FString appID)
 {
-	this->appID = appID;
+	this->AppID = appID;
 }
 
 FString UStomtAPI::GetAppID()
 {
-	return this->appID;
+	return this->AppID;
 }
 
 FString UStomtAPI::GetTargetName()
 {
-	return this->targetName;
+	return this->TargetName;
 }
 
 void UStomtAPI::SetTargetID(FString targetID)
 {
-	this->targetID = targetID;
+	this->TargetID = targetID;
 }
 
 FString UStomtAPI::GetTargetID()
 {
-	return this->targetID;
+	return this->TargetID;
 }
 
 void UStomtAPI::SetImageURL(FString URL)
 {
-	this->imageURL = URL;
+	this->ImageURL = URL;
 }
 
 FString UStomtAPI::GetImageURL()
 {
-	return this->imageURL;
+	return this->ImageURL;
 }
 
 void UStomtAPI::SetStomtToSend(UStomt * stomt)
 {
 	this->StomtToSend = stomt;
 }
-
-UStomtRestRequest * UStomtAPI::GetRequest()
-{
-	return this->request;
-}
-
-bool UStomtAPI::SaveAccesstoken(FString accesstoken)
-{
-	return SaveValueToStomtConf(TEXT("accesstoken"), accesstoken);
-}
-
-bool UStomtAPI::SaveValueToStomtConf(FString FieldName, FString FieldValue)
-{
-	UStomtRestJsonObject* jsonObj = ReadStomtConfAsJson();
-
-	if (jsonObj->HasField(FieldName))
-	{
-		if (jsonObj->GetStringField(FieldName).Equals(FieldValue))
-		{
-			return false;
-		}	
-
-		jsonObj->RemoveField(FieldName);
-	}
-	
-	jsonObj->SetStringField(FieldName, FieldValue);
-
-	return this->WriteFile(jsonObj->EncodeJson(), configName, configFolder, true);
-}
-
-
-
-bool UStomtAPI::SaveFlag(FString FlagName, bool FlagState)
-{
-	return SaveValueToStomtConf(FlagName, FlagState ? TEXT("true") : TEXT("false"));
-}
-
-FString UStomtAPI::ReadStomtConf(FString FieldName)
-{
-	FString result;
-
-	if (this->ReadFile(result, configName, configFolder))
-	{
-		UStomtRestJsonObject* jsonObj = UStomtRestJsonObject::ConstructJsonObject(this);
-		jsonObj->DecodeJson(result);
-		this->accesstoken = jsonObj->GetField(FieldName)->AsString();
-	}
-
-	return result;
-}
-
-bool UStomtAPI::ReadFlag(FString FlagName)
-{
-	FString result;
-	bool FlagState = false;
-
-	if (this->ReadFile(result, configName, configFolder))
-	{
-		UStomtRestJsonObject* jsonObj = UStomtRestJsonObject::ConstructJsonObject(this);
-		jsonObj->DecodeJson(result);
-		FlagState = jsonObj->GetField(FlagName)->AsBool();
-	}
-
-	return FlagState;
-}
-
-UStomtRestJsonObject* UStomtAPI::ReadStomtConfAsJson()
-{
-	FString result;
-	UStomtRestJsonObject* jsonObj = UStomtRestJsonObject::ConstructJsonObject(this);
-
-	if (this->ReadFile(result, configName, configFolder))
-	{
-		jsonObj->DecodeJson(result);
-	}
-
-	return jsonObj;
-}
-
-bool UStomtAPI::WriteStomtConfAsJson(UStomtRestJsonObject * StomtConf)
-{
-	return this->WriteFile(StomtConf->EncodeJson(), configName, configFolder, true);
-}
-
-void UStomtAPI::DeleteStomtConf()
-{
-	FString file = this->configFolder + this->configName;
-	if (!FPlatformFileManager::Get().GetPlatformFile().DeleteFile(*file))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Could not delete stomt.conf.json: %s"), *file);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Deleted stomt.conf.json because of wrong access token Path: %s"), *file);
-	}
-}
-
 
 FString UStomtAPI::ReadLogFile(FString LogFileName)
 {
@@ -288,7 +292,7 @@ FString UStomtAPI::ReadLogFile(FString LogFileName)
 	// Copy LogFileData
 	if (!PlatformFile.CopyFile(*LogFileCopyPath, *LogFilePath, EPlatformFileRead::AllowWrite, EPlatformFileWrite::AllowRead))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("LogFile Copy did not work FromFile: %s | ToFile %s"), *LogFilePath, *LogFileCopyPath);
+		UE_LOG(StomtFileAccess, Error, TEXT("LogFile Copy did not work FromFile: %s | ToFile %s"), *LogFilePath, *LogFileCopyPath);
 	}
 
 	// Read LogFileCopy from Disk
@@ -296,18 +300,18 @@ FString UStomtAPI::ReadLogFile(FString LogFileName)
 	{
 		if (FPaths::FileExists(FPaths::GameLogDir() + LogFileCopyName))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Could not read LogFile %s, but it exists"), *LogFileCopyName);
+			UE_LOG(StomtFileAccess, Warning, TEXT("Could not read LogFile %s, but it exists"), *LogFileCopyName);
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Could not read LogFile %s, because it does not exist"), *LogFileCopyName);
+			UE_LOG(StomtFileAccess, Warning, TEXT("Could not read LogFile %s, because it does not exist"), *LogFileCopyName);
 		}
 	}
 
 	// Delete LogFileCopy
 	if (!PlatformFile.DeleteFile(*LogFileCopyPath))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Could not delete LogFileCopy %s"), *LogFileCopyPath);
+		UE_LOG(StomtFileAccess, Warning, TEXT("Could not delete LogFileCopy %s"), *LogFileCopyPath);
 	}
 
 	return errorLog;
@@ -315,138 +319,233 @@ FString UStomtAPI::ReadLogFile(FString LogFileName)
 
 void UStomtAPI::SendLogFile(FString LogFileData, FString LogFileName)
 {
-	this->SetupNewPostRequest();
+	UStomtRestRequest* request = this->SetupNewPostRequest();
+	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnSendLogFileResponse);
 
 	FString logJson = FString(TEXT("{ \"files\": { \"stomt\": [ { \"data\":\"") + FBase64::Encode(LogFileData) + TEXT("\", \"filename\" : \"") + LogFileName + TEXT("\" } ] } }"));
 
-	this->request->UseStaticJsonString(true);
-	this->request->SetStaticJsonString(logJson);
+	request->UseStaticJsonString(true);
+	request->SetStaticJsonString(logJson);
 
-	this->request->ProcessURL(this->GetRestURL().Append(TEXT("/files")));
+	request->ProcessURL(this->GetRestURL().Append(TEXT("/files")));
 
 	LogFileWasSend = true;
 }
 
-void UStomtAPI::SendEMail(FString EMail)
+void UStomtAPI::OnSendLogFileResponse(UStomtRestRequest * Request)
 {
-	this->SetupNewPostRequest();
+	// Request access token
+	if (this->Config->GetAccessToken().IsEmpty())
+	{
+		if (Request->GetResponseObject()->HasField(TEXT("meta")))
+		{
+			if (Request->GetResponseObject()->GetObjectField(TEXT("meta"))->HasField(TEXT("accesstoken")))
+			{
+				FString Accesstoken = Request->GetResponseObject()->GetObjectField(TEXT("meta"))->GetStringField(TEXT("accesstoken"));
+				this->Config->SetAccessToken(Accesstoken);
+			}
+		}
+	}
 
-	this->request->GetRequestObject()->SetStringField(TEXT("email"), EMail);
+	// Get File uid of the error log and send stomt
+	if (Request->GetResponseObject()->HasField(TEXT("data")))
+	{
+		if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("files")))
+		{
+			this->errorLog_file_uid = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetObjectField(TEXT("files"))->GetObjectField(TEXT("stomt"))->GetStringField("file_uid");
+			this->LogFileWasSend = false;
 
-	this->request->ProcessURL(this->GetRestURL().Append(TEXT("/authentication/subscribe")));
+			if (IsImageUploadComplete)
+			{
+				this->SendStomt(StomtToSend);
+				UE_LOG(StomtNetwork, Log, TEXT("Sent Stomt after sending log files"));
+			}
+			else
+			{
+				UE_LOG(StomtNetwork, Log, TEXT("Did not send stomt | image upload not complete"));
+			}
+		}
+	}
 
-	this->EMailFlagWasSend = true;
+	if (Request->GetResponseCode() == 403 || Request->GetResponseCode() == 419 || Request->GetResponseCode() == 413)
+	{
+		if (StomtToSend != NULL)
+		{
+			this->SendStomt(StomtToSend);
+			LogFileWasSend = false;
+		}
+	}
+
+	IsLogUploadComplete = true;
 }
 
-void UStomtAPI::OnReceiving(UStomtRestRequest * Request)
+void UStomtAPI::SendImageFile(FString ImageFileDataBase64)
 {
-
-	// Wrong access token
-	if (Request->GetResponseCode() == 403 || Request->GetResponseCode() == 419)
+	if (ImageFileDataBase64.IsEmpty())
 	{
-		LoginRequestWasSend = false;
-
-		UStomtRestJsonObject* stomtconf = this->ReadStomtConfAsJson();
-		stomtconf->RemoveField(accesstoken);
-		WriteStomtConfAsJson(stomtconf);
-
-		this->accesstoken.Empty();
+		UE_LOG(StomtNetwork, Warning, TEXT("Could not send stomt image | ImageFileDataBase64 was empty"));
+		return;
 	}
 
+	UStomtRestRequest* request = this->SetupNewPostRequest();
+	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnSendImageFileResponse);
 
-	if (LoginRequestWasSend)
+	FString ImageJson = FString(TEXT("{ \"images\": { \"stomt\": [ { \"data\":\"") + ImageFileDataBase64 + TEXT("\" } ] } }"));
+
+	request->UseStaticJsonString(true);
+	request->SetStaticJsonString(ImageJson);
+
+	request->ProcessURL(this->GetRestURL().Append(TEXT("/images")));
+
+}
+
+void UStomtAPI::OnSendImageFileResponse(UStomtRestRequest * Request)
+{
+	// Request access token
+	if (this->Config->GetAccessToken().IsEmpty())
 	{
-		if (Request->GetResponseCode() == 403 || Request->GetResponseCode() == 404 || Request->GetResponseCode() == 413)
+		if (Request->GetResponseObject()->HasField(TEXT("meta")))
 		{
-			LoginRequestWasSend = false;
-
-			if (StomtToSend != NULL)
+			if (Request->GetResponseObject()->GetObjectField(TEXT("meta"))->HasField(TEXT("accesstoken")))
 			{
-				this->SendStomt(StomtToSend);
-			}
-		}
-		else
-		{
-			if (Request->GetResponseObject()->HasField(TEXT("data")))
-			{
-				if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("accesstoken")))
-				{
-					this->accesstoken = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetStringField(TEXT("accesstoken"));
-					this->SaveAccesstoken(this->accesstoken);
-					this->SaveFlag(TEXT("email"), true);
-					LoginRequestWasSend = false;
-				}
-				else
-				{
-					UE_LOG(LogTemp, Warning, TEXT("Login did not work"));
-				}
+				FString Accesstoken = Request->GetResponseObject()->GetObjectField(TEXT("meta"))->GetStringField(TEXT("accesstoken"));
+				this->Config->SetAccessToken(Accesstoken);
 			}
 		}
 	}
 
-	if (LogFileWasSend)
+	// Get File uid of the error log and send stomt
+	if (Request->GetResponseObject()->HasField(TEXT("data")))
 	{
-		// Request access token
-		if (this->accesstoken.IsEmpty())
+		if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("images")))
 		{
-			if (Request->GetResponseObject()->HasField(TEXT("meta")))
-			{
-				if (Request->GetResponseObject()->GetObjectField(TEXT("meta"))->HasField(TEXT("accesstoken")))
-				{
-					this->accesstoken = Request->GetResponseObject()->GetObjectField(TEXT("meta"))->GetStringField(TEXT("accesstoken"));
-					this->SaveAccesstoken(this->accesstoken);
-				}
-			}
+			this->ImageUploadName = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetObjectField(TEXT("images"))->GetObjectField(TEXT("stomt"))->GetStringField("name");
+			UE_LOG(StomtFileAccess, Log, TEXT("Image Upload complete %s"), *this->ImageUploadName);
 		}
+	}
 
-		// Get File uid of the error log and send stomt
+	if (Request->GetResponseCode() == 403 || Request->GetResponseCode() == 419 || Request->GetResponseCode() == 413)
+	{
+		if (StomtToSend != NULL)
+		{
+			//this->SendStomt(StomtToSend);
+			//LogFileWasSend = false;
+		}
+	}
+
+	if (IsLogUploadComplete)
+	{
+		this->SendStomt(StomtToSend);
+		UE_LOG(StomtNetwork, Log, TEXT("Sent Stomt after sending screenshot file"));
+	}
+	else
+	{
+		UE_LOG(StomtNetwork, Log, TEXT("Did not send stomt | log upload not complete"));
+	}
+
+	IsImageUploadComplete = true;
+}
+
+void UStomtAPI::SendEMail(FString EMail)
+{
+	UStomtRestRequest* request = this->SetupNewPostRequest();
+	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::UStomtAPI::OnSendEMailResponse);
+
+	request->GetRequestObject()->SetStringField(TEXT("email"), EMail);
+
+	request->ProcessURL(this->GetRestURL().Append(TEXT("/authentication/subscribe")));
+}
+
+
+void UStomtAPI::OnSendEMailResponse(UStomtRestRequest * Request)
+{
+	if (Request->GetResponseCode() != 400)
+	{
 		if (Request->GetResponseObject()->HasField(TEXT("data")))
 		{
-			if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("files")))
+			if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("success")))
 			{
-				this->errorLog_file_uid = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetObjectField(TEXT("files"))->GetObjectField(TEXT("stomt"))->GetStringField("file_uid");
-				this->LogFileWasSend = false;
-				this->SendStomt(StomtToSend);
+				if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetBoolField("success"))
+				{
+					this->Config->SetSubscribed(true);
+					this->Track->SetEventCategory("auth");
+					this->Track->SetEventAction("subscribed");
+					this->SendTrack(this->Track);
+				}
 			}
-		}
-
-		if (Request->GetResponseCode() == 403 || Request->GetResponseCode() == 419 || Request->GetResponseCode() == 413)
-		{
-			if (StomtToSend != NULL)
+			else
 			{
-				this->SendStomt(StomtToSend);
-				LogFileWasSend = false;
+				this->Config->SetSubscribed(false);
 			}
 		}
 	}
-
-	if (EMailFlagWasSend)
+	else
 	{
-		if (! (Request->GetResponseCode() == 400))
-		{
-			if (Request->GetResponseObject()->HasField(TEXT("data")))
-			{
-				if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("success")))
-				{
-					this->SaveFlag(TEXT("email"), true);
-				}
-				else
-				{
-					this->SaveFlag(TEXT("email"), false);
-				}
-			}
-			
-		}
-		else
-		{
-			this->SaveFlag(TEXT("email"), true);
-		}
+		this->Config->SetSubscribed(true);
+	}
+}
 
-		EMailFlagWasSend = false;
+void UStomtAPI::SendLogoutRequest()
+{
+	UStomtRestRequest* request = this->SetupNewDeleteRequest();
+	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::UStomtAPI::OnSendLogoutResponse);
+
+	request->ProcessURL(this->GetRestURL().Append(TEXT("/authentication/session")));
+
+	this->Config->SetAccessToken(TEXT(""));
+	this->Config->SetLoggedIn(false);
+	this->Config->SetSubscribed(false);
+}
+
+void UStomtAPI::OnSendLogoutResponse(UStomtRestRequest * Request)
+{
+	if (Request->GetResponseCode() != 400)
+	{
+		if (Request->GetResponseObject()->HasField(TEXT("data")))
+		{
+			if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("success")))
+			{
+				if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetBoolField("success"))
+				{
+					return; // logout was successful
+				}	
+			}
+		}
 	}
 
+	UE_LOG(StomtNetwork, Warning, TEXT("Logout failed | accesstoken: %s "), *this->Config->GetAccessToken());
+}
 
+void UStomtAPI::SendTrack(UStomtTrack * Track)
+{
+	UStomtRestRequest* request = this->SetupNewPostRequest();
 
+	// Add target id
+	Track->SetTargetID(this->GetTargetID());
+
+	request->SetRequestObject(Track->GetAsJsonObject());
+
+	request->ProcessURL(this->GetRestURL().Append(TEXT("/tracks")));
+}
+
+FString UStomtAPI::ReadScreenshotAsBase64()
+{
+	FString ScreenDir = FPaths::ScreenShotDir();
+	FString FilePath = ScreenDir + this->DefaultScreenshotName;
+
+	UE_LOG(Stomt, Log, TEXT("TakeScreenshot | FilePath: %s"), *FilePath);
+	UE_LOG(Stomt, Log, TEXT("Screenshot | AllocatedSize: %d"), this->ReadBinaryFile(FilePath).GetAllocatedSize());
+
+	TArray<uint8> file = this->ReadBinaryFile(FilePath);
+
+	//Delete Screenshot
+	FString AbsoluteFilePath = ScreenDir + this->DefaultScreenshotName;
+	if (!FPlatformFileManager::Get().GetPlatformFile().DeleteFile(*AbsoluteFilePath))
+	{
+		UE_LOG(StomtFileAccess, Warning, TEXT("Could not delete old screenshot File (Could Not Find Screenshot File)") );
+	}
+
+	return FBase64::Encode(file);
 }
 
 bool UStomtAPI::CaptureComponent2D_SaveImage(USceneCaptureComponent2D * Target, const FString ImagePath, const FLinearColor ClearColour)
@@ -534,6 +633,21 @@ void UStomtAPI::SaveRenderTargetToDisk(UTextureRenderTarget2D* InRenderTarget, F
 	HighResScreenshotConfig.SaveImage(Filename, OutBMP, DestSize, &ResultPath);
 }
 
+void UStomtAPI::OnARequestFailed(UStomtRestRequest * Request)
+{
+	this->OnRequestFailed.Broadcast(Request);
+}
+
+bool UStomtAPI::DoesScreenshotFileExist()
+{
+	return FPaths::FileExists(FPaths::ScreenShotDir() + this->DefaultScreenshotName);
+}
+
+void UStomtAPI::UseScreenshotUpload(bool UseUpload)
+{
+	UseImageUpload = UseUpload;
+}
+
 bool UStomtAPI::WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting)
 {
 	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
@@ -576,25 +690,53 @@ bool UStomtAPI::ReadFile(FString& Result, FString FileName, FString SaveDirector
 
 	if (!FPaths::FileExists(path))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("File with this path does not exist: %s "), *path);
+		UE_LOG(StomtFileAccess, Warning, TEXT("File with this path does not exist: %s "), *path);
 	}
 
 	return FFileHelper::LoadFileToString( Result, *path);
 
 }
 
-inline void UStomtAPI::SetupNewPostRequest()
+TArray<uint8> UStomtAPI::ReadBinaryFile(FString FilePath)
 {
-	//Reset Request
-	this->request->ResetResponseData();
-	this->request->ResetRequestData();
+	TArray<uint8> BufferArray;
+	FFileHelper::LoadFileToArray(BufferArray, *FilePath);
+	
+	return BufferArray;
+}
 
-	this->request->SetVerb(ERequestVerb::POST);
-	this->request->SetHeader(TEXT("appid"), this->GetAppID());
+UStomtRestRequest* UStomtAPI::SetupNewPostRequest()
+{
+	UStomtRestRequest* request = NewObject<UStomtRestRequest>();
+	request->OnRequestFail.AddDynamic(this, &UStomtAPI::OnARequestFailed);
 
-	if (!this->accesstoken.IsEmpty())
+	request->SetVerb(ERequestVerb::POST);
+	request->SetHeader(TEXT("appid"), this->GetAppID());
+
+	this->AddAccesstokenToRequest(request);
+
+	return request;
+}
+
+UStomtRestRequest * UStomtAPI::SetupNewDeleteRequest()
+{
+	UStomtRestRequest* request = NewObject<UStomtRestRequest>();
+	request->OnRequestFail.AddDynamic(this, &UStomtAPI::OnARequestFailed);
+
+	request->SetVerb(ERequestVerb::DEL);
+	request->SetHeader(TEXT("appid"), this->GetAppID());
+
+	this->AddAccesstokenToRequest(request);
+
+	return request;
+}
+
+void UStomtAPI::AddAccesstokenToRequest(UStomtRestRequest * Request)
+{
+	if (!this->Config->GetAccessToken().IsEmpty())
 	{
-		this->request->SetHeader(TEXT("accesstoken"), this->accesstoken);
+		Request->SetHeader(TEXT("accesstoken"), this->Config->GetAccessToken());
+		UE_LOG(StomtNetwork, Log , TEXT("AddAccesstoken: %s "), *this->Config->GetAccessToken());
 	}
 }
 

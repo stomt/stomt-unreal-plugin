@@ -10,16 +10,10 @@
 typedef TJsonWriterFactory< TCHAR, TCondensedJsonPrintPolicy<TCHAR> > FCondensedJsonStringWriterFactory;
 typedef TJsonWriter< TCHAR, TCondensedJsonPrintPolicy<TCHAR> > FCondensedJsonStringWriter;
 
-//UStomtRestJsonObject::UStomtRestJsonObject(const class FObjectInitializer& PCIP)
-//	: Super(PCIP)
-//{
-//	Reset();
-//}
 
 UStomtRestJsonObject::UStomtRestJsonObject()
 {
 	Reset();
-	//UE_LOG(LogTemp, Warning, TEXT("UStomtRestJsonObject Constructor"));
 }
 
 UStomtRestJsonObject* UStomtRestJsonObject::ConstructJsonObject(UObject* WorldContextObject)
@@ -89,7 +83,7 @@ bool UStomtRestJsonObject::DecodeJson(const FString& JsonString)
 	// If we've failed to deserialize the string, we should clear our internal data
 	Reset();
 
-	UE_LOG(LogTemp, Error, TEXT("Json decoding failed for: %s"), *JsonString);
+	UE_LOG(Stomt, Error, TEXT("Json decoding failed for: %s"), *JsonString);
 
 	return false;
 }

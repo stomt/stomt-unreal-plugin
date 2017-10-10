@@ -13,6 +13,7 @@
 #include "StomtRestRequest.h"
 #include "Stomt.h"
 #include "StomtAPI.h"
+#include "StomtConfig.h"
 
 #include "StomtPluginWidget.generated.h"
 
@@ -68,10 +69,17 @@ public:
 	FString	ImageURL;
 
 	/**
-	*	REST request to send stomt.
+	*	STOMT API.
 	*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
-	UStomtRestRequest* Request;
+	UStomtAPI* api;
+
+	/**
+	*	STOMT Config.
+	*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
+	UStomtConfig* Config;
+
 
 	/**
 	*	Whether the stomt is not positive (a wish).
@@ -90,6 +98,9 @@ public:
 	*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
 	bool IsEMailAlreadyKnown;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
+	bool IsUserLoggedIn;
 
 	/**
 	*	Error-Code whether the user login worked. (0: OK, 403: wrong password, 404: account does not exist. )
@@ -124,7 +135,7 @@ public:
 
 	/**
 	*	Once the user finishes the login.
-	*	@return Wether the login request was send.
+	*	@return Wether the login Request was send.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	bool OnSubmitLogin();
@@ -135,6 +146,13 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	void OnSubmitEMail();
+
+
+	/**
+	*	Once the user logs out.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
+	void OnLogout();
 
 
 
@@ -149,20 +167,22 @@ public:
 
 	/**
 	*	Event called after the stomt server responded.
-	*	@param CurrentRequest - Stomt request that carries the response information.
+	*	@param CurrentRequest - Stomt Request that carries the response information.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
-	void OnReceiving(UStomtRestRequest* CurrentRequest);
+	void OnLoginRequestResponse(UStomtRestRequest* CurrentRequest);
+
+	UFUNCTION()
+	void OnTargetResponse(UStomtRestRequest * TargetRequest);
 
 	// Not ready yet.
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
-	void TakeScreenshot();
+	void UploadScreenshot();
 
 private:
 
 	UPROPERTY()
 	UStomt* stomt;
 
-	UPROPERTY()
-	UStomtAPI* api;
+
 };

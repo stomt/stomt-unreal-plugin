@@ -17,11 +17,6 @@ AMyActor::AMyActor()
 void AMyActor::BeginPlay()
 {
 	Super::BeginPlay();
-
-
-	//UStomtRestRequest *request = NewObject<UStomtRestRequest>();
-	//request->MyHttpCall();
-	
 }
 
 // Called every frame
