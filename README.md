@@ -6,6 +6,7 @@
 
 This SDK allows the easy integration of the feedback solution [www.stomt.com](https://www.stomt.com/) in your Unreal apps and games.
 
+[Unreal Engine Wiki Page](https://wiki.unrealengine.com/STOMT_Plugin)
 
 ## Why?
 
