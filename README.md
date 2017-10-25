@@ -1,4 +1,4 @@
-# STOMT Unreal Plugin    
+# Collect feedback in-game with STOMT for Unreal Engine 4 
 
 <p align="center">
   <img alt="STOMT Unreal Engine feedback integration" src="http://schukies.io/images/stomt/StomtUnrealWidget_9-2017.PNG" />
