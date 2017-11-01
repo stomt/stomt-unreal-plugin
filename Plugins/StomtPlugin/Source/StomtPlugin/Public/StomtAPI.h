@@ -19,7 +19,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRequestFailed, class UStomtRestRe
  * 
  */
 UCLASS()
-class UStomtAPI : public UObject
+class STOMTPLUGIN_API UStomtAPI : public UObject
 {
 	GENERATED_BODY()
 public:
