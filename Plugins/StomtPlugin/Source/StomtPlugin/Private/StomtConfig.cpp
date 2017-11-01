@@ -37,6 +37,13 @@ UStomtConfig::~UStomtConfig()
 
 void UStomtConfig::Load()
 {
+#if UE_EDITOR
+	if (!IsRunningGame())
+	{
+		return;
+	}
+#endif
+
 	if (FPaths::FileExists(this->ConfigFolder + this->ConfigName))
 	{
 		UStomtRestJsonObject* configJsonObj = ReadStomtConfAsJson();
