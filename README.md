@@ -1,4 +1,4 @@
-# STOMT Unreal Plugin [![STOMT API](https://img.shields.io/badge/stomt-v2.10.X-brightgreen.png)](https://rest.stomt.com/)
+# Collect feedback in-game with STOMT for Unreal Engine 4 (Still in Beta)
 
 <p align="center">
   <img alt="STOMT Unreal Engine feedback integration" src="http://schukies.io/images/stomt/StomtUnrealWidget_9-2017.PNG" />
@@ -6,6 +6,7 @@
 
 This SDK allows the easy integration of the feedback solution [www.stomt.com](https://www.stomt.com/) in your Unreal apps and games.
 
+[Unreal Engine Wiki Page](https://wiki.unrealengine.com/STOMT_Plugin)
 
 ## Why?
 
