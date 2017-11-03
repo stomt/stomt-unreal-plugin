@@ -36,30 +36,7 @@ public:
 	*/
 	void SendStomt(UStomt* stomt);
 
-	UFUNCTION()
-	void OnSendStomtRequestResponse(UStomtRestRequest * Request);
 
-	UStomtRestRequest* SendLoginRequest(FString UserName, FString Password);
-
-	UFUNCTION()
-	void OnLoginRequestResponse(UStomtRestRequest * Request);
-
-	/**
-	* Sends stomt labels. (deprecated)
-	* @param stomt - Stomt Object with serverside ID set and labels set.
-	*/
-	void SendStomtLabels(UStomt* stomt);
-
-	/**
-	* Sends an REST Request for a stomt target.
-	* To receive the respose it is necessary to add a event delegate function.
-	* For example: api->GetRequest()->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnLoginRequestResponse).
-	* @param TargetID - ID of the requested stomt target.
-	*/
-	UStomtRestRequest* RequestTarget(FString targetID);
-
-	UFUNCTION()
-	void OnRequestTargetResponse(UStomtRestRequest * Request);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Data accessors
@@ -118,6 +95,37 @@ public:
 
 	//////////////////////////////////////////////////////////////////////////
 	// Network
+
+	UFUNCTION()
+	void OnSendStomtRequestResponse(UStomtRestRequest * Request);
+
+	UStomtRestRequest* SendLoginRequest(FString UserName, FString Password);
+
+	UFUNCTION()
+	void OnLoginRequestResponse(UStomtRestRequest * Request);
+
+	/**
+	* Sends stomt labels. (deprecated)
+	* @param stomt - Stomt Object with serverside ID set and labels set.
+	*/
+	void SendStomtLabels(UStomt* stomt);
+
+	UStomtRestRequest* RequestSession(FString Accesstoken);
+
+	UFUNCTION()
+	void OnRequestSessionResponse(UStomtRestRequest * Request);
+
+
+	/**
+	* Sends an REST Request for a stomt target.
+	* To receive the respose it is necessary to add a event delegate function.
+	* For example: api->GetRequest()->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnLoginRequestResponse).
+	* @param TargetID - ID of the requested stomt target.
+	*/
+	UStomtRestRequest* RequestTarget(FString targetID);
+
+	UFUNCTION()
+	void OnRequestTargetResponse(UStomtRestRequest * Request);
 
 	/**
 	* Sends the LogFileData to stomt.com server.
@@ -221,6 +229,9 @@ public:
 	FString			TargetID;
 	FString			AppID;
 	FString			ImageURL;
+
+	int			StomtsCreatedByUser;
+	int			StomtsReceivedByTarget;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Helper Functions

@@ -198,6 +198,41 @@ void UStomtAPI::SendStomtLabels(UStomt * stomt)
 	*/
 }
 
+UStomtRestRequest* UStomtAPI::RequestSession(FString Accesstoken)
+{
+	if (Accesstoken.IsEmpty())
+	{
+		return NULL;
+	}
+
+	UStomtRestRequest* request = NewObject<UStomtRestRequest>();
+	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnRequestSessionResponse);
+	request->OnRequestFail.AddDynamic(this, &UStomtAPI::OnARequestFailed);
+
+	request->SetVerb(ERequestVerb::GET);
+	request->SetHeader(TEXT("appid"), this->GetAppID());
+	
+	request->SetHeader(TEXT("accesstoken"), this->Config->GetAccessToken());
+	UE_LOG(StomtNetwork, Log, TEXT("RequestSession: AddAccesstoken: %s "), *this->Config->GetAccessToken());
+
+	request->ProcessURL(this->GetRestURL().Append("/authentication/session"));
+
+	return request;
+}
+
+void UStomtAPI::OnRequestSessionResponse(UStomtRestRequest * Request)
+{
+	if (Request->GetResponseCode() != 200) return;
+
+	if (!Request->GetResponseObject()->HasField(TEXT("data"))) return;
+
+	if (!Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("user"))) return;
+
+	this->StomtsCreatedByUser = (int)Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetObjectField(TEXT("user"))->GetObjectField(TEXT("stats"))->GetNumberField(TEXT("amountStomtsCreated"));
+
+	//UE_LOG(StomtNetwork, Warning, TEXT("StomtsCreatedByUser: %d | StomtsReceivedByTarget: %d"), StomtsCreatedByUser, StomtsReceivedByTarget);
+}
+
 UStomtRestRequest* UStomtAPI::RequestTarget(FString TargetID)
 {
 	UStomtRestRequest* request = NewObject<UStomtRestRequest>();
@@ -226,6 +261,16 @@ void UStomtAPI::OnRequestTargetResponse(UStomtRestRequest * Request)
 		->GetObjectField(TEXT("images"))
 		->GetObjectField(TEXT("profile"))
 		->GetStringField(TEXT("url")));
+
+	this->StomtsReceivedByTarget = (int)Request->GetResponseObject()
+		->GetObjectField(TEXT("data"))
+		->GetObjectField(TEXT("stats"))
+		->GetNumberField(TEXT("amountStomtsReceived"));
+
+	if (!this->Config->GetAccessToken().IsEmpty())
+	{
+		this->RequestSession(this->Config->GetAccessToken());
+	}
 }
 
 void UStomtAPI::SetRestURL(FString URL)
