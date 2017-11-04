@@ -230,6 +230,8 @@ void UStomtAPI::OnRequestSessionResponse(UStomtRestRequest * Request)
 
 	this->StomtsCreatedByUser = (int)Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetObjectField(TEXT("user"))->GetObjectField(TEXT("stats"))->GetNumberField(TEXT("amountStomtsCreated"));
 
+	OnSessionRequestComplete.Broadcast(Request);
+
 	//UE_LOG(StomtNetwork, Warning, TEXT("StomtsCreatedByUser: %d | StomtsReceivedByTarget: %d"), StomtsCreatedByUser, StomtsReceivedByTarget);
 }
 

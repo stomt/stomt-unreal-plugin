@@ -179,6 +179,10 @@ public:
 public:
 	/** Event occured when the Request has been completed */
 	UPROPERTY(BlueprintAssignable, Category = "Stomt|Event")
+	FOnTargetRequestComplete OnSessionRequestComplete;
+
+	/** Event occured when the Request has been completed */
+	UPROPERTY(BlueprintAssignable, Category = "Stomt|Event")
 	FOnTargetRequestComplete OnTargetRequestComplete; 
 
 	/** Event occured when the Request has been completed */
@@ -230,7 +234,10 @@ public:
 	FString			AppID;
 	FString			ImageURL;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
 	int			StomtsCreatedByUser;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
 	int			StomtsReceivedByTarget;
 
 	//////////////////////////////////////////////////////////////////////////
