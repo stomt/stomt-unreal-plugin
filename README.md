@@ -1,6 +1,5 @@
-#### Implementation Time: ~20 Minutes (incl. Triggers)
-
 # Collect Feedbackn In-Game | STOMT for Unreal Engine 4 (Beta)
+#### Implementation Time: ~20 Minutes (incl. Triggers)
 
 <p align="center">
   <img alt="STOMT Unreal Engine feedback integration" src="http://schukies.io/images/stomt/StomtUnrealWidget_9-2017.PNG" />
