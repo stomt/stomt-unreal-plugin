@@ -1,3 +1,5 @@
+#### Implementation Time: ~30 Minutes
+
 # Collect feedback in-game with STOMT for Unreal Engine 4 (Still in Beta)
 
 <p align="center">
