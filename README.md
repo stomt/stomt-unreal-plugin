@@ -3,7 +3,7 @@
 #### Implementation Time: ~20 Minutes (incl. Triggers)
 
 <p align="center">
-  <img alt="STOMT Unreal Engine feedback integration" src="http://schukies.io/images/stomt/StomtUnrealWidget_9-2017.PNG" />
+  <img alt="STOMT Unreal Engine feedback integration" src="http://schukies.io/images/stomt/StomtUnrealWidget_11-2017.PNG" />
 </p>
 
 This SDK allows the easy integration of the feedback solution [www.stomt.com](https://www.stomt.com/) in your Unreal apps and games.
