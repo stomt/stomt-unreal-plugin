@@ -1,11 +1,14 @@
-# STOMT Unreal Plugin [![STOMT API](https://img.shields.io/badge/stomt-v2.10.X-brightgreen.png)](https://rest.stomt.com/)
+# Collect Feedbackn In-Game | STOMT for Unreal Engine 4
+#### Version: Beta
+#### Implementation Time: ~20 Minutes (incl. Triggers)
 
 <p align="center">
-  <img alt="STOMT Unreal Engine feedback integration" src="http://schukies.io/images/stomt/StomtUnrealWidget_9-2017.PNG" />
+  <img alt="STOMT Unreal Engine feedback integration" src="http://schukies.io/images/stomt/StomtUnrealWidget_11-2017.PNG" />
 </p>
 
 This SDK allows the easy integration of the feedback solution [www.stomt.com](https://www.stomt.com/) in your Unreal apps and games.
 
+[Unreal Engine Wiki Page](https://wiki.unrealengine.com/STOMT_Plugin)
 
 ## Why?
 
@@ -44,9 +47,9 @@ _If you use an older Unreal Engine version please check out the `UE/[version]` b
 
 2. Copy the `/Plugins/StomtPlugin` folder from the repository into your project `Plugins` directory. 
 
-3. **If you do not use C++ code in project:** use the Add New button in the editor and add a blank C++ class to your project.
+3. **If you do not use C++ code in project:** use the `Add New` button in the editor and add a blank C++ class to your project.
 
-4. Add the StomtPlugin to your projects PublicDependencyModuleNames in the projects build.cs.
+4. Add the StomtPlugin to your projects `PublicDependencyModuleNames` in the projects `build.cs`.
 
 `/Source/[YourProjectName]/[YourProjectName].Build.cs`:
 ```c++
@@ -67,7 +70,7 @@ PublicDependencyModuleNames.AddRange(new string[] { "StomtPlugin" }); // Add "St
 3. Enter the variables into the `StomtWidgetBP` Blueprint:
 
 * the `App Id` you obtained in the second step
-* your `Target Id` of your STOMT project
+* the `Target Id` of your STOMT project (stomt.com/{Target Id}
 * the production `Rest URL`: `https://rest.stomt.com`
 
 You can enter the configuration directly into the blueprint or access the variables.
