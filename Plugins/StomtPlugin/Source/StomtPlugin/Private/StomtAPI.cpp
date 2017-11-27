@@ -126,6 +126,7 @@ UStomtRestRequest* UStomtAPI::SendLoginRequest(FString UserName, FString Passwor
 {
 	UStomtRestRequest* request = this->SetupNewPostRequest();
 	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnLoginRequestResponse);
+	request->OnRequestFail.AddDynamic(this, &UStomtAPI::OnARequestFailed);
 
 	request->UseRequestLogging(false);
 
@@ -222,6 +223,15 @@ UStomtRestRequest* UStomtAPI::RequestSession(FString Accesstoken)
 
 void UStomtAPI::OnRequestSessionResponse(UStomtRestRequest * Request)
 {
+	if (Request->GetResponseCode() == 419)
+	{
+		// Forbidden: Session invalid. (Request a new access-token via login or refresh token.)
+
+		UE_LOG(StomtNetwork, Warning, TEXT("Invalid accesstoken."));
+
+		Config->SetAccessToken("");
+	}
+
 	if (Request->GetResponseCode() != 200) return;
 
 	if (!Request->GetResponseObject()->HasField(TEXT("data"))) return;
@@ -232,7 +242,7 @@ void UStomtAPI::OnRequestSessionResponse(UStomtRestRequest * Request)
 
 	OnSessionRequestComplete.Broadcast(Request);
 
-	//UE_LOG(StomtNetwork, Warning, TEXT("StomtsCreatedByUser: %d | StomtsReceivedByTarget: %d"), StomtsCreatedByUser, StomtsReceivedByTarget);
+	UE_LOG(StomtNetwork, Warning, TEXT("StomtsCreatedByUser: %d | StomtsReceivedByTarget: %d"), StomtsCreatedByUser, StomtsReceivedByTarget);
 }
 
 UStomtRestRequest* UStomtAPI::RequestTarget(FString TargetID)
