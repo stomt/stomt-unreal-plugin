@@ -80,6 +80,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
 	UStomtConfig* Config;
 
+	/**
+	*	Whether the E-Mail variable is a phone number.
+	*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
+	bool UsePhoneNumber;
 
 	/**
 	*	Whether the stomt is not positive (a wish).
