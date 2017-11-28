@@ -503,12 +503,25 @@ void UStomtAPI::OnSendImageFileResponse(UStomtRestRequest * Request)
 	IsImageUploadComplete = true;
 }
 
-void UStomtAPI::SendEMail(FString EMail)
+void UStomtAPI::SendSubscription(FString EMail)
+{
+	SendSubscription(EMail, false);
+}
+
+void UStomtAPI::SendSubscription(FString EMailOrNumber, bool UseEmail)
 {
 	UStomtRestRequest* request = this->SetupNewPostRequest();
 	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::UStomtAPI::OnSendEMailResponse);
 
-	request->GetRequestObject()->SetStringField(TEXT("email"), EMail);
+	if (UseEmail)
+	{
+		request->GetRequestObject()->SetStringField(TEXT("email"), EMailOrNumber);
+	}
+	else
+	{
+		request->GetRequestObject()->SetStringField(TEXT("phone"), EMailOrNumber);
+	}
+
 
 	request->ProcessURL(this->GetRestURL().Append(TEXT("/authentication/subscribe")));
 }

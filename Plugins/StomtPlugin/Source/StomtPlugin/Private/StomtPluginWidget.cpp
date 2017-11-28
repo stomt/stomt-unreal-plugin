@@ -87,7 +87,7 @@ void UStomtPluginWidget::OnSubmitLastLayer()
 
 	if (!this->EMail.IsEmpty())
 	{
-		this->api->SendEMail(this->EMail);
+		this->api->SendSubscription(this->EMail);
 	}
 	*/
 }
@@ -112,7 +112,7 @@ void UStomtPluginWidget::OnSubmitEMail()
 {
 	if (!this->EMail.IsEmpty())
 	{
-		this->api->SendEMail(this->EMail);
+		this->api->SendSubscription(this->EMail, !UsePhoneNumber);
 	}
 }
 

@@ -143,7 +143,9 @@ public:
 	UFUNCTION()
 	void OnSendImageFileResponse(UStomtRestRequest * Request);
 
-	void SendEMail(FString EMail);
+	void SendSubscription(FString EMail);
+
+	void SendSubscription(FString EMailOrNumber, bool UseEmail);
 
 	UFUNCTION()
 	void OnSendEMailResponse(UStomtRestRequest * Request);
