@@ -12,6 +12,16 @@
 UStomtConfig* UStomtConfig::ConstructStomtConfig()
 {
 	UStomtConfig* config = NewObject<UStomtConfig>();
+
+	config->ConfigFolder = FPaths::EngineUserDir() + FString(TEXT("Saved/Config/stomt/"));
+	UE_LOG(StomtInit, Log, TEXT("Config-Folder: %s"), *config->ConfigFolder);
+
+	config->ConfigName = FString(TEXT("stomt.conf.json"));
+	config->Accesstoken = FString(TEXT(""));
+	config->LoggedInFieldName = FString(TEXT("loggedin"));
+	config->SubscribedFieldName = FString(TEXT("email"));
+	config->AccessTokenFieldName = FString(TEXT("accesstoken"));
+
 	config->Load();
 
 	return config;
@@ -20,14 +30,7 @@ UStomtConfig* UStomtConfig::ConstructStomtConfig()
 
 UStomtConfig::UStomtConfig()
 {
-	this->ConfigFolder = FPaths::EngineUserDir() + FString(TEXT("Saved/Config/stomt/"));
-	UE_LOG(StomtInit, Log, TEXT("Config-Folder: %s"), *this->ConfigFolder);
 
-	this->ConfigName = FString(TEXT("stomt.conf.json"));
-	this->Accesstoken = FString(TEXT(""));
-	this->LoggedInFieldName = FString(TEXT("loggedin"));
-	this->SubscribedFieldName = FString(TEXT("email"));
-	this->AccessTokenFieldName = FString(TEXT("accesstoken"));
 }
 
 UStomtConfig::~UStomtConfig()

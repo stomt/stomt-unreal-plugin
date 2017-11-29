@@ -29,6 +29,7 @@ public:
 	/**
 	*	checks if a config file exists, creates one or reads it
 	**/
+	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	void Load();
 
 	/**

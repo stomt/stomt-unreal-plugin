@@ -247,6 +247,7 @@ void UStomtAPI::OnRequestSessionResponse(UStomtRestRequest * Request)
 
 UStomtRestRequest* UStomtAPI::RequestTarget(FString TargetID)
 {
+
 	UStomtRestRequest* request = NewObject<UStomtRestRequest>();
 	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnRequestTargetResponse);
 	request->OnRequestFail.AddDynamic(this, &UStomtAPI::OnARequestFailed);
