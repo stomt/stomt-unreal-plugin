@@ -37,13 +37,14 @@ UStomtConfig::~UStomtConfig()
 
 void UStomtConfig::Load()
 {
-
-	#if UE_EDITOR
+	// Use this if you experience crashes at bake process.
+	/*	#if UE_EDITOR
 		if (!IsRunningGame())
 		{
 			return;
 		}
-	#endif
+		#endif
+	*/
 
 	if (FPaths::FileExists(this->ConfigFolder + this->ConfigName))
 	{
@@ -52,11 +53,13 @@ void UStomtConfig::Load()
 		if (configJsonObj->HasField(this->SubscribedFieldName))
 		{
 			this->Accesstoken = configJsonObj->GetStringField(this->AccessTokenFieldName);
+			UE_LOG(StomtInit, Log, TEXT("Accesstoken: %s"), *this->Accesstoken);
 		}
 
 		if (configJsonObj->HasField(this->SubscribedFieldName))
 		{
 			this->Subscribed = configJsonObj->GetBoolField(this->SubscribedFieldName);
+			UE_LOG(StomtInit, Log, TEXT("Subscribed: %s"), this->Subscribed ? TEXT("true") : TEXT("false") );
 		}
 		else
 		{
@@ -66,6 +69,7 @@ void UStomtConfig::Load()
 		if (configJsonObj->HasField(this->LoggedInFieldName))
 		{
 			this->LoggedIn = configJsonObj->GetBoolField(this->LoggedInFieldName);
+			UE_LOG(StomtInit, Log, TEXT("LoggedIn: %s"), this->LoggedIn ? TEXT("true") : TEXT("false") );
 		}
 		else
 		{
@@ -84,6 +88,8 @@ void UStomtConfig::Load()
 
 		OnConfigUpdated.Broadcast(this);
 	}
+
+
 	
 }
 
