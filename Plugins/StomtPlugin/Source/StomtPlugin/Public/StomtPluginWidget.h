@@ -55,7 +55,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
 	FString UserPassword;
 
-
 	/**
 	*	Target-name that will be shown in the widget.
 	*/
@@ -158,7 +157,6 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	void OnLogout();
-
 
 
 	/**
