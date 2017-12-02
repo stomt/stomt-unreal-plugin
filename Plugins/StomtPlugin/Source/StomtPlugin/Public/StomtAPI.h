@@ -242,6 +242,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
 	int			StomtsReceivedByTarget;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
+	FString			UserID;
+
 	//////////////////////////////////////////////////////////////////////////
 	// Helper Functions
 
