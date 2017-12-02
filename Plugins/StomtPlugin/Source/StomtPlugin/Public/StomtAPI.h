@@ -122,6 +122,7 @@ public:
 	* For example: api->GetRequest()->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnLoginRequestResponse).
 	* @param TargetID - ID of the requested stomt target.
 	*/
+	UFUNCTION(BlueprintCallable, Category = "Stomt API")
 	UStomtRestRequest* RequestTarget(FString targetID);
 
 	UFUNCTION()
