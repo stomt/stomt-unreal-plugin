@@ -103,22 +103,24 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 
 void UStomtAPI::OnSendStomtRequestResponse(UStomtRestRequest * Request)
 {
-	// DoTo react to this
-
-	if (Request->GetResponseObject()->HasField(TEXT("data")))
+	if (Request->GetResponseCode() == 200)
 	{
-		if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("id")))
+		if (Request->GetResponseObject()->HasField(TEXT("data")))
 		{
-			FString id = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetStringField(TEXT("id"));
-			this->Track->SetStomtID(id);
-			this->Track->SetEventCategory("stomt");
-			this->Track->SetEventAction("submit");
-			this->SendTrack(this->Track);
+			if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("id")))
+			{
+				FString id = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetStringField(TEXT("id"));
+				this->Track->SetStomtID(id);
+				this->Track->SetEventCategory("stomt");
+				this->Track->SetEventAction("submit");
+				this->SendTrack(this->Track);
+			}
 		}
-		else
-		{
-			UE_LOG(StomtNetwork, Warning, TEXT("Send Stomt did not work | OnSendStomtRequestResponse"));
-		}
+	}
+	else
+	{
+		// DoTo react to this
+		UE_LOG(StomtNetwork, Warning, TEXT("Send Stomt did not work | OnSendStomtRequestResponse"));
 	}
 }
 
@@ -143,14 +145,7 @@ UStomtRestRequest* UStomtAPI::SendLoginRequest(FString UserName, FString Passwor
 
 void UStomtAPI::OnLoginRequestResponse(UStomtRestRequest * Request)
 {
-	if (Request->GetResponseCode() == 403 || Request->GetResponseCode() == 404 || Request->GetResponseCode() == 413)
-	{
-		if (StomtToSend != NULL)
-		{
-			this->SendStomt(StomtToSend);
-		}
-	}
-	else
+	if (Request->GetResponseCode() == 200)
 	{
 		if (Request->GetResponseObject()->HasField(TEXT("data")))
 		{
@@ -164,10 +159,6 @@ void UStomtAPI::OnLoginRequestResponse(UStomtRestRequest * Request)
 				this->Track->SetEventCategory("auth");
 				this->Track->SetEventAction("login");
 				this->SendTrack(this->Track);
-			}
-			else
-			{
-				UE_LOG(StomtNetwork, Warning, TEXT("Login did not work"));
 			}
 		}
 	}
@@ -524,14 +515,12 @@ void UStomtAPI::SendSubscription(FString EMailOrNumber, bool UseEmail)
 		request->GetRequestObject()->SetStringField(TEXT("phone"), EMailOrNumber);
 	}
 
-
 	request->ProcessURL(this->GetRestURL().Append(TEXT("/authentication/subscribe")));
 }
 
-
 void UStomtAPI::OnSendEMailResponse(UStomtRestRequest * Request)
 {
-	if (Request->GetResponseCode() != 400)
+	if (Request->GetResponseCode() == 200)
 	{
 		if (Request->GetResponseObject()->HasField(TEXT("data")))
 		{
@@ -545,15 +534,11 @@ void UStomtAPI::OnSendEMailResponse(UStomtRestRequest * Request)
 					this->SendTrack(this->Track);
 				}
 			}
-			else
-			{
-				this->Config->SetSubscribed(false);
-			}
 		}
 	}
 	else
 	{
-		this->Config->SetSubscribed(true);
+		this->Config->SetSubscribed(false);
 	}
 }
 
@@ -571,7 +556,7 @@ void UStomtAPI::SendLogoutRequest()
 
 void UStomtAPI::OnSendLogoutResponse(UStomtRestRequest * Request)
 {
-	if (Request->GetResponseCode() != 400)
+	if (Request->GetResponseCode() == 200)
 	{
 		if (Request->GetResponseObject()->HasField(TEXT("data")))
 		{
@@ -580,12 +565,12 @@ void UStomtAPI::OnSendLogoutResponse(UStomtRestRequest * Request)
 				if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetBoolField("success"))
 				{
 					return; // logout was successful
-				}	
+				}
 			}
 		}
 	}
 
-	UE_LOG(StomtNetwork, Warning, TEXT("Logout failed | accesstoken: %s "), *this->Config->GetAccessToken());
+	UE_LOG(StomtNetwork, Warning, TEXT("Logout failed"));
 }
 
 void UStomtAPI::SendTrack(UStomtTrack * Track)
@@ -754,7 +739,7 @@ bool UStomtAPI::ReadFile(FString& Result, FString FileName, FString SaveDirector
 
 	FString path = SaveDirectory + FileName;
 
-/*
+	/*
 	if (SaveDirectory.GetCharArray()[SaveDirectory.Len() - 2] == '/')
 	{
 		UE_LOG(LogTemp, Warning, TEXT(" / am enden: %s "), *path);
@@ -811,5 +796,3 @@ void UStomtAPI::AddAccesstokenToRequest(UStomtRestRequest * Request)
 		UE_LOG(StomtNetwork, Log , TEXT("AddAccesstoken: %s "), *this->Config->GetAccessToken());
 	}
 }
-
-

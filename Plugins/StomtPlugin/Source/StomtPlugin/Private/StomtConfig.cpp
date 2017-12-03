@@ -91,9 +91,6 @@ void UStomtConfig::Load()
 
 		OnConfigUpdated.Broadcast(this);
 	}
-
-
-	
 }
 
 void UStomtConfig::Delete()
@@ -131,7 +128,6 @@ bool UStomtConfig::GetSubscribed()
 void UStomtConfig::SetSubscribed(bool Subscribed)
 {
 	if (this->Subscribed == Subscribed) return;
-	
 
 	this->Subscribed = Subscribed;
 
@@ -156,7 +152,6 @@ void UStomtConfig::SetLoggedIn(bool LoggedIn)
 	OnConfigUpdated.Broadcast(this);
 }
 
-
 bool UStomtConfig::SaveAccesstoken(FString accesstoken)
 {
 	return SaveValueToStomtConf(this->AccessTokenFieldName, accesstoken);
@@ -180,8 +175,6 @@ bool UStomtConfig::SaveValueToStomtConf(FString FieldName, FString FieldValue)
 
 	return this->WriteFile(jsonObj->EncodeJson(), ConfigName, ConfigFolder, true);
 }
-
-
 
 bool UStomtConfig::SaveFlag(FString FlagName, bool FlagState)
 {
@@ -260,7 +253,6 @@ void UStomtConfig::DeleteStomtConf()
 	}
 }
 
-
 FString UStomtConfig::ReadLogFile(FString LogFileName)
 {
 	FString errorLog;
@@ -300,8 +292,6 @@ FString UStomtConfig::ReadLogFile(FString LogFileName)
 	return errorLog;
 }
 
-
-
 bool UStomtConfig::WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting)
 {
 	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
@@ -317,18 +307,12 @@ bool UStomtConfig::WriteFile(FString TextToSave, FString FileName, FString SaveD
 		// Allow overwriting or file doesn't already exist
 		if (AllowOverwriting || !FPaths::FileExists(*AbsoluteFilePath))
 		{
-			//Use " FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), EFileWrite::FILEWRITE_Append);" for append
+			// Use " FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), EFileWrite::FILEWRITE_Append);" for append
 			return FFileHelper::SaveStringToFile(TextToSave, *AbsoluteFilePath);
 		}
-		else
-		{
-			return false;
-		}
 	}
-	else
-	{
-		return false;
-	}
+	
+	return false;
 }
 
 bool UStomtConfig::ReadFile(FString& Result, FString FileName, FString SaveDirectory)
