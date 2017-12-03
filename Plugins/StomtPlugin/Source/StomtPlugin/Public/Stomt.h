@@ -8,7 +8,7 @@
 #include "Stomt.generated.h"
 
 UCLASS()
-class UStomt : public UObject
+class STOMTPLUGIN_API UStomt : public UObject
 {
 	GENERATED_BODY()
 
