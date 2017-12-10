@@ -250,6 +250,8 @@ public:
 	// Helper Functions
 
 public:
+	UFUNCTION(BlueprintCallable, Category = "Stomt API")
+	bool IsEmailCorrect(FString Email);
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
 	bool DoesScreenshotFileExist();

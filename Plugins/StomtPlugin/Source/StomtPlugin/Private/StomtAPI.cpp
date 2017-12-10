@@ -11,7 +11,9 @@
 #include "Runtime/Core/Public/GenericPlatform/GenericPlatformFile.h"
 #include "Runtime/Core/Public/Misc/Base64.h"
 #include "Runtime/Core/Public/Misc/App.h"
+#include "Runtime/Core/Public/Internationalization/Regex.h"
 #include "StomtJsonObject.h"
+
 
 
 UStomtAPI* UStomtAPI::ConstructStomtAPI(FString TargetID, FString RestURL, FString AppID)
@@ -693,6 +695,14 @@ void UStomtAPI::SaveRenderTargetToDisk(UTextureRenderTarget2D* InRenderTarget, F
 void UStomtAPI::OnARequestFailed(UStomtRestRequest * Request)
 {
 	this->OnRequestFailed.Broadcast(Request);
+}
+
+bool UStomtAPI::IsEmailCorrect(FString Email)
+{
+	const FRegexPattern pattern(TEXT("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"));
+	FRegexMatcher matcher(pattern, Email);
+
+	return matcher.FindNext();
 }
 
 bool UStomtAPI::DoesScreenshotFileExist()
