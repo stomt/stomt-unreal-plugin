@@ -97,7 +97,7 @@ bool UStomtPluginWidget::OnSubmitLogin()
 	if (!this->UserName.IsEmpty() && !this->UserPassword.IsEmpty())
 	{
 		UStomtRestRequest* request = this->api->SendLoginRequest(this->UserName, this->UserPassword);
-		request->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnLoginRequestResponse);
+		request->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnLoginResponse);
 		this->LoginErrorCode = 0;
 		return true;
 	}
@@ -121,9 +121,8 @@ void UStomtPluginWidget::OnLogout()
 	this->api->SendLogoutRequest();
 }
 
-void UStomtPluginWidget::OnLoginRequestResponse(UStomtRestRequest * LoginRequest)
+void UStomtPluginWidget::OnLoginResponse(UStomtRestRequest * LoginRequest)
 {
-
 	this->LoginErrorCode = LoginRequest->GetResponseCode();
 	this->IsUserLoggedIn = this->api->Config->GetLoggedIn();
 	this->api->OnLoginRequestComplete.Broadcast(LoginRequest);

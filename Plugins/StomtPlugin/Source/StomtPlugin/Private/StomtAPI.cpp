@@ -172,7 +172,7 @@ void UStomtAPI::OnLoginRequestResponse(UStomtRestRequest * Request)
 		}
 	}
 
-	OnLoginRequestComplete.Broadcast(Request);
+	//OnLoginRequestComplete.Broadcast(Request);
 }
 
 void UStomtAPI::SendStomtLabels(UStomt * stomt)

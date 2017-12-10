@@ -173,7 +173,7 @@ public:
 	*	@param CurrentRequest - Stomt Request that carries the response information.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
-	void OnLoginRequestResponse(UStomtRestRequest* CurrentRequest);
+	void OnLoginResponse(UStomtRestRequest* CurrentRequest);
 
 	UFUNCTION()
 	void OnTargetResponse(UStomtRestRequest * TargetRequest);
