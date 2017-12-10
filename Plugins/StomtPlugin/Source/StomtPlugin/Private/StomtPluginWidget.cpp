@@ -41,7 +41,6 @@ void UStomtPluginWidget::OnConstruction(FString TargetID, FString RestURL, FStri
 
 void UStomtPluginWidget::OnMessageChanged(FString text)
 {
-
 	if (!text.IsEmpty())
 	{
 		this->Message = text;
@@ -54,8 +53,6 @@ void UStomtPluginWidget::OnMessageChanged(FString text)
 
 void UStomtPluginWidget::OnSubmit()
 {
-	//ReadScreenshot();
-
 	if (!this->Message.IsEmpty())
 	{
 		this->stomt = UStomt::ConstructStomt(this->api->GetTargetID(), !this->IsWish, this->Message);
@@ -79,17 +76,7 @@ void UStomtPluginWidget::OnSubmit()
 
 void UStomtPluginWidget::OnSubmitLastLayer()
 {
-	/*
-	if (!this->EMail.IsEmpty() && !this->UserPassword.IsEmpty())
-	{
-		this->api->SendLoginRequest(this->EMail, this->UserPassword);
-	}
 
-	if (!this->EMail.IsEmpty())
-	{
-		this->api->SendSubscription(this->EMail);
-	}
-	*/
 }
 
 bool UStomtPluginWidget::OnSubmitLogin()
@@ -105,7 +92,6 @@ bool UStomtPluginWidget::OnSubmitLogin()
 	{
 		return false;
 	}
-
 }
 
 void UStomtPluginWidget::OnSubmitEMail()
@@ -140,4 +126,3 @@ void UStomtPluginWidget::UploadScreenshot()
 {
 	this->api->SendImageFile(this->api->ReadScreenshotAsBase64());
 }
-

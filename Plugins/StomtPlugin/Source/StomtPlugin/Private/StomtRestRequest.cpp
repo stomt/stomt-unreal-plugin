@@ -32,7 +32,6 @@ void UStomtRestRequest::SetVerb(ERequestVerb::Type Verb)
 	this->RequestVerb = Verb;
 }
 
-
 void UStomtRestRequest::SetHeader(const FString &HeaderName, const FString &HeaderValue)
 {
 	this->RequestHeaders.Add( HeaderName, HeaderValue);
@@ -44,21 +43,18 @@ void UStomtRestRequest::OnResponseReceived(FHttpRequestPtr Request, FHttpRespons
 	if (!bWasSuccessful)
 	{
 		UE_LOG(StomtNetwork, Error, TEXT("Request failed: %s ResponseCode: %d "), *Request->GetURL(), *Response->GetContentAsString());
-		
-		
-		
+
 		// Broadcast the result event
 		OnRequestFail.Broadcast(this);
 		return;
 	}
-
 
 	if (EHttpResponseCodes::IsOk(Response->GetResponseCode())) 
 	{
 		UE_LOG(StomtNetwork, Log, TEXT("EHttpResponseCodes::IsOk"));
 		UE_LOG(StomtNetwork, Log, TEXT("Content: %s"), *Response->GetContentAsString() );
 	}
-	else 
+	else
 	{
 		UE_LOG(StomtNetwork, Warning, TEXT( "not successful: %s"), *Response->GetContentAsString() );
 	}
