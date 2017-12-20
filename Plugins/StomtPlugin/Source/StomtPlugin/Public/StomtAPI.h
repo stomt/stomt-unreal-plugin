@@ -36,8 +36,6 @@ public:
 	*/
 	void SendStomt(UStomt* stomt);
 
-
-
 	//////////////////////////////////////////////////////////////////////////
 	// Data accessors
 
@@ -168,13 +166,6 @@ public:
 
 	UFUNCTION()
 	FString ReadScreenshotAsBase64();
-
-	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
-	bool CaptureComponent2D_SaveImage(class USceneCaptureComponent2D* Target, const FString ImagePath, const FLinearColor ClearColour);
-
-	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
-	void SaveRenderTargetToDisk(UTextureRenderTarget2D* InRenderTarget, FString Filename);
-
 
 	//////////////////////////////////////////////////////////////////////////
 	// Request callbacks

@@ -5,21 +5,10 @@ using System.Collections.Generic;
 
 public class stomtTarget : TargetRules
 {
-	public stomtTarget(TargetInfo Target)
+	public stomtTarget(TargetInfo Target) : base (Target)
 	{
 		Type = TargetType.Game;
-	}
 
-	//
-	// TargetRules interface.
-	//
-
-	public override void SetupBinaries(
-		TargetInfo Target,
-		ref List<UEBuildBinaryConfiguration> OutBuildBinaryConfigurations,
-		ref List<string> OutExtraModuleNames
-		)
-	{
-		OutExtraModuleNames.Add("stomt");
+        ExtraModuleNames.Add("stomt");
 	}
 }
