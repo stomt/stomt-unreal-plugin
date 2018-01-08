@@ -1,19 +1,23 @@
 {
-    "FileVersion": 3,
-	
-    "FriendlyName": "STOMT Plugin",
-    "Version": 1,
-    "VersionName": "1.0",
-    "Description": "This Widget allows the easy integration of the feedback solution www.stomt.com in your game.",
-    "Category": "Widgets",
-    "CreatedBy": "Daniel Schukies",
-    "CreatedByUrl": "https://www.stomt.com",
-	
-	"Modules":
-     [
-        {
-            "Name": "StomtPlugin",
-            "Type": "Runtime"
-        }
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "STOMT Plugin",
+	"Description": "This Widget allows the easy integration of the feedback solution www.stomt.com in your game.",
+	"Category": "Widgets",
+	"CreatedBy": "Daniel Schukies",
+	"CreatedByURL": "https://www.stomt.com",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "StomtPlugin",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
 	]
 }
