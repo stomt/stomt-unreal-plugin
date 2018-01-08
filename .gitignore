@@ -241,14 +241,6 @@ pip-log.txt
 #Unreal Engine
 
 Binaries/
-Content/*
-!Content/Blueprints/
-!Plugins/GameInventorySystem/Content
-!Plugins/GameInventorySystem/Source
-!Plugins/GameAttributes/Content
-!Plugins/GameAttributes/Source
-!Plugins/TimeOfDay/Content
-!Plugins/TimeOfDay/Source
 DerivedDataCache/
 Intermediate/
 Saved/
