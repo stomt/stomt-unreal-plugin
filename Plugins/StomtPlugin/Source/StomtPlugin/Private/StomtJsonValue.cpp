@@ -5,15 +5,6 @@
 #include "StomtJsonValue.h"
 #include "CoreMisc.h"
 
-//UStomtJsonValue::UStomtJsonValue(const class FObjectInitializer& PCIP)
-//{
-//
-//}
-//
-//UStomtJsonValue::UStomtJsonValue(FString& StringValue)
-//{
-//	this->JsonVal = MakeShareable(new FJsonValueString(StringValue));
-//}
 
 UStomtJsonValue* UStomtJsonValue::ConstructJsonValueNumber(UObject* WorldContextObject, float Number)
 {
@@ -61,16 +52,6 @@ UStomtJsonValue* UStomtJsonValue::ConstructJsonValueArray(UObject* WorldContextO
 
 	return NewValue;
 }
-
-//UStomtJsonValue* UStomtJsonValue::ConstructJsonValueObject(UObject* WorldContextObject, UStomtJsonObject *JsonObject)
-//{
-//	TSharedPtr<FJsonValue> NewVal = MakeShareable(new FJsonValueObject(JsonObject->GetRootObject()));
-//
-//	UStomtJsonValue* NewValue = NewObject<UStomtJsonValue>();
-//	NewValue->SetRootValue(NewVal);
-//
-//	return NewValue;
-//}
 
 UStomtJsonValue* ConstructJsonValue(UObject* WorldContextObject, const TSharedPtr<FJsonValue>& InValue)
 {
@@ -231,21 +212,6 @@ TArray<UStomtJsonValue*> UStomtJsonValue::AsArray() const
 	return OutArray;
 }
 
-//UStomtJsonObject* UStomtJsonValue::AsObject()
-//{
-//	if (!JsonVal.IsValid())
-//	{
-//		ErrorMessage(TEXT("Object"));
-//		return NULL;
-//	}
-//
-//	TSharedPtr<FJsonObject> NewObj = JsonVal->AsObject();
-//
-//	UStomtJsonObject* JsonObj = NewObject<UStomtJsonObject>();
-//	JsonObj->SetRootObject(NewObj);
-//
-//	return JsonObj;
-//}
 
 //
 ////////////////////////////////////////////////////////////////////////////

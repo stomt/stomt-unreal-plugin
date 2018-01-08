@@ -6,8 +6,6 @@
 #include "StomtPluginPrivatePCH.h"
 #include "StomtJsonValue.generated.h"
 
-//class UStomtJsonObject;
-
 /**
  * Represents all the types a Json Value can be.
  */

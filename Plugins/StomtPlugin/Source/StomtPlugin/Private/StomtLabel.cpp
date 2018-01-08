@@ -20,12 +20,6 @@ UStomtLabel::UStomtLabel()
 	*/
 }
 
-/*
-UStomtLabel::~UStomtLabel()
-{
-}
-*/
-
 //////////////////////////////////////////////////////////////////////////
 // Data accessors
 

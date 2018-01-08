@@ -662,12 +662,6 @@ bool UStomtAPI::ReadFile(FString& Result, FString FileName, FString SaveDirector
 
 	FString path = SaveDirectory + FileName;
 
-	/*
-	if (SaveDirectory.GetCharArray()[SaveDirectory.Len() - 2] == '/')
-	{
-		UE_LOG(LogTemp, Warning, TEXT(" / am enden: %s "), *path);
-	}*/
-
 	if (!FPaths::FileExists(path))
 	{
 		UE_LOG(StomtFileAccess, Warning, TEXT("File with this path does not exist: %s "), *path);
