@@ -241,9 +241,7 @@ pip-log.txt
 #Unreal Engine
 
 Binaries/
-#Plugins/
-#Plugins/*
-#Content/*
+Content/*
 !Content/Blueprints/
 !Plugins/GameInventorySystem/Content
 !Plugins/GameInventorySystem/Source
@@ -255,8 +253,4 @@ DerivedDataCache/
 Intermediate/
 Saved/
 *.sln
-*.sln
-*.sln
 stomt.VC.opendb
-*.opendb
-*.db
