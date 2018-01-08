@@ -257,8 +257,8 @@ FString UStomtConfig::ReadLogFile(FString LogFileName)
 {
 	FString errorLog;
 
-	FString LogFilePath = FPaths::GameLogDir() + LogFileName;
-	FString LogFileCopyPath = FPaths::GameLogDir() + LogFileName + TEXT("Copy.log");
+	FString LogFilePath = FPaths::ProjectLogDir() + LogFileName;
+	FString LogFileCopyPath = FPaths::ProjectLogDir() + LogFileName + TEXT("Copy.log");
 	FString LogFileCopyName = LogFileName + TEXT("Copy.log");
 
 	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
@@ -271,9 +271,9 @@ FString UStomtConfig::ReadLogFile(FString LogFileName)
 	}
 
 	// Read LogFileCopy from Disk
-	if (!this->ReadFile(errorLog, LogFileCopyName, FPaths::GameLogDir()))
+	if (!this->ReadFile(errorLog, LogFileCopyName, FPaths::ProjectLogDir()))
 	{
-		if (FPaths::FileExists(FPaths::GameLogDir() + LogFileCopyName))
+		if (FPaths::FileExists(FPaths::ProjectLogDir() + LogFileCopyName))
 		{
 			UE_LOG(StomtFileAccess, Warning, TEXT("Could not read LogFile %s, but it exists"), *LogFileCopyName);
 		}
