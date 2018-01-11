@@ -112,7 +112,8 @@ Append labels, as for example your game-version or the player position.
 
 ## Common Issues
 
-* none
+* UE 4.18.2 Error/Info message text disappears when it's displayed for the second time.
+* UE 4.16.3 None
 
 Don't hesitate to [contact](https://www.stomt.com/stomt-unreal-engine-plugin) us if you have any issues or need help.
 
