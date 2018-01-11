@@ -54,9 +54,7 @@ PublicDependencyModuleNames.AddRange(new string[] { "StomtPlugin" }); // Add "St
 
 4. Open your project with the unreal editor and enable the plugin. `Edit -> Plugins -> Widgets -> STOMT Plugin`
 
-<img alt="Events" src="https://i.imgur.com/7vSgefh.png" />
-
-5. Check `Show Plugin Content` in the bottom right corner of your editor.
+5. Check `Show Plugin Content` in the bottom right corner of your editor (view options).
 
 <img alt="Events" src="https://i.imgur.com/YoTY7w6.png" />
 
