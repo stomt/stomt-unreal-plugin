@@ -59,9 +59,9 @@ PublicDependencyModuleNames.AddRange(new string[] { "StomtPlugin" }); // Add "St
 
 5. Check `Show Plugin Content` in the bottom right corner of your editor.
 
-<img alt="Events" src="https://i.imgur.com/XcIzo8M.jpg" />
+<img alt="Events" src="https://i.imgur.com/YoTY7w6.png" />
 
-6. Place the `StomtPlugin Content/Blueprints/ExampleActor` in your scene and press play. (Press 'E' to toggle the widget on/off)
+6. Place the `ExampleActor` in your scene and press play. (Press 'E' to toggle the widget on/off)
 
 
 
