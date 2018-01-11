@@ -77,18 +77,6 @@ You can enter the configuration directly into the blueprint or access the variab
 
 <img alt="STOMT Plugin configuraton" src="http://schukies.io/images/stomt/enter-config.PNG" />
 
-
-## Use our Sandbox
-
-If you want to test the integration please feel free to do what you want on [test.stomt.com](https://test.stomt.com/) 
-
-* Just go through the configuration steps again using the test server:
-
-1. Register on [test.stomt.com](https://test.stomt.com/signup/game).
-2. And create an [App Id](https://test.stomt.com/integrate) for your project.
-3. Enter "https://test.rest.stomt.com" as `Rest URL` in the widget.
-
-
 ## Events
 
 The STOMT Widget supports a variety of callback events.
