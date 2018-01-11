@@ -38,7 +38,6 @@ Example Games that use our widget:
 
 ## Installation
 
-This repository contains the STOMT plugin. 
 Use it as example and integrate the plugin into your game by following the steps below.
 
 _If you use an older Unreal Engine version please check out the `UE/[version]` branch._
