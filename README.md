@@ -3,7 +3,7 @@
 #### Implementation Time: ~20 Minutes (incl. Triggers)
 
 <p align="center">
-  <img alt="STOMT Unreal Engine feedback integration" src="http://schukies.io/images/stomt/StomtUnrealWidget_11-2017.PNG" />
+  <img alt="STOMT Unreal Engine feedback integration" src="https://i.imgur.com/hK8BRqq.jpg" />
 </p>
 
 This SDK allows the easy integration of the feedback solution [www.stomt.com](https://www.stomt.com/) in your Unreal apps and games.
@@ -38,27 +38,31 @@ Example Games that use our widget:
 
 ## Installation
 
-This repository contains a complete Unreal-Project with the STOMT plugin already integrated. 
+This repository contains the STOMT plugin. 
 Use it as example and integrate the plugin into your game by following the steps below.
 
 _If you use an older Unreal Engine version please check out the `UE/[version]` branch._
 
-1. Clone or download this repository to a folder.
+1. Clone or download this repository into your projects `Plugins` directory.
 
-2. Copy the `/Plugins/StomtPlugin` folder from the repository into your project `Plugins` directory. 
+2. **If you do not use C++ code in project:** use the `Add New` button in the editor and add a blank C++ class to your project.
+[Guide](https://docs.unrealengine.com/latest/INT/Programming/QuickStart/2/index.html)
 
-3. **If you do not use C++ code in project:** use the `Add New` button in the editor and add a blank C++ class to your project.
-
-4. Add the StomtPlugin to your projects `PublicDependencyModuleNames` in the projects `build.cs`.
-
-`/Source/[YourProjectName]/[YourProjectName].Build.cs`:
+3. Add the StomtPlugin to your projects `PublicDependencyModuleNames` in the projects `build.cs`. `/Source/[YourProjectName]/[YourProjectName].Build.cs`:
 ```c++
 PublicDependencyModuleNames.AddRange(new string[] { "StomtPlugin" }); // Add "StomtPlugin" String
 ```
 
-5. Copy `/Content/Stomt` folder from the repository into your project `Content` folder.
+4. Open your project with the unreal editor and enable the plugin. `Edit -> Plugins -> Widgets -> STOMT Plugin`
 
-6. Place the `StomtActor` in your scene and press play. (Press 'E' to toggle the widget on/off)
+<img alt="Events" src="https://i.imgur.com/7vSgefh.png" />
+
+5. Check `Show Plugin Content` in the bottom right corner of your editor.
+
+<img alt="Events" src="https://i.imgur.com/XcIzo8M.jpg" />
+
+6. Place the `StomtPlugin Content/Blueprints/ExampleActor` in your scene and press play. (Press 'E' to toggle the widget on/off)
+
 
 
 ## Configuration
@@ -73,10 +77,10 @@ PublicDependencyModuleNames.AddRange(new string[] { "StomtPlugin" }); // Add "St
 * the `Target Id` of your STOMT project (stomt.com/{Target Id}
 * the production `Rest URL`: `https://rest.stomt.com`
 
-You can enter the configuration directly into the blueprint or access the variables.
+You can enter the configuration directly into the `StomtWidgetBP` blueprint or access the variables.
 
 <img alt="STOMT Plugin configuraton" src="http://schukies.io/images/stomt/enter-config.PNG" />
-
+<img alt="STOMT Plugin configuraton" src="https://i.imgur.com/RkZtEaR.jpg" />
 
 ## Use our Sandbox
 
@@ -101,6 +105,9 @@ This shows how you can access them:
 
 Labels will help you track down user issues.
 Append labels, as for example your game-version or the player position.
+<p align="center">
+<img alt="Events" src="https://i.imgur.com/sS8T8Fy.png" />
+</p>
 
 <img alt="Events" src="http://schukies.io/images/stomt/label.PNG" />
 
