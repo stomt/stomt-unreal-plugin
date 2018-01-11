@@ -1,17 +1,17 @@
 {
 	"FileVersion": 3,
 	"Version": 1,
-	"VersionName": "1.0",
+	"VersionName": "2.0",
 	"FriendlyName": "STOMT Plugin",
 	"Description": "This Widget allows the easy integration of the feedback solution www.stomt.com in your game.",
 	"Category": "Widgets",
-	"CreatedBy": "Daniel Schukies",
+	"CreatedBy": "STOMT",
 	"CreatedByURL": "https://www.stomt.com",
-	"DocsURL": "",
+	"DocsURL": "https://github.com/stomt/stomt-unreal-plugin",
 	"MarketplaceURL": "",
-	"SupportURL": "",
+	"SupportURL": "https://www.stomt.com/dev/unreal-sdk",
 	"CanContainContent": true,
-	"IsBetaVersion": false,
+	"IsBetaVersion": true,
 	"Installed": false,
 	"Modules": [
 		{

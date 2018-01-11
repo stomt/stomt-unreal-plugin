@@ -1,5 +1,4 @@
 # Collect Feedback In-Game | STOMT for Unreal Engine 4
-#### Version: Beta
 #### Implementation Time: ~20 Minutes (incl. Triggers)
 
 <p align="center">
@@ -77,17 +76,8 @@ PublicDependencyModuleNames.AddRange(new string[] { "StomtPlugin" }); // Add "St
 You can enter the configuration directly into the `StomtWidgetBP` blueprint or access the variables.
 
 <img alt="STOMT Plugin configuraton" src="http://schukies.io/images/stomt/enter-config.PNG" />
+
 <img alt="STOMT Plugin configuraton" src="https://i.imgur.com/RkZtEaR.jpg" />
-
-## Use our Sandbox
-
-If you want to test the integration please feel free to do what you want on [test.stomt.com](https://test.stomt.com/) 
-
-* Just go through the configuration steps again using the test server:
-
-1. Register on [test.stomt.com](https://test.stomt.com/signup/game).
-2. And create an [App Id](https://test.stomt.com/integrate) for your project.
-3. Enter "https://test.rest.stomt.com" as `Rest URL` in the widget.
 
 
 ## Events
@@ -97,6 +87,7 @@ The STOMT Widget supports a variety of callback events.
 This shows how you can access them:
 
 <img alt="Events" src="http://schukies.io/images/stomt/example.PNG" />
+
 
 ## Labels
 
