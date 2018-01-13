@@ -70,6 +70,9 @@ That allows you to:
 * Only show the button to certain players (e.g. power users)
 * Trigger the form after certain events
 
+<img alt="STOMT Plugin Form Triggers" src="https://i.imgur.com/HVhJXq4.png" />
+
+
 ## Event-Callbacks
 
 The STOMT Widget supports a variety of callback events.
