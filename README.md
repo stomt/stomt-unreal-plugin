@@ -3,7 +3,7 @@
 #### Unreal Version 4.18.2 (Check out the other branches for 4.16 support)
 
 <p align="center">
-  <img alt="STOMT Unreal Engine feedback integration" src="https://i.imgur.com/hK8BRqq.jpg" />
+  <img alt="STOMT Unreal Engine feedback integration" src="https://i.imgur.com/1i1eCrb.jpg" />
 </p>
 
 This SDK allows the easy integration of the feedback solution [www.stomt.com](https://www.stomt.com/) in your Unreal apps and games.
