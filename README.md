@@ -1,6 +1,6 @@
 # Collect Feedback In-Game | STOMT for Unreal Engine 4
 #### Implementation Time: ~20 Minutes (incl. Triggers)
-#### Unreal Version 4.18.2 (Check out the other branches for 4.16 support)
+#### Unreal Version: 4.18.2 (There is also a 4.16 branch)
 
 <p align="center">
   <img alt="STOMT Unreal Engine feedback integration" src="https://i.imgur.com/1i1eCrb.jpg" />
@@ -70,6 +70,7 @@ That allows you to:
 * Only show the button to certain players (e.g. power users)
 * Trigger the form after certain events
 
+**Define a hotkey:**
 <img alt="STOMT Plugin Form Triggers" src="https://i.imgur.com/HVhJXq4.png" />
 
 
@@ -85,7 +86,7 @@ Labels will help you track down user issues.
 Append labels, as for example your game-version or the player position/level. You can either hardcode them in the Unity Inspector or use a script to add them in a flexible way based on the information you have.    
 
 <p align="center">
-<img alt="Events" width="600" height="auto" src="https://i.imgur.com/sS8T8Fy.png" />
+<img alt="Events" title="In-Game Feedback Tagging" width="600" height="auto" src="https://i.imgur.com/sS8T8Fy.png" />
 </p>
 
 **Easily add an array of labels**
