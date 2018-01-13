@@ -60,6 +60,15 @@ PublicDependencyModuleNames.AddRange(new string[] { "StomtPlugin" }); // Add "St
 **Alternatively access the variables**
 <img alt="STOMT Plugin configuraton" src="https://i.imgur.com/RkZtEaR.jpg" />
 
+## Form Triggers
+
+The widget can be opened and closed whenever you want by using our trigger functions.     
+    
+That allows you to:    
+* Put a button into the main menu [(Example)](https://imgur.com/5SoQzfj)
+* Put a button into the HUD [(Example)](https://imgur.com/t9wPpJj)
+* Only show the button to certain players (e.g. power users)
+* Trigger the form after certain events
 
 ## Event-Callbacks
 
@@ -89,13 +98,13 @@ Don't hesitate to [contact](https://www.stomt.com/stomt-unreal-engine-plugin) us
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/stomt/stomt-unity-sdk/tags). 
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/stomt/stomt-unreal-plugin/tags). 
 
 ## Contribution
 
-We would love to see you contributing to this project. Please read [CONTRIBUTING.md](https://github.com/stomt/stomt-unreal-engine-plugin/blob/master/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.    
+We would love to see you contributing to this project. Please read [CONTRIBUTING.md](https://github.com/stomt/stomt-unreal-plugin/blob/master/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.    
     
-Visit the [project on STOMT](https://www.stomt.com/stomt-unreal-engine-plugin) to support with your ideas, wishes and feedback.
+Visit the [project on STOMT](https://www.stomt.com/stomt-unreal-plugin) to support with your ideas, wishes and feedback.
 
 ## Authors
 
