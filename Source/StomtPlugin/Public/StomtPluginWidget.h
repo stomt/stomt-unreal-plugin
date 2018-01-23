@@ -106,6 +106,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
 	bool IsUserLoggedIn;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
+	bool UploadLogs;
+
 	/**
 	*	Error-Code whether the user login worked. (0: OK, 403: wrong password, 404: account does not exist. )
 	*/

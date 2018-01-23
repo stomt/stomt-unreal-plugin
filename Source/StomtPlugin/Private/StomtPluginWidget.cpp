@@ -65,7 +65,14 @@ void UStomtPluginWidget::OnSubmit()
 
 		FString LogFileName = FApp::GetProjectName() + FString(TEXT(".log"));
 
-		this->api->SendLogFile(this->api->ReadLogFile(LogFileName), LogFileName);
+		if (this->UploadLogs)
+		{
+			this->api->SendLogFile(this->api->ReadLogFile(LogFileName), LogFileName);	
+		}
+		else
+		{
+			this->api->LogFileWasSend = true;
+		}
 
 		// Check EMail
 		this->IsEMailAlreadyKnown = this->api->Config->GetSubscribed();

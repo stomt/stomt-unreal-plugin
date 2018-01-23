@@ -234,7 +234,7 @@ void UStomtAPI::OnRequestSessionResponse(UStomtRestRequest * Request)
 
 	OnSessionRequestComplete.Broadcast(Request);
 
-	UE_LOG(StomtNetwork, Warning, TEXT("StomtsCreatedByUser: %d | StomtsReceivedByTarget: %d"), StomtsCreatedByUser, StomtsReceivedByTarget);
+	UE_LOG(StomtNetwork, Log, TEXT("StomtsCreatedByUser: %d | StomtsReceivedByTarget: %d"), StomtsCreatedByUser, StomtsReceivedByTarget);
 }
 
 UStomtRestRequest* UStomtAPI::RequestTarget(FString TargetID)
