@@ -60,6 +60,12 @@ PublicDependencyModuleNames.AddRange(new string[] { "StomtPlugin" }); // Add "St
 **Alternatively access the variables**
 <img alt="STOMT Plugin configuraton" src="https://i.imgur.com/RkZtEaR.jpg" />
 
+
+**You can disable the screeenshot and LogUpload functionality**
+<img alt="STOMT Plugin configuraton" src="https://i.imgur.com/hFA7xUs.png" />
+
+
+
 ## Form Triggers
 
 The widget can be opened and closed whenever you want by using our trigger functions.     
