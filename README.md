@@ -79,6 +79,8 @@ You can enter the configuration directly into the `StomtWidgetBP` blueprint or a
 
 <img alt="STOMT Plugin configuraton" src="https://i.imgur.com/RkZtEaR.jpg" />
 
+<img alt="STOMT Plugin configuraton" src="https://i.imgur.com/hFA7xUs.png" />
+
 
 ## Events
 
