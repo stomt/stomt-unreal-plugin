@@ -61,7 +61,7 @@ PublicDependencyModuleNames.AddRange(new string[] { "StomtPlugin" }); // Add "St
 <img alt="STOMT Plugin configuraton" src="https://i.imgur.com/RkZtEaR.jpg" />
 
 
-**You can disable the screeenshot and LogUpload functionality**
+**You can disable the screenshot and log-upload functionality**
 <img alt="STOMT Plugin configuraton" src="https://i.imgur.com/hFA7xUs.png" />
 
 
