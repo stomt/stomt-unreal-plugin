@@ -1,20 +1,14 @@
-// Copyright 2017 Daniel Schukies. All Rights Reserved.
-
-
 #pragma once
+
 #include "StomtPluginPrivatePCH.h"
 #include "StomtRestRequest.h"
 #include "StomtTrack.generated.h"
 
-
-
-/**
- * 
- */
 UCLASS()
 class UStomtTrack : public UObject
 {
 	GENERATED_BODY()
+
 public:
 
 	static UStomtTrack* ConstructStomtTrack();
@@ -22,22 +16,17 @@ public:
 	UStomtTrack();
 
 	~UStomtTrack();
-	//////////////////////////////////////////////////////////////////////////
-	// Public
 
-
+public:
 	//////////////////////////////////////////////////////////////////////////
 	// Read Track
 
-public:
 	UStomtRestJsonObject* GetAsJsonObject();
 
-
-
+public:
 	//////////////////////////////////////////////////////////////////////////
 	// Write Track
 
-public:
 	void SetDevicePlatform(FString DevicePlatform);
 	void SetDeviceID(FString DeviceID);
 	void SetSDKType(FString SDKType);
@@ -58,7 +47,6 @@ public:
 
 
 private:
-
 
 	//////////////////////////////////////////////////////////////////////////
 	// Data

@@ -1,15 +1,12 @@
-// Copyright 2014 Vladimir Alyamkin. All Rights Reserved.
-// Copyright 2016 Stomt. All Rights Reserved.
-
-//#include "StomtPluginPrivatePCH.h"
+#pragma once
 
 #include "StomtPluginPrivatePCH.h"
 #include "StomtJsonObject.h"
+
 #include "CoreMisc.h"
 
 typedef TJsonWriterFactory< TCHAR, TCondensedJsonPrintPolicy<TCHAR> > FCondensedJsonStringWriterFactory;
 typedef TJsonWriter< TCHAR, TCondensedJsonPrintPolicy<TCHAR> > FCondensedJsonStringWriter;
-
 
 UStomtRestJsonObject::UStomtRestJsonObject()
 {

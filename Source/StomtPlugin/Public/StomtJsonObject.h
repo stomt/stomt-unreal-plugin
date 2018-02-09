@@ -1,12 +1,7 @@
-// Copyright 1998-2014 Epic Games, Inc. All Rights Reserved.
-// Copyright 2014 Vladimir Alyamkin. All Rights Reserved.
-// Copyright 2016 Stomt. All Rights Reserved.
-
 #pragma once
+
 #include "StomtJsonValue.h"
 #include "StomtJsonObject.generated.h"
-
-
 
 /**
  * Blueprintable FJsonObject wrapper
@@ -17,6 +12,7 @@ class UStomtRestJsonObject : public UObject
 	GENERATED_BODY()
 
 public:
+
 	UStomtRestJsonObject();
 
 	/** Create new Json object */
@@ -168,7 +164,5 @@ public:
 private:
 	/** Internal JSON data */
 	TSharedPtr<FJsonObject> JsonObj;
-
-
 
 };

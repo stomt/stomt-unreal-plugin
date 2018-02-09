@@ -1,10 +1,9 @@
-// Copyright 2014 Vladimir Alyamkin. All Rights Reserved.
-// Copyright 2016 Stomt. All Rights Reserved.
+#pragma once
 
 #include "StomtPluginPrivatePCH.h"
 #include "StomtJsonValue.h"
-#include "CoreMisc.h"
 
+#include "CoreMisc.h"
 
 UStomtJsonValue* UStomtJsonValue::ConstructJsonValueNumber(UObject* WorldContextObject, float Number)
 {

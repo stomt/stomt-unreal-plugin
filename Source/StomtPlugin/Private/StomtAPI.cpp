@@ -1,8 +1,9 @@
-// Copyright 2016 Daniel Schukies. All Rights Reserved.
-
 #pragma once
+
 #include "StomtPluginPrivatePCH.h"
 #include "StomtAPI.h"
+#include "StomtJsonObject.h"
+
 #include "Runtime/ImageWrapper/Public/Interfaces/IImageWrapper.h"
 #include "Runtime/ImageWrapper/Public/Interfaces/IImageWrapperModule.h"
 #include "Runtime/Engine/Public/HighResScreenshot.h"
@@ -12,9 +13,6 @@
 #include "Runtime/Core/Public/Misc/Base64.h"
 #include "Runtime/Core/Public/Misc/App.h"
 #include "Runtime/Core/Public/Internationalization/Regex.h"
-#include "StomtJsonObject.h"
-
-
 
 UStomtAPI* UStomtAPI::ConstructStomtAPI(FString TargetID, FString RestURL, FString AppID)
 {
@@ -30,7 +28,6 @@ UStomtAPI* UStomtAPI::ConstructStomtAPI(FString TargetID, FString RestURL, FStri
 
 	return api;
 }
-
 
 UStomtAPI::UStomtAPI()
 {

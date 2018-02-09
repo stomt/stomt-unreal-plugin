@@ -1,12 +1,10 @@
-// Copyright 2016 Daniel Schukies. All Rights Reserved.
-
 #pragma once
+
 #include "Runtime/UMG/Public/UMG.h"
 #include "Runtime/UMG/Public/UMGStyle.h"
 #include "Runtime/UMG/Public/Slate/SObjectWidget.h"
 #include "Runtime/UMG/Public/IUMGModule.h"
 #include "Runtime/UMG/Public/Blueprint/UserWidget.h"
-
 
 #include "Blueprint/UserWidget.h"
 
@@ -17,18 +15,13 @@
 
 #include "StomtPluginWidget.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class UStomtPluginWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
 
 public:
 
-	
 	~UStomtPluginWidget();
 
 	/**
@@ -144,20 +137,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	bool OnSubmitLogin();
 
-
 	/**
 	*	Once the user finishes the email input.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	void OnSubmitEMail();
 
-
 	/**
 	*	Once the user logs out.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	void OnLogout();
-
 
 	/**
 	*	Called at the widget startup to initialize variables.
@@ -186,6 +176,5 @@ private:
 
 	UPROPERTY()
 	UStomt* stomt;
-
 
 };

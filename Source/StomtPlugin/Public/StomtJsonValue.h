@@ -1,8 +1,5 @@
-// Copyright 1998-2014 Epic Games, Inc. All Rights Reserved.
-// Copyright 2014 Vladimir Alyamkin. All Rights Reserved.
-// Copyright 2016 Stomt. All Rights Reserved.
-
 #pragma once
+
 #include "StomtPluginPrivatePCH.h"
 #include "StomtJsonValue.generated.h"
 
@@ -31,6 +28,7 @@ UCLASS(BlueprintType, Blueprintable)
 class UStomtJsonValue : public UObject
 {
 	GENERATED_BODY()
+
 public:
 
 	/** Create new Json Number value
@@ -49,10 +47,6 @@ public:
 	/** Create new Json Array value */
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "Construct Json Array Value", HidePin = "WorldContextObject", DefaultToSelf = "WorldContextObject"), Category = "Stomt|Json")
 		static UStomtJsonValue* ConstructJsonValueArray(UObject* WorldContextObject, const TArray<UStomtJsonValue*>& InArray);
-
-	///** Create new Json Object value */
-	//UFUNCTION(BlueprintPure, meta = (DisplayName = "Construct Json Object Value", HidePin = "WorldContextObject", DefaultToSelf = "WorldContextObject"), Category = "Stomt|Json")
-	//	static UStomtJsonValue* ConstructJsonValueObject(UObject* WorldContextObject, UStomtJsonObject *JsonObject);
 
 	/** Create new Json value from FJsonValue (to be used from StomtJsonObject) */
 	static UStomtJsonValue* ConstructJsonValue(UObject* WorldContextObject, const TSharedPtr<FJsonValue>& InValue);
@@ -96,15 +90,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Stomt|Json")
 		TArray<UStomtJsonValue*> AsArray() const;
 
-	///** Returns this value as an object, throwing an error if this is not an Json Object */
-	//UFUNCTION(BlueprintCallable, Category = "Stomt|Json")
-	//	UStomtJsonObject* AsObject();
-
-
 	//////////////////////////////////////////////////////////////////////////
 	// Data
 
 private:
+
 	/** Internal JSON data */
 	TSharedPtr<FJsonValue> JsonVal;
 
@@ -113,8 +103,8 @@ private:
 	// Helpers
 
 protected:
+	
 	/** Simple error logger */
 	void ErrorMessage(const FString& InType) const;
 
-//
 };

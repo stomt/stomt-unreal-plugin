@@ -28,4 +28,3 @@ DECLARE_LOG_CATEGORY_EXTERN(StomtNetwork, Log, All);
 //Logging during file access
 DECLARE_LOG_CATEGORY_EXTERN(StomtFileAccess, Log, All);
 #include "StomtPlugin.h"
-
