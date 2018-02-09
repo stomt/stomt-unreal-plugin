@@ -1,7 +1,5 @@
-// Copyright 2017 Daniel Schukies. All Rights Reserved.
-
-
 #pragma once
+
 #include "StomtPluginPrivatePCH.h"
 #include "StomtRestRequest.h"
 #include "Stomt.h"
@@ -14,14 +12,11 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetRequestComplete, class USto
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLoginRequestComplete, class UStomtRestRequest*, Request);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRequestFailed, class UStomtRestRequest*, Request);
 
-
-/**
- * 
- */
 UCLASS()
 class UStomtAPI : public UObject
 {
 	GENERATED_BODY()
+
 public:
 
 	static UStomtAPI* ConstructStomtAPI(FString TargetID, FString RestURL, FString AppID);
@@ -112,7 +107,6 @@ public:
 
 	UFUNCTION()
 	void OnRequestSessionResponse(UStomtRestRequest * Request);
-
 
 	/**
 	* Sends an REST Request for a stomt target.
@@ -259,4 +253,5 @@ private:
 	UStomtRestRequest*	SetupNewPostRequest();
 	UStomtRestRequest*	SetupNewDeleteRequest();
 	void				AddAccesstokenToRequest(UStomtRestRequest* Request);
+
 };

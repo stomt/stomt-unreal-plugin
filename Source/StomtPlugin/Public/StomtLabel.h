@@ -1,7 +1,5 @@
-// Copyright 2016 Daniel Schukies. All Rights Reserved.
-
-
 #pragma once
+
 #include "StomtPluginPrivatePCH.h"
 #include "StomtLabel.generated.h"
 
@@ -29,15 +27,16 @@ public:
 	void SetIsPublic(bool isPublic);
 	void SetAsTargetOwner(bool asTargetOwner);
 
-
 	FString GetName();
 	FString GetColor();
 	bool GetIsPublic();
 	bool GetAsTargetOwner();
 
+private:
+
 	//////////////////////////////////////////////////////////////////////////
 	// Data
-private:
+
 	FString name;
 	FString color;
 	bool isPublic;

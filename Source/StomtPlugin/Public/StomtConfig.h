@@ -1,21 +1,16 @@
-// Copyright 2017 Daniel Schukies. All Rights Reserved.
-
-
 #pragma once
+
 #include "StomtPluginPrivatePCH.h"
 #include "StomtRestRequest.h"
 #include "StomtConfig.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnConfigUpdated, class UStomtConfig*, Config);
 
-
-/**
- * 
- */
 UCLASS()
 class UStomtConfig : public UObject
 {
 	GENERATED_BODY()
+
 public:
 
 	static UStomtConfig* ConstructStomtConfig();

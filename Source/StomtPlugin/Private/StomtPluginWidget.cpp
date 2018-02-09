@@ -1,13 +1,11 @@
-// Copyright 2016 Daniel Schukies. All Rights Reserved.
-
+#pragma once
 
 #include "StomtPluginPrivatePCH.h"
 #include "StomtPluginWidget.h"
 #include "StomtRestRequest.h"
 #include "StomtLabel.h"
+
 #include "Runtime/Engine/Classes/Components/SceneCaptureComponent2D.h"
-
-
 
 UStomtPluginWidget::~UStomtPluginWidget()
 {

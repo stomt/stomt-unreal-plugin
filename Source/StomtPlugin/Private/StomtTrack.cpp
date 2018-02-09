@@ -1,8 +1,9 @@
-// Copyright 2017 Daniel Schukies. All Rights Reserved.
-
 #pragma once
+
 #include "StomtPluginPrivatePCH.h"
 #include "StomtTrack.h"
+#include "StomtJsonObject.h"
+
 #include "Runtime/Core/Public/Misc/FileHelper.h"
 #include "Runtime/Core/Public/Misc/Paths.h"
 #include "Runtime/Core/Public/GenericPlatform/GenericPlatformFile.h"
@@ -11,16 +12,12 @@
 #include "Runtime/Engine/Classes/Kismet/KismetSystemLibrary.h"
 #include "Runtime/Core/Public/GenericPlatform/GenericPlatformProcess.h"
 #include "Runtime/Engine/Classes/Kismet/KismetSystemLibrary.h"
-#include "StomtJsonObject.h"
 
 UStomtTrack* UStomtTrack::ConstructStomtTrack()
 {
 	UStomtTrack* track = NewObject<UStomtTrack>();
-
-
 	return track;
 }
-
 
 UStomtTrack::UStomtTrack()
 {

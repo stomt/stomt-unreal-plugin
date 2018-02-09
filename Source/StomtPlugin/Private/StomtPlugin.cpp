@@ -1,6 +1,6 @@
+#pragma once
+
 #include "StomtPluginPrivatePCH.h"
-
-
 
 class FStomtPlugin : public StomtPlugin
 {
@@ -16,12 +16,9 @@ class FStomtPlugin : public StomtPlugin
 	}
 };
 
-
-
 IMPLEMENT_MODULE(FStomtPlugin, StomtPlugin);
 
 DEFINE_LOG_CATEGORY(Stomt);
 DEFINE_LOG_CATEGORY(StomtNetwork);
 DEFINE_LOG_CATEGORY(StomtInit);
 DEFINE_LOG_CATEGORY(StomtFileAccess);
-

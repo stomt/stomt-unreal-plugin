@@ -1,10 +1,8 @@
-// Copyright 2016 Daniel Schukies. All Rights Reserved.
-
 #pragma once
+
 #include "StomtPluginPrivatePCH.h"
 #include "StomtJsonObject.h"
 #include "StomtRestRequest.generated.h"
-
 
 /**
 * @author Original latent action class by https://github.com/unktomi
@@ -12,6 +10,7 @@
 template <class T> class FVaRestLatentAction : public FPendingLatentAction
 {
 public:
+	
 	virtual void Call(const T &Value)
 	{
 		Result = Value;
@@ -229,7 +228,3 @@ protected:
 	int32 ResponseCode;
 
 };
-
-
-
-

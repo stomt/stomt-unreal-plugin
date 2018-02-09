@@ -4,6 +4,7 @@
 
 class StomtPlugin : public IModuleInterface
 {
+
 public:
 
 	/**
@@ -26,4 +27,5 @@ public:
 	{
 		return FModuleManager::Get().IsModuleLoaded("StomtPlugin");
 	}
+
 };
