@@ -32,6 +32,7 @@ public:
 	**/
 	void Delete();
 
+	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	FString GetAccessToken();
 	void	SetAccessToken(FString AccessToken);
 
