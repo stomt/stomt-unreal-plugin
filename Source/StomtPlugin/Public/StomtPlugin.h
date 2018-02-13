@@ -1,3 +1,4 @@
+// Copyright 2018 STOMT GmbH. All Rights Reserved.
 #pragma once
 
 #include "ModuleManager.h"
