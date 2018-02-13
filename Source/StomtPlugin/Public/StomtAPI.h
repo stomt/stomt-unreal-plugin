@@ -110,6 +110,12 @@ public:
 
 	/**
 	* Sends an REST Request for a stomt target.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Stomt API")
+	UStomtRestRequest* RequestTargetByAppID();
+
+	/**
+	* Sends an REST Request for a stomt target.
 	* To receive the respose it is necessary to add a event delegate function.
 	* For example: api->GetRequest()->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnLoginRequestResponse).
 	* @param TargetID - ID of the requested stomt target.

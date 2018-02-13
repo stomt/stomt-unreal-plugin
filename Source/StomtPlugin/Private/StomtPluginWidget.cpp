@@ -29,7 +29,7 @@ void UStomtPluginWidget::OnConstruction(FString TargetID, FString RestURL, FStri
 	this->Config = this->api->Config;
 
 	// Request Target Name
-	UStomtRestRequest* request = this->api->RequestTarget(TargetID);
+	UStomtRestRequest* request = this->api->RequestTargetByAppID();
 	request->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnTargetResponse);
 
 	//Lookup EMail

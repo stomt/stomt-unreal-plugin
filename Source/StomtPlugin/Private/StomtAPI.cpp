@@ -15,9 +15,19 @@
 UStomtAPI* UStomtAPI::ConstructStomtAPI(FString TargetID, FString RestURL, FString AppID)
 {
 	UStomtAPI* api = NewObject<UStomtAPI>();
+
+	if (AppID.Equals("AKN5M7Ob0MqxKXYdE9i3IhQtF"))
+	{
+		api->SetTargetID("my-my");
+		api->SetRestURL("https://test.rest.stomt.com");
+	}
+	else
+	{
+		api->SetRestURL("https://rest.stomt.com");
+	}
+
 	api->SetAppID(AppID);
 	api->SetTargetID(TargetID);
-	api->SetRestURL(RestURL);
 
 	UE_LOG(StomtInit, Log, TEXT("Construct Stomt API"));
 	UE_LOG(StomtInit, Log, TEXT("AppID: %s "), *api->GetAppID());
@@ -232,17 +242,30 @@ void UStomtAPI::OnRequestSessionResponse(UStomtRestRequest * Request)
 	UE_LOG(StomtNetwork, Log, TEXT("StomtsCreatedByUser: %d | StomtsReceivedByTarget: %d"), StomtsCreatedByUser, StomtsReceivedByTarget);
 }
 
-UStomtRestRequest* UStomtAPI::RequestTarget(FString TargetID)
+UStomtRestRequest * UStomtAPI::RequestTargetByAppID()
 {
-
 	UStomtRestRequest* request = NewObject<UStomtRestRequest>();
 	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnRequestTargetResponse);
 	request->OnRequestFail.AddDynamic(this, &UStomtAPI::OnARequestFailed);
 
 	request->SetVerb(ERequestVerb::GET);
-	request->SetHeader(TEXT("appid"), this->GetAppID() );
+	request->SetHeader(TEXT("appid"), this->GetAppID());
 
-	request->ProcessURL( this->GetRestURL().Append("/targets/").Append(TargetID) );
+	request->ProcessURL(this->GetRestURL().Append("/targets/"));
+
+	return request;
+}
+
+UStomtRestRequest* UStomtAPI::RequestTarget(FString TargetID)
+{
+	UStomtRestRequest* request = NewObject<UStomtRestRequest>();
+	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnRequestTargetResponse);
+	request->OnRequestFail.AddDynamic(this, &UStomtAPI::OnARequestFailed);
+
+	request->SetVerb(ERequestVerb::GET);
+	request->SetHeader(TEXT("appid"), this->GetAppID());
+
+	request->ProcessURL(this->GetRestURL().Append("/targets/").Append(TargetID));
 
 	return request;
 }
