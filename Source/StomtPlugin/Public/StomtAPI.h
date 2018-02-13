@@ -215,6 +215,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
 	bool			UseImageUpload;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
+	bool			useDefaultLabels;
+
 	bool			IsLogUploadComplete;
 	bool			IsImageUploadComplete;
 
@@ -223,7 +226,11 @@ public:
 	bool			LogFileWasSend;
 
 	FString			RestURL;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
 	FString			TargetName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
 	FString			TargetID;
 	FString			AppID;
 	FString			ImageURL;
@@ -254,6 +261,7 @@ private:
 
 	bool				WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting);
 	bool				ReadFile(FString& Result, FString FileName, FString SaveDirectory);
+
 	TArray<uint8>		ReadBinaryFile(FString FilePath);
 
 	UStomtRestRequest*	SetupNewPostRequest();

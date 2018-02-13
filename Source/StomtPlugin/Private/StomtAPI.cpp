@@ -44,6 +44,7 @@ UStomtAPI::UStomtAPI()
 	IsImageUploadComplete = false;
 	IsLogUploadComplete = false;
 	UseImageUpload = true;
+	useDefaultLabels = true;
 
 	this->Config = UStomtConfig::ConstructStomtConfig();
 	this->Track = UStomtTrack::ConstructStomtTrack();
@@ -75,6 +76,13 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 		{
 			labels.Add(UStomtJsonValue::ConstructJsonValueString(this, stomt->GetLabels()[i]->GetName()));
 		}
+	}
+
+	if (useDefaultLabels)
+	{
+		const FVector2D ViewportSize = FVector2D(GEngine->GameViewport->Viewport->GetSizeXY());
+		labels.Add(UStomtJsonValue::ConstructJsonValueString(this, ViewportSize.ToString()));
+		labels.Add(UStomtJsonValue::ConstructJsonValueString(this, UGameplayStatics::GetPlatformName()));
 	}
 
 	if (labels.Num() > 0)
@@ -279,6 +287,7 @@ void UStomtAPI::OnRequestTargetResponse(UStomtRestRequest * Request)
 	if (!Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("displayname"))) return;
 	
 	this->TargetName = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetStringField(TEXT("displayname"));
+	this->TargetID = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetStringField(TEXT("id"));
 	this->SetImageURL(Request->GetResponseObject()
 		->GetObjectField(TEXT("data"))
 		->GetObjectField(TEXT("images"))

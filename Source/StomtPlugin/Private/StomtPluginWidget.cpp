@@ -22,8 +22,6 @@ void UStomtPluginWidget::OnConstruction(FString TargetID, FString RestURL, FStri
 	else
 	{
 		this->api->SetAppID(AppID);
-		this->api->SetTargetID(TargetID);
-		this->api->SetRestURL(RestURL);
 	}
 
 	this->Config = this->api->Config;
@@ -122,6 +120,9 @@ void UStomtPluginWidget::OnLoginResponse(UStomtRestRequest * LoginRequest)
 void UStomtPluginWidget::OnTargetResponse(UStomtRestRequest * TargetRequest)
 {
 	this->TargetName = this->api->GetTargetName();
+
+	UE_LOG(Stomt, Log, TEXT("OnTargetResponse: %s"), *this->TargetName);
+
 	this->ImageURL = this->api->GetImageURL();
 
 	this->api->OnTargetRequestComplete.Broadcast(TargetRequest);
