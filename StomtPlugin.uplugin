@@ -6,7 +6,7 @@
 	"FriendlyName": "STOMT Plugin",
 	"Description": "This Widget allows the easy integration of the feedback solution www.stomt.com in your game.",
 	"Category": "Widgets",
-	"CreatedBy": "Daniel Schukies",
+	"CreatedBy": "STOMT",
 	"CreatedByURL": "https://www.stomt.com",
 	"DocsURL": "https://github.com/stomt/stomt-unreal-plugin",
 	"MarketplaceURL" : "com.epicgames.launcher://ue/marketplace/content/7980672d57664bb5a567ff39f5106af6",
