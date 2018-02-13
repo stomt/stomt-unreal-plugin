@@ -13,7 +13,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLoginRequestComplete, class UStom
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRequestFailed, class UStomtRestRequest*, Request);
 
 UCLASS()
-class UStomtAPI : public UObject
+class STOMTPLUGIN_API UStomtAPI : public UObject
 {
 	GENERATED_BODY()
 
