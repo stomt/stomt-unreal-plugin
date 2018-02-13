@@ -1,3 +1,5 @@
+// Copyright 2018 STOMT GmbH. All Rights Reserved.
+
 using UnrealBuildTool;
 using System.IO;
 
