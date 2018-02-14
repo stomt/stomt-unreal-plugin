@@ -1,8 +1,8 @@
 // Copyright 2018 STOMT GmbH. All Rights Reserved.
 #pragma once
 
-#include "StomtPluginPrivatePCH.h"
 #include "StomtPluginWidget.h"
+#include "StomtPluginPrivatePCH.h"
 #include "StomtRestRequest.h"
 #include "StomtLabel.h"
 
