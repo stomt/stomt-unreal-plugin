@@ -1,8 +1,8 @@
 // Copyright 2018 STOMT GmbH. All Rights Reserved.
 #pragma once
 
-#include "Stomt.h"
 #include "StomtPluginPrivatePCH.h"
+#include "Stomt.h"
 
 //////////////////////////////////////////////////////////////////////////
 // Construction
