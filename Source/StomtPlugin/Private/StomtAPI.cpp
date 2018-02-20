@@ -92,6 +92,14 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 		request->GetRequestObject()->SetObjectField(TEXT("extradata"), jObjExtraData);
 	}
 
+	if (CustomKeyValuePairs.Num() > 0)
+	{
+		for (int i = 0; i != CustomKeyValuePairs.Num(); ++i)
+		{
+			jObjExtraData->SetStringField(CustomKeyValuePairs[i][0], CustomKeyValuePairs[i][1]);
+		}	
+	}
+
 	// Stomt Image
 	if (!this->ImageUploadName.IsEmpty() && UseImageUpload)
 	{
@@ -662,7 +670,7 @@ void UStomtAPI::AddCustomKeyValuePair(FString key, FString value)
 	pair.Add(key);
 	pair.Add(value);
 
-	CustomKeyValuePairs->Add(pair);
+	CustomKeyValuePairs.Add(pair);
 }
 
 bool UStomtAPI::WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting)

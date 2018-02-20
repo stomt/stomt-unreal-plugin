@@ -271,5 +271,5 @@ private:
 	UStomtRestRequest*	SetupNewDeleteRequest();
 	void				AddAccesstokenToRequest(UStomtRestRequest* Request);
 
-	TArray<TArray<FString>>* CustomKeyValuePairs;
+	TArray<TArray<FString>> CustomKeyValuePairs;
 };
