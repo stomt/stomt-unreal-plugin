@@ -656,6 +656,15 @@ void UStomtAPI::UseScreenshotUpload(bool UseUpload)
 	UseImageUpload = UseUpload;
 }
 
+void UStomtAPI::AddCustomKeyValuePair(FString key, FString value)
+{
+	TArray<FString> pair = TArray<FString>();
+	pair.Add(key);
+	pair.Add(value);
+
+	CustomKeyValuePairs->Add(pair);
+}
+
 bool UStomtAPI::WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting)
 {
 	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();

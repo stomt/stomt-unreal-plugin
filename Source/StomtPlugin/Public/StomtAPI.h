@@ -257,6 +257,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
 	void UseScreenshotUpload(bool UseUpload);
+
+	void AddCustomKeyValuePair(FString key, FString value);
 	
 private:
 
@@ -269,4 +271,5 @@ private:
 	UStomtRestRequest*	SetupNewDeleteRequest();
 	void				AddAccesstokenToRequest(UStomtRestRequest* Request);
 
+	TArray<TArray<FString>>* CustomKeyValuePairs;
 };
