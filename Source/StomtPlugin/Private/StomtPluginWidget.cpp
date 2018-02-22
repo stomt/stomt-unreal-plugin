@@ -62,7 +62,8 @@ void UStomtPluginWidget::OnSubmit()
 		// API Object should not be null ;)
 		this->api->SetStomtToSend(stomt);
 
-		FString LogFileName = FApp::GetProjectName() + FString(TEXT(".log"));
+		FString ProjectName = FApp::GetGameName(); // FApp::GetProjectName()
+		FString LogFileName = ProjectName + FString(TEXT(".log"));
 
 		if (this->UploadLogs)
 		{
