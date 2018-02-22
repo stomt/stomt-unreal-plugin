@@ -1,8 +1,8 @@
 // Copyright 2018 STOMT GmbH. All Rights Reserved.
 #pragma once
 
-#include "StomtConfig.h"
 #include "StomtPluginPrivatePCH.h"
+#include "StomtConfig.h"
 #include "StomtJsonObject.h"
 
 #include "Runtime/Core/Public/Misc/FileHelper.h"

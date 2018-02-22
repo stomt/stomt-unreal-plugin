@@ -1,8 +1,8 @@
 // Copyright 2018 STOMT GmbH. All Rights Reserved.
 #pragma once
 
-#include "StomtAPI.h"
 #include "StomtPluginPrivatePCH.h"
+#include "StomtAPI.h"
 #include "StomtJsonObject.h"
 
 #include "Runtime/Engine/Public/HighResScreenshot.h"
