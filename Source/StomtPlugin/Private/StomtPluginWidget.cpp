@@ -66,10 +66,13 @@ void UStomtPluginWidget::OnSubmit()
 		if (this->UploadLogs)
 		{
 			this->api->SendLogFile(this->api->ReadLogFile(LogFileName), LogFileName);	
+			//UE_LOG(Stomt, Log, TEXT("this->UploadLogs true"));
+
 		}
 		else
 		{
-			this->api->LogFileWasSend = true;
+			this->api->IsLogUploadComplete = true;
+			//UE_LOG(Stomt, Log, TEXT("this->UploadLogs false"));
 		}
 
 		// Check EMail
