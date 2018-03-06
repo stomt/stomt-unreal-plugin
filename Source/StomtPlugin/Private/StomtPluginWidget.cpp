@@ -68,7 +68,7 @@ void UStomtPluginWidget::OnSubmit()
 		}
 		else
 		{
-			this->api->LogFileWasSend = true;
+			this->api->IsLogUploadComplete = true;
 		}
 
 		// Check EMail
