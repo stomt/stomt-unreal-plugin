@@ -246,6 +246,18 @@ public:
 	FString			UserID;
 
 	//////////////////////////////////////////////////////////////////////////
+	// Multi-Language
+
+public:
+	UFUNCTION(BlueprintCallable, Category = "Stomt API")
+		UStomtRestJsonObject* LoadLanguageFile();
+	UFUNCTION(BlueprintCallable, Category = "Stomt API")
+		FString GetLangText(FString text);
+
+private:
+	UStomtRestJsonObject* Languages;
+
+	//////////////////////////////////////////////////////////////////////////
 	// Helper Functions
 
 public:

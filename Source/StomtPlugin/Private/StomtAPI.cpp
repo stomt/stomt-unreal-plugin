@@ -35,6 +35,10 @@ UStomtAPI* UStomtAPI::ConstructStomtAPI(FString TargetID, FString RestURL, FStri
 	UE_LOG(StomtInit, Log, TEXT("TargetID: %s "), *api->GetTargetID());
 	UE_LOG(StomtInit, Log, TEXT("RestURL: %s "), *api->GetRestURL());
 
+	api->LoadLanguageFile();
+
+	UE_LOG(StomtInit, Log, TEXT("LangTest: %s"), *api->GetLangText("STOMT_WISH_BUBBLE"));
+
 	return api;
 }
 
@@ -644,6 +648,50 @@ FString UStomtAPI::ReadScreenshotAsBase64()
 void UStomtAPI::OnARequestFailed(UStomtRestRequest * Request)
 {
 	this->OnRequestFailed.Broadcast(Request);
+}
+
+UStomtRestJsonObject* UStomtAPI::LoadLanguageFile()
+{
+	FString jsonString = "";
+
+	this->ReadFile(jsonString, FString(TEXT("languages.json")), FPaths::GamePluginsDir() + "StomtPlugin/Resources/" );
+	
+	UStomtRestJsonObject* jsonObject = UStomtRestJsonObject::ConstructJsonObject(this);
+	if (jsonObject->DecodeJson(jsonString))
+	{
+		this->Languages = jsonObject;
+	}
+	else
+	{
+		UE_LOG(StomtNetwork, Error, TEXT("Could not decode Language File StomtPlugin/Resources/languages.json"));
+	}
+
+	//UE_LOG(StomtNetwork, Warning, TEXT("Lang-File: %s"), *jsonObject->EncodeJson());
+	return jsonObject;
+}
+
+FString UStomtAPI::GetLangText(FString text)
+{
+	if (this->Languages != NULL)
+	{
+		//this->
+
+		if (!this->Languages->GetObjectField("data")->HasField("de"))
+		{
+			UE_LOG(StomtNetwork, Warning, TEXT("Language {0} not supported (does not exist in language file) falling back to english."));
+
+			return "";
+		}
+
+		if ( !this->Languages->GetObjectField("data")->GetObjectField("de")->HasField(text) )
+		{
+			UE_LOG(StomtNetwork, Warning, TEXT("Translation for '{0}' not found in language: '{1}'."));
+		}
+
+		return this->Languages->GetObjectField("data")->GetObjectField("de")->GetStringField(text);
+	}
+
+	return FString();
 }
 
 bool UStomtAPI::IsEmailCorrect(FString Email)
