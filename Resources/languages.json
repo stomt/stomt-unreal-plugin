@@ -1,0 +1,67 @@
+{
+	"data":
+	{
+		"de": 
+		{
+			"STOMT_WISH_BUBBLE": "Ich wünschte",
+			"STOMT_LIKE_BUBBLE": "Ich mag",
+			"STOMT_DEFAULT_TEXT_WISH": "würde",
+			"STOMT_DEFAULT_TEXT_LIKE": "weil",
+			"STOMT_PLACEHOLDER": "...bitte beende diesen Satz",
+			"STOMT_ERROR_MORE_TEXT": "Bitte schreibe etwas mehr.",
+			"STOMT_SCREENSHOT": "Screenshot",
+			
+			"HEADER_TARGET_STOMTS": "STOMTS",
+			"HEADER_YOUR_STOMTS": "DEINE",
+			
+			"SUBSCRIBE_GET_NOTIFIED": "Werde benachrichtigt, wenn jemand reagiert.",
+			"SUBSCRIBE_TOGGLE_EMAIL": "E-Mail",
+			"SUBSCRIBE_TOGGLE_PHONE": "SMS",
+			"SUBSCRIBE_EMAIL_QUESTION": "Wie lautet deine E-Mail-Adresse?",
+			"SUBSCRIBE_PHONE_QUESTION": "Wie lautet deine Telefonnummer?",
+			"SUBSCRIBE_PHONE_PLACEHOLDER" : "+49 152 03959902",
+			"SUBSCRIBE_EMAIL_PLACEHOLDER" : "deine@email.com",
+			"SUBSCRIBE_SKIP": "Überspringen",
+
+			"SUCCESS_THANK_YOU": "DANKE!",
+			"SUCCESS_FIND_ALL_STOMTS": "Super, finde mehr Wünsche auf",
+			"SUCCESS_FIND_YOUR_STOMTS": "Finde deine stomts",
+			"SUCCESS_CREATE_NEW_WISH": "Wünsch dir noch was",
+			
+			"NETWORK_NOT_CONNECTED": "Verbindung zu STOMT unterbrochen",
+			"NETWORK_NO_INTERNET": "Keine Internetverbindung",
+			"NETWORK_RECONNECT": "Wiederverbinden"
+		},	
+		"en": 
+		{
+			"STOMT_WISH_BUBBLE": "I wish",
+			"STOMT_LIKE_BUBBLE": "I like",
+			"STOMT_DEFAULT_TEXT_WISH": "would",
+			"STOMT_DEFAULT_TEXT_LIKE": "because",
+			"STOMT_PLACEHOLDER": "...please finish the sentence",
+			"STOMT_ERROR_MORE_TEXT": "Please write a bit more.",
+			"STOMT_SCREENSHOT": "Screenshot",
+			
+			"HEADER_TARGET_STOMTS": "STOMTS",
+			"HEADER_YOUR_STOMTS": "YOURS",
+			
+			"SUBSCRIBE_GET_NOTIFIED": "Get notified when someone reacts.",
+			"SUBSCRIBE_TOGGLE_EMAIL": "E-Mail",
+			"SUBSCRIBE_TOGGLE_PHONE": "SMS",
+			"SUBSCRIBE_EMAIL_QUESTION": "What's your email address?",
+			"SUBSCRIBE_PHONE_QUESTION": "What's your phone number?",
+			"SUBSCRIBE_PHONE_PLACEHOLDER" : "+1-541-754-3010",
+			"SUBSCRIBE_EMAIL_PLACEHOLDER" : "your@gmail.com",			
+			"SUBSCRIBE_SKIP": "Skip",
+
+			"SUCCESS_THANK_YOU": "THANK YOU!",
+			"SUCCESS_FIND_ALL_STOMTS": "Amazing, find more wishes on",
+			"SUCCESS_FIND_YOUR_STOMTS": "click to find your stomts here",
+			"SUCCESS_CREATE_NEW_WISH": "Create another wish",
+			
+			"NETWORK_NOT_CONNECTED": "Could not connect to STOMT",
+			"NETWORK_NO_INTERNET": "No internet connection",
+			"NETWORK_RECONNECT": "Reconnect"
+		}
+	}
+}
