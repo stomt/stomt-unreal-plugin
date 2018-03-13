@@ -251,11 +251,22 @@ public:
 public:
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
 		UStomtRestJsonObject* LoadLanguageFile();
+
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
 		FString GetLangText(FString text);
 
+	UFUNCTION(BlueprintCallable, Category = "Stomt API")
+		FString GetCurrentLanguage();
+
+	UFUNCTION(BlueprintCallable, Category = "Stomt API")
+		bool SetCurrentLanguage(FString language);
+
 private:
+	FString GetSystemLanguage();
+
 	UStomtRestJsonObject* Languages;
+
+	FString CurrentLanguage;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Helper Functions
