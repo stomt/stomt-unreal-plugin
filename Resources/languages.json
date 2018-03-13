@@ -9,6 +9,7 @@
 			"STOMT_DEFAULT_TEXT_LIKE": "weil",
 			"STOMT_PLACEHOLDER": "...bitte beende diesen Satz",
 			"STOMT_ERROR_MORE_TEXT": "Bitte schreibe etwas mehr.",
+			"STOMT_ERROR_LESS_TEXT": "Nutze nur {0} Zeichen.",
 			"STOMT_SCREENSHOT": "Screenshot",
 			
 			"HEADER_TARGET_STOMTS": "STOMTS",
@@ -40,6 +41,7 @@
 			"STOMT_DEFAULT_TEXT_LIKE": "because",
 			"STOMT_PLACEHOLDER": "...please finish the sentence",
 			"STOMT_ERROR_MORE_TEXT": "Please write a bit more.",
+			"STOMT_ERROR_LESS_TEXT": "Use only {0} characters.",
 			"STOMT_SCREENSHOT": "Screenshot",
 			
 			"HEADER_TARGET_STOMTS": "STOMTS",
