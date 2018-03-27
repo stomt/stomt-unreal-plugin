@@ -656,7 +656,12 @@ UStomtRestJsonObject* UStomtAPI::LoadLanguageFile()
 {
 	FString jsonString = "";
 
-	this->ReadFile(jsonString, FString(TEXT("languages.json")), FPaths::GamePluginsDir() + "StomtPlugin/Resources/" );
+	if (!this->ReadFile(jsonString, FString(TEXT("languages.json")), FPaths::GamePluginsDir() + "StomtPlugin/Resources/"))
+	{
+		this->ReadFile(jsonString, FString(TEXT("languages.json")), FPaths::GamePluginsDir() + "StomtPluginSub/Resources/");
+
+		UE_LOG(StomtInit, Log, TEXT("Load StomtPlugin/Resources/languages.json failed, trying StomtPluginSub/Resources/languages.json "));
+	}
 	
 	UStomtRestJsonObject* jsonObject = UStomtRestJsonObject::ConstructJsonObject(this);
 	if (jsonObject->DecodeJson(jsonString))
@@ -665,7 +670,7 @@ UStomtRestJsonObject* UStomtAPI::LoadLanguageFile()
 	}
 	else
 	{
-		UE_LOG(StomtNetwork, Error, TEXT("Could not decode Language File StomtPlugin/Resources/languages.json"));
+		UE_LOG(StomtInit, Error, TEXT("Could not decode Language File StomtPlugin(Sub)/Resources/languages.json"));
 	}
 
 	//UE_LOG(StomtNetwork, Warning, TEXT("Lang-File: %s"), *jsonObject->EncodeJson());
@@ -784,6 +789,8 @@ bool UStomtAPI::ReadFile(FString& Result, FString FileName, FString SaveDirector
 	if (!FPaths::FileExists(path))
 	{
 		UE_LOG(StomtFileAccess, Warning, TEXT("File with this path does not exist: %s "), *path);
+
+		return false;
 	}
 
 	return FFileHelper::LoadFileToString( Result, *path);
