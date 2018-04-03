@@ -1,6 +1,6 @@
 # Collect Feedback In-Game | STOMT for Unreal Engine 4
 #### Implementation Time: ~20 Minutes (incl. Triggers)
-#### Unreal Version: 4.18.2 (There is also a 4.16 branch)
+#### Unreal Version: 4.18 (For other version visit: [4.16](https://github.com/stomt/stomt-unreal-plugin/tree/UE/4.16), [4.17](https://github.com/stomt/stomt-unreal-plugin/tree/UE/4.17), [4.19](https://github.com/stomt/stomt-unreal-plugin/tree/UE/4.19))
 
 <p align="center">
   <img alt="STOMT Unreal Engine feedback integration" src="https://i.imgur.com/1i1eCrb.jpg" />
