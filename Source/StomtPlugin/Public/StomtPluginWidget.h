@@ -171,7 +171,10 @@ public:
 
 	UFUNCTION()
 	void OnTargetResponse(UStomtRestRequest * TargetRequest);
-
+	
+	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
+	FString AppendStomtURLParams(FString url, FString utm_content);
+	
 	// Not ready yet.
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	void UploadScreenshot();

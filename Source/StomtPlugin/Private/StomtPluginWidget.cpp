@@ -129,6 +129,26 @@ void UStomtPluginWidget::OnTargetResponse(UStomtRestRequest * TargetRequest)
 	this->api->OnTargetRequestComplete.Broadcast(TargetRequest);
 }
 
+FString UStomtPluginWidget::AppendStomtURLParams(FString url, FString utm_content)
+{
+	url += FString("?utm_medium=" + FString("sdk"));
+	url += FString("&utm_campaign=" + FString("unreal"));
+	url += FString("&utm_term=" + FString(FApp::GetProjectName()) );
+	url += FString("&utm_medium=" + FString("sdk"));
+
+	if ( !utm_content.IsEmpty() )
+	{
+		url += FString("&utm_content=" + utm_content);
+	}
+
+	if ( !this->api->Config->GetAccessToken().IsEmpty() )
+	{
+		url += FString("&accesstoken=" + this->api->Config->GetAccessToken() );
+	}
+	
+	return url;
+}
+
 void UStomtPluginWidget::UploadScreenshot()
 {
 	this->api->SendImageFile(this->api->ReadScreenshotAsBase64());
