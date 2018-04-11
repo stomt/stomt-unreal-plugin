@@ -42,6 +42,7 @@
 			"SDK_LOGIN": "Login",
 			"SDK_LOGIN_SIGNUP": "Anmelden",
 			"SDK_LOGIN_LOGOUT": "Ausloggen",
+			"SDK_LOGIN_FORGOT_PW": "Passwort vergessen?",
 			"SDK_LOGIN_SUCCESS": "Du bist eingeloggt!",
 			"SDK_LOGIN_WENT_WRONG": "Ups, da lief was schief."
 		},	
@@ -86,6 +87,7 @@
 			"SDK_LOGIN": "Login",
 			"SDK_LOGIN_SIGNUP": "Signup",
 			"SDK_LOGIN_LOGOUT": "Logout",
+			"SDK_LOGIN_FORGOT_PW": "Forgot password?",
 			"SDK_LOGIN_SUCCESS": "You're now logged in!",
 			"SDK_LOGIN_WENT_WRONG": "Ups something went wrong."
 		}
