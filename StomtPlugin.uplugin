@@ -3,7 +3,7 @@
 	"Version": 2,
 	"VersionName": "2.0.0",
 	"EngineVersion" : "4.16.0",
-	"FriendlyName": "STOMT Plugin",
+	"FriendlyName": "StomtPlugin",
 	"Description": "This Widget allows the easy integration of the feedback solution www.stomt.com in your game.",
 	"Category": "Widgets",
 	"CreatedBy": "STOMT",
