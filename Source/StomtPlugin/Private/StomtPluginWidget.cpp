@@ -131,10 +131,10 @@ void UStomtPluginWidget::OnTargetResponse(UStomtRestRequest * TargetRequest)
 
 FString UStomtPluginWidget::AppendStomtURLParams(FString url, FString utm_content)
 {
-	url += FString("?utm_medium=" + FString("sdk"));
+	url += FString("?utm_source=" + FString("stomt"));
+	url += FString("&utm_medium=" + FString("sdk"));
 	url += FString("&utm_campaign=" + FString("unreal"));
 	url += FString("&utm_term=" + FString(FApp::GetProjectName()) );
-	url += FString("&utm_medium=" + FString("sdk"));
 
 	if ( !utm_content.IsEmpty() )
 	{
