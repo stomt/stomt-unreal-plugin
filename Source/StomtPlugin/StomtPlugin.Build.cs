@@ -7,6 +7,8 @@ public class StomtPlugin : ModuleRules
 {
     public StomtPlugin(ReadOnlyTargetRules ROTargetRules) : base(ROTargetRules)
     {
+        PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+
         PrivateIncludePaths.AddRange(new string[] { "StomtPlugin/Private" });
         PublicIncludePaths.AddRange(new string[] { "StomtPlugin/Public" });
  
