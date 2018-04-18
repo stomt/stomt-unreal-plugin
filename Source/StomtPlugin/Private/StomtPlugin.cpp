@@ -1,6 +1,6 @@
 // Copyright 2018 STOMT GmbH. All Rights Reserved.
 #pragma once
-
+#include "StomtPlugin.h"
 #include "StomtPluginPrivatePCH.h"
 
 class FStomtPlugin : public StomtPlugin
