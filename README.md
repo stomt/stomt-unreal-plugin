@@ -34,7 +34,7 @@ PublicDependencyModuleNames.AddRange(new string[] { "StomtPlugin" }); // Add "St
 
 3. Open your project and enable the plugin. `Edit -> Plugins -> Widgets -> STOMT Plugin`
 
-4. Check `Show Plugin Content` in the bottom right corner of your editor (view options).
+4. Check `Show Plugin Content` and `Show Engine Content` in the bottom right corner of your editor (view options).
 
 <img alt="Events" src="https://i.imgur.com/YoTY7w6.png" />
 
