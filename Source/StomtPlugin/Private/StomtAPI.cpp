@@ -651,15 +651,7 @@ void UStomtAPI::OnARequestFailed(UStomtRestRequest * Request)
 
 UStomtRestJsonObject* UStomtAPI::LoadLanguageFile()
 {
-	FString jsonString = "";
-
-	if (!this->ReadFile(jsonString, FString(TEXT("languages.json")), FPaths::GamePluginsDir() + "StomtPlugin/Resources/"))
-	{
-		this->ReadFile(jsonString, FString(TEXT("languages.json")), FPaths::GamePluginsDir() + "StomtPluginSub/Resources/");
-
-		UE_LOG(StomtInit, Log, TEXT("Load StomtPlugin/Resources/languages.json failed, trying StomtPluginSub/Resources/languages.json "));
-	}
-	
+	FString jsonString = this->LoadLanguageFileContent();
 	UStomtRestJsonObject* jsonObject = UStomtRestJsonObject::ConstructJsonObject(this);
 	if (jsonObject->DecodeJson(jsonString))
 	{
@@ -670,8 +662,70 @@ UStomtRestJsonObject* UStomtAPI::LoadLanguageFile()
 		UE_LOG(StomtInit, Error, TEXT("Could not decode Language File StomtPlugin(Sub)/Resources/languages.json"));
 	}
 
-	//UE_LOG(StomtNetwork, Warning, TEXT("Lang-File: %s"), *jsonObject->EncodeJson());
 	return jsonObject;
+}
+
+FString UStomtAPI::LoadLanguageFileContent()
+{
+	FString jsonString = "";
+
+	// Try Marketplace Plugin Folder - EnginePluginsDir()/Marketplace
+	if (this->ReadFile(jsonString, FString(TEXT("languages.json")), FPaths::EnginePluginsDir() + "Marketplace/StomtPlugin/Resources/")) {
+		return jsonString;
+	}
+	if (this->ReadFile(jsonString, FString(TEXT("languages.json")), FPaths::EnginePluginsDir() + "Marketplace/StomtPluginSub/Resources/")) {
+		return jsonString;
+	}
+	if (this->ReadFile(jsonString, FString(TEXT("languages.json")), FPaths::EnginePluginsDir() + "Marketplace/stomt-unreal-plugin/Resources/")) {
+		return jsonString;
+	}
+
+	// Try Engine Plugin Folder - EnginePluginsDir()
+	if (this->ReadFile(jsonString, FString(TEXT("languages.json")), FPaths::EnginePluginsDir() + "StomtPlugin/Resources/")) {
+		return jsonString;
+	}
+	if (this->ReadFile(jsonString, FString(TEXT("languages.json")), FPaths::EnginePluginsDir() + "StomtPluginSub/Resources/")) {
+		return jsonString;
+	}
+	if (this->ReadFile(jsonString, FString(TEXT("languages.json")), FPaths::EnginePluginsDir() + "stomt-unreal-plugin/Resources/")) {
+		return jsonString;
+	}
+
+	// Try local Game Plugin Folder - GamePluginsDir()
+	if (this->ReadFile(jsonString, FString(TEXT("languages.json")), FPaths::GamePluginsDir() + "StomtPlugin/Resources/")) {
+		return jsonString;
+	}
+	if (this->ReadFile(jsonString, FString(TEXT("languages.json")), FPaths::GamePluginsDir() + "StomtPluginSub/Resources/")) {
+		return jsonString;
+	}
+	if (this->ReadFile(jsonString, FString(TEXT("languages.json")), FPaths::GamePluginsDir() + "stomt-unreal-plugin/Resources/")) {
+		return jsonString;
+	}
+
+	// Try local Project Plugin Folder - ProjectPluginsDir()
+	if (this->ReadFile(jsonString, FString(TEXT("languages.json")), FPaths::ProjectPluginsDir() + "StomtPlugin/Resources/")) {
+		return jsonString;
+	}
+	if (this->ReadFile(jsonString, FString(TEXT("languages.json")), FPaths::ProjectPluginsDir() + "StomtPluginSub/Resources/")) {
+		return jsonString;
+	}
+	if (this->ReadFile(jsonString, FString(TEXT("languages.json")), FPaths::ProjectPluginsDir() + "stomt-unreal-plugin/Resources/")) {
+		return jsonString;
+	}
+
+	// Try local Enterprise Plugin Folder - EnterprisePluginsDir()
+	if (this->ReadFile(jsonString, FString(TEXT("languages.json")), FPaths::EnterprisePluginsDir() + "StomtPlugin/Resources/")) {
+		return jsonString;
+	}
+	if (this->ReadFile(jsonString, FString(TEXT("languages.json")), FPaths::EnterprisePluginsDir() + "StomtPluginSub/Resources/")) {
+		return jsonString;
+	}
+	if (this->ReadFile(jsonString, FString(TEXT("languages.json")), FPaths::EnterprisePluginsDir() + "stomt-unreal-plugin/Resources/")) {
+		return jsonString;
+	}
+
+	UE_LOG(StomtInit, Log, TEXT("Unable to find languages.json file."));
+	return jsonString;
 }
 
 FString UStomtAPI::GetLangText(FString text)
