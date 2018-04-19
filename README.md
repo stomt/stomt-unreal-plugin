@@ -8,19 +8,43 @@
 
 This SDK allows the easy integration of the feedback solution [www.stomt.com](https://www.stomt.com/) in your Unreal apps and games.
 
-[Unreal Engine Wiki Page](https://wiki.unrealengine.com/STOMT_Plugin)
 
-## Examples / Use-Cases / Demo
+## Use-Cases
 
 Example Games that use our integrations:
 
-* [Empires of the Undergrowth](https://www.stomt.com/empires-of-the-undergrowth)      
+* [Empires of the Undergrowth](https://www.stomt.com/empires-of-the-undergrowth)
 * [All Walls Must Fall](https://www.stomt.com/AWMF)
 * [Pantropy](https://www.stomt.com/pantropy)
 
+
 ## Installation
 
-_If you use an older Unreal Engine version please check out the `UE/[version]` branch._
+### Installation via Marketplace (recommended)
+
+1. [Download](com.epicgames.launcher://ue/marketplace/content/7980672d57664bb5a567ff39f5106af6) the Plugin via the [Unreal Engine Marketplace](https://www.unrealengine.com/marketplace/stomt-collect-feedback-community-building)
+
+2. Enable StomtPlugin in your Plugins Window (in Unreal Editor: `Edit -> Plugins -> Installed -> Widgets -> StomtPlugin`)
+
+<img alt="Enable StomtPlguin in Unreal Editor" src="https://github.com/stomt/stomt-unreal-plugin/tree/master/Docs/Images/unreal_enable_StomtPlugin.png" />
+
+3. Show the Engine Content in your Content Browser
+
+<img alt="Unhide the Engine Content in Unreal Editor" src="https://github.com/stomt/stomt-unreal-plugin/tree/master/Docs/Images/unreal_StomtPlugin_enable_engine_content.png" />
+
+4. Find StomtPlugin Content
+
+<img alt="Discover StomtPlugins Conent" src="https://github.com/stomt/stomt-unreal-plugin/tree/master/Docs/Images/unreal_StomtPlugin_find_widget_content.png" />
+
+5. Place the `ExampleActor` in your scene.
+
+6. Click play to run the game and show the feedback widget by pressing `E`.
+
+_You should now see the feedback form window in your game. Try to toggle "I wish"/"I like" and send a test stomt to "My Game" (The default test target). Then continue with [Configuration](#configuration)._
+
+### Manual Installation
+
+_If you use an older Unreal Engine version please check out the [`UE/[version]` branch](https://github.com/stomt/stomt-unreal-plugin/branches)._
 
 1. Clone or download this repository into your projects `Plugins` directory.
 
@@ -32,13 +56,17 @@ _If you use an older Unreal Engine version please check out the `UE/[version]` b
 PublicDependencyModuleNames.AddRange(new string[] { "StomtPlugin" }); // Add "StomtPlugin" String
 ```
 
-3. Open your project and enable the plugin. `Edit -> Plugins -> Widgets -> STOMT Plugin`
+3. Restart Unreal Editor, open your project and enable the plugin. `Edit -> Plugins -> Widgets -> StomtPlugin`
 
 4. Check `Show Plugin Content` and `Show Engine Content` in the bottom right corner of your editor (view options).
 
 <img alt="Events" src="https://i.imgur.com/YoTY7w6.png" />
 
-5. Place the `ExampleActor` in your scene and press play. (Press 'E' to toggle the widget on/off)
+5. Place the `ExampleActor` in your scene.
+
+6. Click play to run the game and show the feedback widget by pressing `E`.
+
+_You should now see the feedback form window in your game. Try to toggle "I wish"/"I like" and send a test stomt to "My Game" (The default test target). Then continue with [Configuration](#configuration)._
 
 
 ## Configuration
@@ -47,19 +75,9 @@ PublicDependencyModuleNames.AddRange(new string[] { "StomtPlugin" }); // Add "St
 
 2. Create an [App Id](https://www.stomt.com/integrate) for Unreal.
 
-3. Enter the variables into the `StomtWidgetBP` Blueprint:
+3. Enter the `App Id` into the `ExampleActor` Blueprint:
 
-* the `App Id` you obtained in the second step
-* the `Target Id` of your STOMT project (stomt.com/{Target Id})
-* the production `Rest URL`: `https://rest.stomt.com`
-
-**Enter the configuration directly into the `StomtWidgetBP` blueprint**
-
-<img alt="STOMT Plugin configuraton" src="http://schukies.io/images/stomt/enter-config.PNG" />
-
-**Alternatively access the variables**
-<img alt="STOMT Plugin configuraton" src="https://i.imgur.com/RkZtEaR.jpg" />
-
+<img alt="Unhide the Engine Content in Unreal Editor" src="https://github.com/stomt/stomt-unreal-plugin/tree/master/Docs/Images/unreal_StomtPlugin_configure_AppID.png" />
 
 **You can disable the screenshot and log-upload functionality**
 <img alt="STOMT Plugin configuraton" src="https://i.imgur.com/hFA7xUs.png" />
