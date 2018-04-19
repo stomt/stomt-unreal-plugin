@@ -19,7 +19,6 @@ UStomtAPI* UStomtAPI::ConstructStomtAPI(FString TargetID, FString RestURL, FStri
 
 	if (AppID.Equals("AKN5M7Ob0MqxKXYdE9i3IhQtF"))
 	{
-		api->SetTargetID("my-my");
 		api->SetRestURL("https://test.rest.stomt.com");
 	}
 	else
@@ -28,11 +27,9 @@ UStomtAPI* UStomtAPI::ConstructStomtAPI(FString TargetID, FString RestURL, FStri
 	}
 
 	api->SetAppID(AppID);
-	api->SetTargetID(TargetID);
 
 	UE_LOG(StomtInit, Log, TEXT("Construct Stomt API"));
 	UE_LOG(StomtInit, Log, TEXT("AppID: %s "), *api->GetAppID());
-	UE_LOG(StomtInit, Log, TEXT("TargetID: %s "), *api->GetTargetID());
 	UE_LOG(StomtInit, Log, TEXT("RestURL: %s "), *api->GetRestURL());
 
 	api->LoadLanguageFile();
