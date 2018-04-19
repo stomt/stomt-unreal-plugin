@@ -26,15 +26,15 @@ Example Games that use our integrations:
 
 2. Enable StomtPlugin in your Plugins Window (in Unreal Editor: `Edit -> Plugins -> Installed -> Widgets -> StomtPlugin`)
 
-<img alt="Enable StomtPlguin in Unreal Editor" src="https://github.com/stomt/stomt-unreal-plugin/tree/master/Docs/Images/unreal_enable_StomtPlugin.png" />
+<img alt="Enable StomtPlugin in Unreal Editor" src="https://github.com/stomt/stomt-unreal-plugin/raw/master/Docs/Images/unreal_enable_StomtPlugin.png" />
 
 3. Show the Engine Content in your Content Browser
 
-<img alt="Unhide the Engine Content in Unreal Editor" src="https://github.com/stomt/stomt-unreal-plugin/tree/master/Docs/Images/unreal_StomtPlugin_enable_engine_content.png" />
+<img alt="Unhide the Engine Content in Unreal Editor" src="https://github.com/stomt/stomt-unreal-plugin/raw/master/Docs/Images/unreal_StomtPlugin_enable_engine_content.png" />
 
 4. Find StomtPlugin Content
 
-<img alt="Discover StomtPlugins Conent" src="https://github.com/stomt/stomt-unreal-plugin/tree/master/Docs/Images/unreal_StomtPlugin_find_widget_content.png" />
+<img alt="Discover StomtPlugins Conent" src="https://github.com/stomt/stomt-unreal-plugin/raw/master/Docs/Images/unreal_StomtPlugin_find_widget_content.png" />
 
 5. Place the `ExampleActor` in your scene.
 
@@ -77,7 +77,7 @@ _You should now see the feedback form window in your game. Try to toggle "I wish
 
 3. Enter the `App Id` into the `ExampleActor` Blueprint:
 
-<img alt="Unhide the Engine Content in Unreal Editor" src="https://github.com/stomt/stomt-unreal-plugin/tree/master/Docs/Images/unreal_StomtPlugin_configure_AppID.png" />
+<img alt="Unhide the Engine Content in Unreal Editor" src="https://github.com/stomt/stomt-unreal-plugin/raw/master/Docs/Images/unreal_StomtPlugin_configure_AppID.png" />
 
 **You can disable the screenshot and log-upload functionality**
 <img alt="STOMT Plugin configuraton" src="https://i.imgur.com/hFA7xUs.png" />
