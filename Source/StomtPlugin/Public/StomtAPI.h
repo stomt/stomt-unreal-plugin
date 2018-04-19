@@ -264,6 +264,8 @@ public:
 private:
 	FString GetSystemLanguage();
 
+	FString LoadLanguageFileContent();
+
 	UStomtRestJsonObject* Languages;
 
 	FString CurrentLanguage;
