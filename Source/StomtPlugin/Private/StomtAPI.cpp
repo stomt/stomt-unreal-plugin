@@ -408,6 +408,12 @@ FString UStomtAPI::ReadLogFile(FString LogFileName)
 
 void UStomtAPI::SendLogFile(FString LogFileData, FString LogFileName)
 {
+	if (LogFileData.IsEmpty())
+	{
+		IsLogUploadComplete = true;
+		return;
+	}
+
 	UStomtRestRequest* request = this->SetupNewPostRequest();
 	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnSendLogFileResponse);
 

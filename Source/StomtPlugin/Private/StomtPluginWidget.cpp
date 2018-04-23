@@ -64,7 +64,15 @@ void UStomtPluginWidget::OnSubmit()
 
 		if (this->UploadLogs)
 		{
-			this->api->SendLogFile(this->api->ReadLogFile(LogFileName), LogFileName);	
+			FString logFile = this->api->ReadLogFile(LogFileName);
+			if (!logFile.IsEmpty())
+			{
+				this->api->SendLogFile(this->api->ReadLogFile(LogFileName), LogFileName);
+			}
+			else
+			{
+				this->api->IsLogUploadComplete = true;
+			}
 		}
 		else
 		{
