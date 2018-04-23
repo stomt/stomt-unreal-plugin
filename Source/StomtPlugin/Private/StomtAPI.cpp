@@ -632,8 +632,24 @@ void UStomtAPI::SendTrack(UStomtTrack * Track)
 
 	// Add target id
 	Track->SetTargetID(this->GetTargetID());
+	
+	UStomtRestJsonObject* track = Track->GetAsJsonObject();
 
-	request->SetRequestObject(Track->GetAsJsonObject());
+	if (track != NULL)
+	{
+		if (!track->IsValidLowLevel())
+		{
+			UE_LOG(StomtNetwork, Warning, TEXT("SendTrack: track not valid"));
+			return;
+		}
+	}
+	else
+	{
+		UE_LOG(StomtNetwork, Warning, TEXT("SendTrack: track was null"));
+		return;
+	}
+
+	request->SetRequestObject(track);
 
 	request->ProcessURL(this->GetRestURL().Append(TEXT("/tracks")));
 }
