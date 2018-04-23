@@ -20,10 +20,12 @@ UStomtAPI* UStomtAPI::ConstructStomtAPI(FString TargetID, FString RestURL, FStri
 	if (AppID.Equals("AKN5M7Ob0MqxKXYdE9i3IhQtF"))
 	{
 		api->SetRestURL("https://test.rest.stomt.com");
+		api->SetStomtURL("https://test.stomt.com/");
 	}
 	else
 	{
 		api->SetRestURL("https://rest.stomt.com");
+		api->SetStomtURL("https://www.stomt.com/");
 	}
 
 	api->SetAppID(AppID);
@@ -325,6 +327,16 @@ void UStomtAPI::SetRestURL(FString URL)
 FString UStomtAPI::GetRestURL()
 {
 	return this->RestURL;
+}
+
+void UStomtAPI::SetStomtURL(FString URL)
+{
+	this->StomtURL = URL;
+}
+
+FString UStomtAPI::GetStomtURL()
+{
+	return this->StomtURL;
 }
 
 void UStomtAPI::SetAppID(FString appID)

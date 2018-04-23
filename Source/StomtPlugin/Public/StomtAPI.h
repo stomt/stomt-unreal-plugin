@@ -40,8 +40,20 @@ public:
 	* For example: https://rest.stomt.com
 	* @param URL - Stomt REST URL
 	*/
+	UFUNCTION(BlueprintCallable, Category = "Stomt API")
 	void	SetRestURL(FString URL);
+	UFUNCTION(BlueprintCallable, Category = "Stomt API")
 	FString GetRestURL();
+
+	/**
+	* Sets the Stomt rest Server URL.
+	* For example: https://rest.stomt.com
+	* @param URL - Stomt REST URL
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Stomt API")
+	void	SetStomtURL(FString URL);
+	UFUNCTION(BlueprintCallable, Category = "Stomt API")
+	FString GetStomtURL();
 
 	/**
 	* Sets the Stomt App ID.
@@ -227,6 +239,9 @@ public:
 	bool			LogFileWasSend;
 
 	FString			RestURL;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
+	FString			StomtURL;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
 	FString			TargetName;
