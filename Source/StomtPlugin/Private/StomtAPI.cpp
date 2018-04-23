@@ -451,7 +451,15 @@ void UStomtAPI::OnSendLogFileResponse(UStomtRestRequest * Request)
 			}
 			else
 			{
-				UE_LOG(StomtNetwork, Log, TEXT("Did not send stomt | image upload not complete"));
+				if (!UseImageUpload)
+				{
+					this->SendStomt(StomtToSend);
+					UE_LOG(StomtNetwork, Log, TEXT("Sent Stomt after sending log files | ImageUpload disabled"));
+				}
+				else
+				{
+					UE_LOG(StomtNetwork, Log, TEXT("Did not send stomt | image upload not complete"));
+				}		
 			}
 		}
 	}
