@@ -84,6 +84,11 @@ _You should now see the feedback form window in your game. Try to toggle "I wish
 <img alt="STOMT Plugin configuraton" width="600" src="https://i.imgur.com/hFA7xUs.png" />
 
 
+4. Add the `StomtWidgetBP` to the viewport via script (ExampleActor) or in your main HUD as widget.
+
+
+
+
 
 ## Form Triggers
 
