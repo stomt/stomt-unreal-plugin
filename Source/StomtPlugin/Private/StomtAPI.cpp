@@ -13,7 +13,7 @@
 #include "Runtime/Core/Public/Misc/App.h"
 #include "Runtime/Core/Public/Internationalization/Regex.h"
 
-UStomtAPI* UStomtAPI::ConstructStomtAPI(FString TargetID, FString RestURL, FString AppID)
+UStomtAPI* UStomtAPI::ConstructStomtAPI(FString AppID)
 {
 	UStomtAPI* api = NewObject<UStomtAPI>();
 
@@ -767,19 +767,23 @@ FString UStomtAPI::GetLangText(FString text)
 
 	if (this->Languages != NULL)
 	{
-		if (!this->Languages->GetObjectField("data")->HasField(this->CurrentLanguage))
+		if (this->Languages->GetObjectField("data") != NULL)
 		{
-			UE_LOG(StomtNetwork, Warning, TEXT("Language %s not supported (does not exist in language file) falling back to english."), *this->CurrentLanguage);
-			this->CurrentLanguage = "en";
+			if (!this->Languages->GetObjectField("data")->HasField(this->CurrentLanguage))
+			{
+				UE_LOG(StomtNetwork, Warning, TEXT("Language %s not supported (does not exist in language file) falling back to english."), *this->CurrentLanguage);
+				this->CurrentLanguage = "en";
+			}
+
+			if (!this->Languages->GetObjectField("data")->GetObjectField(this->CurrentLanguage)->HasField(text))
+			{
+				UE_LOG(StomtNetwork, Warning, TEXT("Translation for '%s' not found in language: '%s'."), *text, *this->CurrentLanguage);
+				return "No Transl.";
+			}
+
+			return this->Languages->GetObjectField("data")->GetObjectField(this->CurrentLanguage)->GetStringField(text);
 		}
 
-		if ( !this->Languages->GetObjectField("data")->GetObjectField(this->CurrentLanguage)->HasField(text) )
-		{
-			UE_LOG(StomtNetwork, Warning, TEXT("Translation for '%s' not found in language: '%s'."), *text, *this->CurrentLanguage);
-			return "No Transl.";
-		}
-
-		return this->Languages->GetObjectField("data")->GetObjectField(this->CurrentLanguage)->GetStringField(text);
 	}
 
 	return FString();

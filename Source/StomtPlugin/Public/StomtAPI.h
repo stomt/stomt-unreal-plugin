@@ -20,7 +20,7 @@ class STOMTPLUGIN_API UStomtAPI : public UObject
 
 public:
 
-	static UStomtAPI* ConstructStomtAPI(FString TargetID, FString RestURL, FString AppID);
+	static UStomtAPI* ConstructStomtAPI(FString AppID);
 
 	UStomtAPI();
 
