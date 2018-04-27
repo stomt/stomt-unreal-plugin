@@ -13,17 +13,19 @@
 #include "Runtime/Core/Public/Misc/App.h"
 #include "Runtime/Core/Public/Internationalization/Regex.h"
 
-UStomtAPI* UStomtAPI::ConstructStomtAPI(FString TargetID, FString RestURL, FString AppID)
+UStomtAPI* UStomtAPI::ConstructStomtAPI(FString AppID)
 {
 	UStomtAPI* api = NewObject<UStomtAPI>();
 
 	if (AppID.Equals("AKN5M7Ob0MqxKXYdE9i3IhQtF"))
 	{
 		api->SetRestURL("https://test.rest.stomt.com");
+		api->SetStomtURL("https://test.stomt.com/");
 	}
 	else
 	{
 		api->SetRestURL("https://rest.stomt.com");
+		api->SetStomtURL("https://www.stomt.com/");
 	}
 
 	api->SetAppID(AppID);
@@ -327,6 +329,16 @@ FString UStomtAPI::GetRestURL()
 	return this->RestURL;
 }
 
+void UStomtAPI::SetStomtURL(FString URL)
+{
+	this->StomtURL = URL;
+}
+
+FString UStomtAPI::GetStomtURL()
+{
+	return this->StomtURL;
+}
+
 void UStomtAPI::SetAppID(FString appID)
 {
 	this->AppID = appID;
@@ -408,6 +420,12 @@ FString UStomtAPI::ReadLogFile(FString LogFileName)
 
 void UStomtAPI::SendLogFile(FString LogFileData, FString LogFileName)
 {
+	if (LogFileData.IsEmpty())
+	{
+		IsLogUploadComplete = true;
+		return;
+	}
+
 	UStomtRestRequest* request = this->SetupNewPostRequest();
 	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnSendLogFileResponse);
 
@@ -451,7 +469,15 @@ void UStomtAPI::OnSendLogFileResponse(UStomtRestRequest * Request)
 			}
 			else
 			{
-				UE_LOG(StomtNetwork, Log, TEXT("Did not send stomt | image upload not complete"));
+				if (!UseImageUpload)
+				{
+					this->SendStomt(StomtToSend);
+					UE_LOG(StomtNetwork, Log, TEXT("Sent Stomt after sending log files | ImageUpload disabled"));
+				}
+				else
+				{
+					UE_LOG(StomtNetwork, Log, TEXT("Did not send stomt | image upload not complete"));
+				}		
 			}
 		}
 	}
@@ -618,8 +644,24 @@ void UStomtAPI::SendTrack(UStomtTrack * Track)
 
 	// Add target id
 	Track->SetTargetID(this->GetTargetID());
+	
+	UStomtRestJsonObject* track = Track->GetAsJsonObject();
 
-	request->SetRequestObject(Track->GetAsJsonObject());
+	if (track != NULL)
+	{
+		if (!track->IsValidLowLevel())
+		{
+			UE_LOG(StomtNetwork, Warning, TEXT("SendTrack: track not valid"));
+			return;
+		}
+	}
+	else
+	{
+		UE_LOG(StomtNetwork, Warning, TEXT("SendTrack: track was null"));
+		return;
+	}
+
+	request->SetRequestObject(track);
 
 	request->ProcessURL(this->GetRestURL().Append(TEXT("/tracks")));
 }
@@ -667,7 +709,52 @@ UStomtRestJsonObject* UStomtAPI::LoadLanguageFile()
 
 FString UStomtAPI::LoadLanguageFileContent()
 {
-	FString jsonString = "{\"data\":{\"de\": {\"SDK_STOMT_WISH_BUBBLE\": \"Ich wünschte\",\"SDK_STOMT_LIKE_BUBBLE\": \"Ich mag\",\"SDK_STOMT_DEFAULT_TEXT_WISH\": \"würde\",\"SDK_STOMT_DEFAULT_TEXT_LIKE\": \"weil\",\"SDK_STOMT_PLACEHOLDER\": \"...bitte beende diesen Satz\",\"SDK_STOMT_ERROR_MORE_TEXT\": \"Bitte schreibe etwas mehr.\",\"SDK_STOMT_ERROR_LESS_TEXT\": \"Nutze nur {0} Zeichen.\", \"SDK_STOMT_SCREENSHOT\": \"Screenshot\",\"SDK_HEADER_TARGET_STOMTS\": \"STOMTS\",\"SDK_HEADER_YOUR_STOMTS\": \"DEINE\",\"SDK_SUBSCRIBE_GET_NOTIFIED\": \"Werde benachrichtigt, wenn jemand reagiert.\",\"SDK_SUBSCRIBE_TOGGLE_EMAIL\": \"E-Mail\",\"SDK_SUBSCRIBE_TOGGLE_PHONE\": \"SMS\",\"SDK_SUBSCRIBE_EMAIL_QUESTION\": \"Wie lautet deine E-Mail-Adresse?\",\"SDK_SUBSCRIBE_PHONE_QUESTION\": \"Wie lautet deine Telefonnummer?\",\"SDK_SUBSCRIBE_PHONE_PLACEHOLDER\" : \"+49 152 03959902\",\"SDK_SUBSCRIBE_EMAIL_PLACEHOLDER\" : \"deine@email.com\",\"SDK_SUBSCRIBE_DEFAULT_PLACEHOLDER\" : \"Wir senden dir keine Spam Nachrichten\",\"SDK_SUBSCRIBE_VALID_EMAIL\" : \"E-Mail-Adresse ist gültig, fantastisch!\",\"SDK_SUBSCRIBE_NO_VALID_EMAIL\" : \"Bitte gebe eine gültige Adresse ein.\",\"SDK_SUBSCRIBE_SKIP\": \"Überspringen\",\"SDK_SUCCESS_THANK_YOU\": \"DANKE!\",\"SDK_SUCCESS_FIND_ALL_STOMTS\": \"Super, finde mehr Wünsche auf\",\"SDK_SUCCESS_FIND_YOUR_STOMTS\": \"Finde deine stomts\",\"SDK_SUCCESS_CREATE_NEW_WISH\": \"Wünsch dir noch was\",\"SDK_NETWORK_NOT_CONNECTED\": \"Verbindung zu STOMT unterbrochen\",\"SDK_NETWORK_NO_INTERNET\": \"Keine Internetverbindung\",\"SDK_NETWORK_RECONNECT\": \"Wiederverbinden\",\"SDK_LOGIN_ACCOUNT_WRONG\": \"Account Name stimmt nicht.\",\"SDK_LOGIN_PASSWORD_WRONG\": \"Passwort stimmt nicht.\",\"SDK_LOGIN_PASSWORD\": \"Passwort\",\"SDK_LOGIN\": \"Login\",\"SDK_LOGIN_SIGNUP\": \"Anmelden\",\"SDK_LOGIN_LOGOUT\": \"Ausloggen\",\"SDK_LOGIN_FORGOT_PW\": \"Passwort vergessen?\",\"SDK_LOGIN_SUCCESS\": \"Du bist eingeloggt!\",\"SDK_LOGIN_WENT_WRONG\": \"Ups, da lief was schief.\"},\"en\": {\"SDK_STOMT_WISH_BUBBLE\": \"I wish\",\"SDK_STOMT_LIKE_BUBBLE\": \"I like\",\"SDK_STOMT_DEFAULT_TEXT_WISH\": \"would\",\"SDK_STOMT_DEFAULT_TEXT_LIKE\": \"because\",\"SDK_STOMT_PLACEHOLDER\": \"...please finish the sentence\",\"SDK_STOMT_ERROR_MORE_TEXT\": \"Please write a bit more.\",\"SDK_STOMT_ERROR_LESS_TEXT\": \"Use only {0} characters.\",   \"SDK_STOMT_SCREENSHOT\": \"Screenshot\",\"SDK_HEADER_TARGET_STOMTS\": \"STOMTS\",\"SDK_HEADER_YOUR_STOMTS\": \"YOURS\",\"SDK_SUBSCRIBE_GET_NOTIFIED\": \"Get notified when someone reacts.\",\"SDK_SUBSCRIBE_TOGGLE_EMAIL\": \"E-Mail\",\"SDK_SUBSCRIBE_TOGGLE_PHONE\": \"SMS\",\"SDK_SUBSCRIBE_EMAIL_QUESTION\": \"What's your email address?\",\"SDK_SUBSCRIBE_PHONE_QUESTION\": \"What's your phone number?\",\"SDK_SUBSCRIBE_PHONE_PLACEHOLDER\" : \"+1-541-754-3010\",\"SDK_SUBSCRIBE_EMAIL_PLACEHOLDER\" : \"your@gmail.com\",\"SDK_SUBSCRIBE_DEFAULT_PLACEHOLDER\" : \"We won’t share your contact nor spam you.\",\"SDK_SUBSCRIBE_VALID_EMAIL\" : \"Email address is valid, fantastic!\",\"SDK_SUBSCRIBE_NO_VALID_EMAIL\" : \"Please type in a valid address.\",\"SDK_SUBSCRIBE_SKIP\": \"Skip\",\"SDK_SUCCESS_THANK_YOU\": \"THANK YOU!\",\"SDK_SUCCESS_FIND_ALL_STOMTS\": \"Amazing, find more wishes on\",\"SDK_SUCCESS_FIND_YOUR_STOMTS\": \"click to find your stomts here\",\"SDK_SUCCESS_CREATE_NEW_WISH\": \"Create another wish\",\"SDK_NETWORK_NOT_CONNECTED\": \"Could not connect to STOMT\",\"SDK_NETWORK_NO_INTERNET\": \"No internet connection\",\"SDK_NETWORK_RECONNECT\": \"Reconnect\",\"SDK_LOGIN_ACCOUNT_WRONG\": \"Account was incorrect.\",\"SDK_LOGIN_PASSWORD_WRONG\": \"Password was incorrect.\",\"SDK_LOGIN_PASSWORD\": \"Password\",\"SDK_LOGIN\": \"Login\",\"SDK_LOGIN_SIGNUP\": \"Signup\",\"SDK_LOGIN_LOGOUT\": \"Logout\",\"SDK_LOGIN_FORGOT_PW\": \"Forgot password?\",\"SDK_LOGIN_SUCCESS\": \"You're now logged in!\",\"SDK_LOGIN_WENT_WRONG\": \"Ups something went wrong.\"}}}";
+	TArray<FString> PluginFolders;
+
+	PluginFolders.Add( FPaths::EnginePluginsDir() + "Marketplace/"	);
+	PluginFolders.Add( FPaths::GamePluginsDir()						);
+	PluginFolders.Add( FPaths::ProjectPluginsDir()					); 
+	PluginFolders.Add( FPaths::EnterprisePluginsDir()				);
+
+	TArray<FString> PluginNames;
+
+	PluginNames.Add("StomtPlugin/"									);
+	PluginNames.Add("StomtPluginSub/"								);
+	PluginNames.Add("stomt-unreal-plugin/"							);
+
+	FString LocalFolder = "Resources/";
+
+	FString FileName = "languages.json";
+
+	FString WorkingPath = "";
+
+	for (auto& StrFolder : PluginFolders)
+	{
+		for (auto& StrPluginName : PluginNames)
+		{
+			if ( FPaths::FileExists( StrFolder + StrPluginName + LocalFolder + FileName))
+			{
+				WorkingPath = StrFolder + StrPluginName + LocalFolder;
+				UE_LOG(StomtInit, Log, TEXT("Using language file in path: %s"), *WorkingPath);
+			}
+		}
+	}
+
+	FString jsonString = "";
+
+	if( this->ReadFile(jsonString, FileName, WorkingPath) )
+	{
+		return jsonString;
+	}
+
+	if (WorkingPath.IsEmpty())
+	{
+		UE_LOG(StomtInit, Warning, TEXT("Language file not found"));
+
+		jsonString = "{\"data\":{\"de\": {\"SDK_STOMT_WISH_BUBBLE\": \"Ich wünschte\",\"SDK_STOMT_LIKE_BUBBLE\": \"Ich mag\",\"SDK_STOMT_DEFAULT_TEXT_WISH\": \"würde\",\"SDK_STOMT_DEFAULT_TEXT_LIKE\": \"weil\",\"SDK_STOMT_PLACEHOLDER\": \"...bitte beende diesen Satz\",\"SDK_STOMT_ERROR_MORE_TEXT\": \"Bitte schreibe etwas mehr.\",\"SDK_STOMT_ERROR_LESS_TEXT\": \"Nutze nur {0} Zeichen.\", \"SDK_STOMT_SCREENSHOT\": \"Screenshot\",\"SDK_HEADER_TARGET_STOMTS\": \"STOMTS\",\"SDK_HEADER_YOUR_STOMTS\": \"DEINE\",\"SDK_SUBSCRIBE_GET_NOTIFIED\": \"Werde benachrichtigt, wenn jemand reagiert.\",\"SDK_SUBSCRIBE_TOGGLE_EMAIL\": \"E-Mail\",\"SDK_SUBSCRIBE_TOGGLE_PHONE\": \"SMS\",\"SDK_SUBSCRIBE_EMAIL_QUESTION\": \"Wie lautet deine E-Mail-Adresse?\",\"SDK_SUBSCRIBE_PHONE_QUESTION\": \"Wie lautet deine Telefonnummer?\",\"SDK_SUBSCRIBE_PHONE_PLACEHOLDER\" : \"+49 152 03959902\",\"SDK_SUBSCRIBE_EMAIL_PLACEHOLDER\" : \"deine@email.com\",\"SDK_SUBSCRIBE_DEFAULT_PLACEHOLDER\" : \"Wir senden dir keine Spam Nachrichten\",\"SDK_SUBSCRIBE_VALID_EMAIL\" : \"E-Mail-Adresse ist gültig, fantastisch!\",\"SDK_SUBSCRIBE_NO_VALID_EMAIL\" : \"Bitte gebe eine gültige Adresse ein.\",\"SDK_SUBSCRIBE_SKIP\": \"Überspringen\",\"SDK_SUCCESS_THANK_YOU\": \"DANKE!\",\"SDK_SUCCESS_FIND_ALL_STOMTS\": \"Super, finde mehr Wünsche auf\",\"SDK_SUCCESS_FIND_YOUR_STOMTS\": \"Finde deine stomts\",\"SDK_SUCCESS_CREATE_NEW_WISH\": \"Wünsch dir noch was\",\"SDK_NETWORK_NOT_CONNECTED\": \"Verbindung zu STOMT unterbrochen\",\"SDK_NETWORK_NO_INTERNET\": \"Keine Internetverbindung\",\"SDK_NETWORK_RECONNECT\": \"Wiederverbinden\",\"SDK_LOGIN_ACCOUNT_WRONG\": \"Account Name stimmt nicht.\",\"SDK_LOGIN_PASSWORD_WRONG\": \"Passwort stimmt nicht.\",\"SDK_LOGIN_PASSWORD\": \"Passwort\",\"SDK_LOGIN\": \"Login\",\"SDK_LOGIN_SIGNUP\": \"Anmelden\",\"SDK_LOGIN_LOGOUT\": \"Ausloggen\",\"SDK_LOGIN_FORGOT_PW\": \"Passwort vergessen?\",\"SDK_LOGIN_SUCCESS\": \"Du bist eingeloggt!\",\"SDK_LOGIN_WENT_WRONG\": \"Ups, da lief was schief.\"},\"en\": {\"SDK_STOMT_WISH_BUBBLE\": \"I wish\",\"SDK_STOMT_LIKE_BUBBLE\": \"I like\",\"SDK_STOMT_DEFAULT_TEXT_WISH\": \"would\",\"SDK_STOMT_DEFAULT_TEXT_LIKE\": \"because\",\"SDK_STOMT_PLACEHOLDER\": \"...please finish the sentence\",\"SDK_STOMT_ERROR_MORE_TEXT\": \"Please write a bit more.\",\"SDK_STOMT_ERROR_LESS_TEXT\": \"Use only {0} characters.\",   \"SDK_STOMT_SCREENSHOT\": \"Screenshot\",\"SDK_HEADER_TARGET_STOMTS\": \"STOMTS\",\"SDK_HEADER_YOUR_STOMTS\": \"YOURS\",\"SDK_SUBSCRIBE_GET_NOTIFIED\": \"Get notified when someone reacts.\",\"SDK_SUBSCRIBE_TOGGLE_EMAIL\": \"E-Mail\",\"SDK_SUBSCRIBE_TOGGLE_PHONE\": \"SMS\",\"SDK_SUBSCRIBE_EMAIL_QUESTION\": \"What's your email address?\",\"SDK_SUBSCRIBE_PHONE_QUESTION\": \"What's your phone number?\",\"SDK_SUBSCRIBE_PHONE_PLACEHOLDER\" : \"+1-541-754-3010\",\"SDK_SUBSCRIBE_EMAIL_PLACEHOLDER\" : \"your@gmail.com\",\"SDK_SUBSCRIBE_DEFAULT_PLACEHOLDER\" : \"We won’t share your contact nor spam you.\",\"SDK_SUBSCRIBE_VALID_EMAIL\" : \"Email address is valid, fantastic!\",\"SDK_SUBSCRIBE_NO_VALID_EMAIL\" : \"Please type in a valid address.\",\"SDK_SUBSCRIBE_SKIP\": \"Skip\",\"SDK_SUCCESS_THANK_YOU\": \"THANK YOU!\",\"SDK_SUCCESS_FIND_ALL_STOMTS\": \"Amazing, find more wishes on\",\"SDK_SUCCESS_FIND_YOUR_STOMTS\": \"click to find your stomts here\",\"SDK_SUCCESS_CREATE_NEW_WISH\": \"Create another wish\",\"SDK_NETWORK_NOT_CONNECTED\": \"Could not connect to STOMT\",\"SDK_NETWORK_NO_INTERNET\": \"No internet connection\",\"SDK_NETWORK_RECONNECT\": \"Reconnect\",\"SDK_LOGIN_ACCOUNT_WRONG\": \"Account was incorrect.\",\"SDK_LOGIN_PASSWORD_WRONG\": \"Password was incorrect.\",\"SDK_LOGIN_PASSWORD\": \"Password\",\"SDK_LOGIN\": \"Login\",\"SDK_LOGIN_SIGNUP\": \"Signup\",\"SDK_LOGIN_LOGOUT\": \"Logout\",\"SDK_LOGIN_FORGOT_PW\": \"Forgot password?\",\"SDK_LOGIN_SUCCESS\": \"You're now logged in!\",\"SDK_LOGIN_WENT_WRONG\": \"Ups something went wrong.\"}}}";
+		return jsonString;
+	}
+
 	return jsonString;
 }
 
@@ -680,19 +767,23 @@ FString UStomtAPI::GetLangText(FString text)
 
 	if (this->Languages != NULL)
 	{
-		if (!this->Languages->GetObjectField("data")->HasField(this->CurrentLanguage))
+		if (this->Languages->GetObjectField("data") != NULL)
 		{
-			UE_LOG(StomtNetwork, Warning, TEXT("Language %s not supported (does not exist in language file) falling back to english."), *this->CurrentLanguage);
-			this->CurrentLanguage = "en";
+			if (!this->Languages->GetObjectField("data")->HasField(this->CurrentLanguage))
+			{
+				UE_LOG(StomtNetwork, Warning, TEXT("Language %s not supported (does not exist in language file) falling back to english."), *this->CurrentLanguage);
+				this->CurrentLanguage = "en";
+			}
+
+			if (!this->Languages->GetObjectField("data")->GetObjectField(this->CurrentLanguage)->HasField(text))
+			{
+				UE_LOG(StomtNetwork, Warning, TEXT("Translation for '%s' not found in language: '%s'."), *text, *this->CurrentLanguage);
+				return "No Transl.";
+			}
+
+			return this->Languages->GetObjectField("data")->GetObjectField(this->CurrentLanguage)->GetStringField(text);
 		}
 
-		if ( !this->Languages->GetObjectField("data")->GetObjectField(this->CurrentLanguage)->HasField(text) )
-		{
-			UE_LOG(StomtNetwork, Warning, TEXT("Translation for '%s' not found in language: '%s'."), *text, *this->CurrentLanguage);
-			return "No Transl.";
-		}
-
-		return this->Languages->GetObjectField("data")->GetObjectField(this->CurrentLanguage)->GetStringField(text);
 	}
 
 	return FString();

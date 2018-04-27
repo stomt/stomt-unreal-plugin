@@ -13,12 +13,12 @@ UStomtPluginWidget::~UStomtPluginWidget()
 	this->LoginErrorCode = 0;
 }
 
-void UStomtPluginWidget::OnConstruction(FString TargetID, FString RestURL, FString AppID)
+void UStomtPluginWidget::OnConstruction(FString AppID)
 {
 	// Create API Object
 	if (api == NULL)
 	{
-		api = UStomtAPI::ConstructStomtAPI(TargetID, RestURL, AppID);
+		api = UStomtAPI::ConstructStomtAPI(AppID);
 	}
 	else
 	{
@@ -64,7 +64,15 @@ void UStomtPluginWidget::OnSubmit()
 
 		if (this->UploadLogs)
 		{
-			this->api->SendLogFile(this->api->ReadLogFile(LogFileName), LogFileName);	
+			FString logFile = this->api->ReadLogFile(LogFileName);
+			if (!logFile.IsEmpty())
+			{
+				this->api->SendLogFile(this->api->ReadLogFile(LogFileName), LogFileName);
+			}
+			else
+			{
+				this->api->IsLogUploadComplete = true;
+			}
 		}
 		else
 		{

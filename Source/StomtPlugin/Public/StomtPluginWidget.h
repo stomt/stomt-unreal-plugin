@@ -160,7 +160,7 @@ public:
 	*	@param AppID - Stomt application-ID
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
-	void OnConstruction(FString TargetID, FString RestURL, FString AppID);
+	void OnConstruction(FString AppID);
 
 	/**
 	*	Event called after the stomt server responded.
