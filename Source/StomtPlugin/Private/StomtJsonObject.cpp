@@ -307,6 +307,11 @@ UStomtRestJsonObject* UStomtRestJsonObject::GetObjectField(const FString& FieldN
 		return NULL;
 	}
 
+	if ( !JsonObj->HasField(FieldName) )
+	{
+		return NULL;
+	}
+
 	TSharedPtr<FJsonObject> JsonObjField = JsonObj->GetObjectField(FieldName);
 
 	UStomtRestJsonObject* OutRestJsonObj = NewObject<UStomtRestJsonObject>();
