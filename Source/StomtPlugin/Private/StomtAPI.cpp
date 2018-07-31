@@ -767,6 +767,9 @@ FString UStomtAPI::GetLangText(FString text)
 
 	if (this->Languages != NULL)
 	{
+		if ( !this->Languages->HasField("data") )
+			return "";
+
 		if (this->Languages->GetObjectField("data") != NULL)
 		{
 			if (!this->Languages->GetObjectField("data")->HasField(this->CurrentLanguage))
