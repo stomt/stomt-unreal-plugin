@@ -4,7 +4,6 @@
 #include "CoreUObject.h"
 #include "Engine.h"
 
-#include "Delegate.h"
 #include "Http.h"
 #include "Map.h"
 #include "Json.h"
