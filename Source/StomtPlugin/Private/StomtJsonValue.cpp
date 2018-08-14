@@ -4,8 +4,6 @@
 #include "StomtJsonValue.h"
 #include "StomtPluginPrivatePCH.h"
 
-#include "CoreMisc.h"
-
 UStomtJsonValue* UStomtJsonValue::ConstructJsonValueNumber(UObject* WorldContextObject, float Number)
 {
 	TSharedPtr<FJsonValue> NewVal = MakeShareable(new FJsonValueNumber(Number));

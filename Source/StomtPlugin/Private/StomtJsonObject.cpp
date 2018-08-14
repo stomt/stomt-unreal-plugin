@@ -4,8 +4,6 @@
 #include "StomtJsonObject.h"
 #include "StomtPluginPrivatePCH.h"
 
-#include "CoreMisc.h"
-
 typedef TJsonWriterFactory< TCHAR, TCondensedJsonPrintPolicy<TCHAR> > FCondensedJsonStringWriterFactory;
 typedef TJsonWriter< TCHAR, TCondensedJsonPrintPolicy<TCHAR> > FCondensedJsonStringWriter;
 
