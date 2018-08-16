@@ -393,7 +393,8 @@ FString UStomtAPI::ReadLogFile(FString LogFileName)
 	// Copy LogFileData
 	if (!PlatformFile.CopyFile(*LogFileCopyPath, *LogFilePath, EPlatformFileRead::AllowWrite, EPlatformFileWrite::AllowRead))
 	{
-		UE_LOG(StomtFileAccess, Error, TEXT("LogFile Copy did not work FromFile: %s | ToFile %s"), *LogFilePath, *LogFileCopyPath);
+		UE_LOG(StomtFileAccess, Warning, TEXT("LogFile Copy did not work FromFile: %s | ToFile %s"), *LogFilePath, *LogFileCopyPath);
+		return TEXT("");
 	}
 
 	// Read LogFileCopy from Disk
