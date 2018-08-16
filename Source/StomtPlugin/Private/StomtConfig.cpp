@@ -51,7 +51,7 @@ void UStomtConfig::Load()
 	{
 		UStomtRestJsonObject* configJsonObj = ReadStomtConfAsJson();
 
-		if (configJsonObj->HasField(this->SubscribedFieldName))
+		if (configJsonObj->HasField(this->AccessTokenFieldName))
 		{
 			this->Accesstoken = configJsonObj->GetStringField(this->AccessTokenFieldName);
 			UE_LOG(StomtInit, Log, TEXT("Accesstoken: %s"), *this->Accesstoken);
