@@ -50,40 +50,48 @@ void UStomtPluginWidget::OnMessageChanged(FString text)
 
 void UStomtPluginWidget::OnSubmit()
 {
-	if (!this->Message.IsEmpty())
+	if (this->Message.IsEmpty())
 	{
-		this->stomt = UStomt::ConstructStomt(this->api->GetTargetID(), !this->IsWish, this->Message);
-		this->stomt->SetLabels(this->Labels);
+		return;
+	}
 
-		stomt->SetAnonym(false);
+	// Create Stomt Instance
+	this->stomt = UStomt::ConstructStomt(this->api->GetTargetID(), !this->IsWish, this->Message);
+	this->stomt->SetLabels(this->Labels);
+	this->stomt->SetAnonym(false);
 
-		// API Object should not be null ;)
-		this->api->SetStomtToSend(stomt);
+	this->api->SetStomtToSend(stomt);
 
-		FString LogFileName = FApp::GetProjectName() + FString(TEXT(".log"));
+	FString LogFileName = FApp::GetProjectName() + FString(TEXT(".log"));
 
-		if (this->UploadLogs)
+	if (this->UploadLogs)
+	{
+		FString logFile = this->api->ReadLogFile(LogFileName);
+		if (!logFile.IsEmpty())
 		{
-			FString logFile = this->api->ReadLogFile(LogFileName);
-			if (!logFile.IsEmpty())
-			{
-				this->api->SendLogFile(this->api->ReadLogFile(LogFileName), LogFileName);
-			}
-			else
-			{
-				this->api->IsLogUploadComplete = true;
-			}
+			this->api->SendLogFile(logFile, LogFileName);
 		}
 		else
 		{
 			this->api->IsLogUploadComplete = true;
+			if (!this->api->UseImageUpload)
+			{
+				this->api->SendStomt(stomt);
+			}
 		}
-
-		// Check EMail
-		this->IsEMailAlreadyKnown = this->api->Config->GetSubscribed();
-
-		UE_LOG(Stomt, Log, TEXT("Is EMail Already Known: %s"), this->IsEMailAlreadyKnown ? TEXT("true") : TEXT("false"));
 	}
+	else
+	{
+		this->api->IsLogUploadComplete = true;
+		if (!this->api->UseImageUpload)
+		{
+			this->api->SendStomt(stomt);
+		}
+	}
+
+	// Check EMail
+	this->IsEMailAlreadyKnown = this->api->Config->GetSubscribed();
+	UE_LOG(Stomt, Log, TEXT("Is EMail Already Known: %s"), this->IsEMailAlreadyKnown ? TEXT("true") : TEXT("false"));
 }
 
 void UStomtPluginWidget::OnSubmitLastLayer()
