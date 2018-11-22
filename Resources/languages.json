@@ -44,7 +44,12 @@
 			"SDK_LOGIN_LOGOUT": "Ausloggen",
 			"SDK_LOGIN_FORGOT_PW": "Passwort vergessen?",
 			"SDK_LOGIN_SUCCESS": "Du bist eingeloggt!",
-			"SDK_LOGIN_WENT_WRONG": "Ups, da lief was schief."
+			"SDK_LOGIN_WENT_WRONG": "Ups, da lief was schief.",
+			
+			"SDK_TERMS_LOGS_OPT_IN": "We would like to attach log files.",
+			"SDK_TERMS_LOGS_OPT_IN_DIS": "Yes, attach log files.",
+			"SDK_TERMS_LOGS_OPT_OUT": "We will attach log files to your stomt.",
+			"SDK_TERMS_LOGS_OPT_OUT_DIS": "Do not attach log files."
 		},	
 		"en": 
 		{
@@ -89,7 +94,12 @@
 			"SDK_LOGIN_LOGOUT": "Logout",
 			"SDK_LOGIN_FORGOT_PW": "Forgot password?",
 			"SDK_LOGIN_SUCCESS": "You're now logged in!",
-			"SDK_LOGIN_WENT_WRONG": "Ups something went wrong."
+			"SDK_LOGIN_WENT_WRONG": "Ups something went wrong.",
+			
+			"SDK_TERMS_LOGS_OPT_IN": "We would like to attach log files.",
+			"SDK_TERMS_LOGS_OPT_IN_DIS": "Yes, attach log files.",
+			"SDK_TERMS_LOGS_OPT_OUT": "We will attach log files to your stomt.",
+			"SDK_TERMS_LOGS_OPT_OUT_DIS": "Do not attach log files."
 		},
 		"es": 
 		{
