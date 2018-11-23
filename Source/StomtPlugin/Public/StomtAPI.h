@@ -281,8 +281,10 @@ private:
 
 	FString LoadLanguageFileContent();
 
+	UPROPERTY()
 	UStomtRestJsonObject* Languages;
 
+	UPROPERTY()
 	FString CurrentLanguage;
 
 	//////////////////////////////////////////////////////////////////////////

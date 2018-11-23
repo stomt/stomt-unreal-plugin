@@ -119,15 +119,23 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// Data
 
+	UPROPERTY()
 	bool				Subscribed;
+	UPROPERTY()
 	bool				LoggedIn;
 
+	UPROPERTY()
 	FString				SubscribedFieldName;
+	UPROPERTY()
 	FString				LoggedInFieldName;
+	UPROPERTY()
 	FString				AccessTokenFieldName;
 
+	UPROPERTY()
 	FString				Accesstoken;
+	UPROPERTY()
 	FString				ConfigFolder;
+	UPROPERTY()
 	FString				ConfigName;
 
 };
