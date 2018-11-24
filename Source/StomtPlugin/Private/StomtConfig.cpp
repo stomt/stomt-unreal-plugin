@@ -5,6 +5,7 @@
 #include "StomtPluginPrivatePCH.h"
 #include "StomtJsonObject.h"
 
+
 #include "Runtime/Core/Public/Misc/FileHelper.h"
 #include "Runtime/Core/Public/Misc/Paths.h"
 #include "Runtime/Core/Public/GenericPlatform/GenericPlatformFile.h"
@@ -22,9 +23,10 @@ UStomtConfig* UStomtConfig::ConstructStomtConfig()
 	config->LoggedInFieldName = FString(TEXT("loggedin"));
 	config->SubscribedFieldName = FString(TEXT("email"));
 	config->AccessTokenFieldName = FString(TEXT("accesstoken"));
+	config->StomtsFieldName = FString(TEXT("stomts"));
 
 	config->Load();
-
+	
 	return config;
 }
 
@@ -76,6 +78,18 @@ void UStomtConfig::Load()
 		{
 			this->LoggedIn = false;
 		}
+
+		if (configJsonObj->HasField(this->StomtsFieldName))
+		{
+			this->Stomts = configJsonObj->GetArrayField(this->StomtsFieldName);
+			UE_LOG(StomtInit, Log, TEXT("Saved Offline Stomts: %d"), this->Stomts.Num());
+		}
+		else
+		{
+			UE_LOG(StomtInit, Log, TEXT("Saved Offline Stomts: 0"));
+		}
+
+
 
 		OnConfigUpdated.Broadcast(this);
 	}
@@ -150,6 +164,70 @@ void UStomtConfig::SetLoggedIn(bool LoggedIn)
 	OnConfigUpdated.Broadcast(this);
 }
 
+TArray<UStomtJsonValue*> UStomtConfig::GetStomtsAsJson()
+{
+	UStomtRestJsonObject* jsonObj = ReadStomtConfAsJson();
+
+	if (jsonObj->HasField(this->StomtsFieldName))
+	{
+		return jsonObj->GetArrayField(this->StomtsFieldName);
+	}
+	else
+	{
+		return TArray<UStomtJsonValue*>();
+	}
+}
+
+TArray<UStomt*> UStomtConfig::GetStomts()
+{
+	TArray<UStomt*> stomtObjects;
+	UStomtRestJsonObject* jsonObj = ReadStomtConfAsJson();
+
+	if (jsonObj->HasField(this->StomtsFieldName))
+	{
+
+		for (UStomtRestJsonObject* stomt : jsonObj->GetObjectArrayField(this->StomtsFieldName))
+		{
+			UStomt* stomtObject = UStomt::ConstructStomt(
+				stomt->GetStringField("target_id"), 
+				stomt->GetBoolField("positive"),
+				stomt->GetStringField("text")	
+			);
+
+			stomtObjects.Add(stomtObject);
+
+			/*
+			jObj->SetField(TEXT("target_id"), UStomtJsonValue::ConstructJsonValueString(this, stomt.GetTargetID()));
+			jObj->SetField(TEXT("positive"), UStomtJsonValue::ConstructJsonValueBool(this, stomt.GetPositive()));
+			jObj->SetField(TEXT("text"), UStomtJsonValue::ConstructJsonValueString(this, stomt.GetText()));
+			jObj->SetField(TEXT("anonym"), UStomtJsonValue::ConstructJsonValueBool(this, stomt.GetAnonym()));
+			jObj->SetArrayField(TEXT("labels"), labels);
+
+			for (int i = 0; i != stomt.GetLabels().Num(); ++i)
+			{
+				if (!stomt.GetLabels()[i]->GetName().IsEmpty())
+				{
+					labels.Add(UStomtJsonValue::ConstructJsonValueString(this, stomt.GetLabels()[i]->GetName()));
+				}
+			}
+			*/
+		}
+	}
+	else
+	{
+		return TArray<UStomt*>();
+	}
+
+	return stomtObjects;
+}
+
+
+
+bool UStomtConfig::AddStomt(UStomt* stomt)
+{
+	return SaveStomtToConf(*stomt);
+}
+
 bool UStomtConfig::SaveAccesstoken(FString accesstoken)
 {
 	return SaveValueToStomtConf(this->AccessTokenFieldName, accesstoken);
@@ -173,6 +251,71 @@ bool UStomtConfig::SaveValueToStomtConf(FString FieldName, FString FieldValue)
 
 	return this->WriteFile(jsonObj->EncodeJson(), ConfigName, ConfigFolder, true);
 }
+
+bool UStomtConfig::SaveStomtToConf(UStomt& stomt)
+{
+	UStomtRestJsonObject* jsonObj = ReadStomtConfAsJson();
+
+	UStomtRestJsonObject* jObj = UStomtRestJsonObject::ConstructJsonObject(this);
+	TArray<UStomtJsonValue*> labels = TArray<UStomtJsonValue*>();
+
+	for (int i = 0; i != stomt.GetLabels().Num(); ++i)
+	{
+		if (!stomt.GetLabels()[i]->GetName().IsEmpty())
+		{
+			labels.Add(UStomtJsonValue::ConstructJsonValueString(this, stomt.GetLabels()[i]->GetName()));
+		}
+	}
+
+	jObj->SetField(TEXT("target_id"), UStomtJsonValue::ConstructJsonValueString(this, stomt.GetTargetID()));
+	jObj->SetField(TEXT("positive"), UStomtJsonValue::ConstructJsonValueBool(this, stomt.GetPositive()));
+	jObj->SetField(TEXT("text"), UStomtJsonValue::ConstructJsonValueString(this, stomt.GetText()));
+	jObj->SetField(TEXT("anonym"), UStomtJsonValue::ConstructJsonValueBool(this, stomt.GetAnonym()));
+	jObj->SetArrayField(TEXT("labels"), labels);
+
+	if (!jsonObj->HasField(StomtsFieldName))
+	{
+		TArray<UStomtRestJsonObject*> objArray;
+		objArray.Add(jObj);
+		jsonObj->SetObjectArrayField(StomtsFieldName, objArray);
+
+		UE_LOG(StomtNetwork, Log, TEXT("Add Offline Stomt: To new field"));
+	}
+	else
+	{
+		TArray<UStomtRestJsonObject*> objArray2;
+		objArray2 = jsonObj->GetObjectArrayField(StomtsFieldName);
+		objArray2.Add(jObj);
+		jsonObj->SetObjectArrayField(StomtsFieldName, objArray2);
+		UE_LOG(StomtNetwork, Log, TEXT("Add Offline Stomt: To existing field"));
+	}
+
+
+
+	return this->WriteFile(jsonObj->EncodeJson(), ConfigName, ConfigFolder, true);
+}
+
+bool UStomtConfig::ClearStomts()
+{
+	UStomtRestJsonObject* jsonObj = ReadStomtConfAsJson();
+
+	if (jsonObj->HasField(StomtsFieldName))
+	{
+		UE_LOG(StomtNetwork, Log, TEXT("Clear offline stomts"));
+		// void RemoveField(const FString& FieldName);
+		jsonObj->GetArrayField(StomtsFieldName).Empty();
+		jsonObj->RemoveField(StomtsFieldName);
+	}
+	else
+	{
+		return true;
+	}
+
+	return this->WriteFile(jsonObj->EncodeJson(), ConfigName, ConfigFolder, true);
+}
+
+
+
 
 bool UStomtConfig::SaveFlag(FString FlagName, bool FlagState)
 {

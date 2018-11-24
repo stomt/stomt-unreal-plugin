@@ -207,6 +207,12 @@ public:
 	UFUNCTION()
 	void OnARequestFailed(UStomtRestRequest* Request);
 
+	UFUNCTION(BlueprintCallable, Category = "Stomt API")
+	bool IsConnected();
+
+	UFUNCTION(BlueprintCallable, Category = "Stomt API")
+	void ConnectionTest();
+
 	//////////////////////////////////////////////////////////////////////////
 	// Data
 public:
@@ -237,6 +243,8 @@ public:
 	bool			LoginRequestWasSend;
 	bool			EMailFlagWasSend;
 	bool			LogFileWasSend;
+
+	bool			NetworkError;
 
 	FString			RestURL;
 
@@ -301,8 +309,12 @@ public:
 	void UseScreenshotUpload(bool UseUpload);
 
 	void AddCustomKeyValuePair(FString key, FString value);
+
+	void				HandleOfflineStomts();
 	
 private:
+
+
 
 	bool				WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting);
 	bool				ReadFile(FString& Result, FString FileName, FString SaveDirectory);

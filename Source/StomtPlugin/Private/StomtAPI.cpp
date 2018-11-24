@@ -49,12 +49,13 @@ UStomtAPI::UStomtAPI()
 	IsLogUploadComplete = false;
 	UseImageUpload = true;
 	useDefaultLabels = true;
+	NetworkError = false;
 
 	this->Config = UStomtConfig::ConstructStomtConfig();
 	this->Track = UStomtTrack::ConstructStomtTrack();
 	DefaultScreenshotName = FString("HighresScreenshot00000.png");
 
-	 this->SetCurrentLanguage(this->GetSystemLanguage());
+	this->SetCurrentLanguage(this->GetSystemLanguage());
 }
 
 UStomtAPI::~UStomtAPI()
@@ -63,6 +64,11 @@ UStomtAPI::~UStomtAPI()
 
 void UStomtAPI::SendStomt(UStomt* stomt)
 {
+	if (!IsConnected())
+	{
+		this->Config->AddStomt(stomt);
+	}
+
 	UStomtRestRequest* request = this->SetupNewPostRequest();
 	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnSendStomtRequestResponse);
 
@@ -264,7 +270,7 @@ void UStomtAPI::OnRequestSessionResponse(UStomtRestRequest * Request)
 	UE_LOG(StomtNetwork, Log, TEXT("StomtsCreatedByUser: %d | StomtsReceivedByTarget: %d"), StomtsCreatedByUser, StomtsReceivedByTarget);
 }
 
-UStomtRestRequest * UStomtAPI::RequestTargetByAppID()
+UStomtRestRequest* UStomtAPI::RequestTargetByAppID()
 {
 	UStomtRestRequest* request = NewObject<UStomtRestRequest>();
 	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnRequestTargetResponse);
@@ -317,6 +323,8 @@ void UStomtAPI::OnRequestTargetResponse(UStomtRestRequest * Request)
 	{
 		this->RequestSession(this->Config->GetAccessToken());
 	}
+
+	this->NetworkError = false;
 }
 
 void UStomtAPI::SetRestURL(FString URL)
@@ -689,8 +697,20 @@ FString UStomtAPI::ReadScreenshotAsBase64()
 
 void UStomtAPI::OnARequestFailed(UStomtRestRequest * Request)
 {
+	this->NetworkError = true;
 	this->OnRequestFailed.Broadcast(Request);
 }
+
+bool UStomtAPI::IsConnected()
+{
+	return !NetworkError;
+}
+
+void UStomtAPI::ConnectionTest()
+{
+	this->RequestTargetByAppID();
+}
+
 
 UStomtRestJsonObject* UStomtAPI::LoadLanguageFile()
 {
@@ -839,6 +859,30 @@ void UStomtAPI::AddCustomKeyValuePair(FString key, FString value)
 	pair.Add(value);
 
 	CustomKeyValuePairs.Add(pair);
+}
+
+void UStomtAPI::HandleOfflineStomts()
+{
+	if (IsConnected())
+	{
+		UE_LOG(StomtNetwork, Log, TEXT("Stomt API is connected."));
+		TArray<UStomt*> stomts = this->Config->GetStomts();
+		if (stomts.Num() > 0)
+		{
+			UE_LOG(StomtNetwork, Log, TEXT("Start sending offline stomts: %d"), stomts.Num());
+			for (UStomt* stomt : stomts)
+			{
+				UE_LOG(StomtNetwork, Log, TEXT("Sending Offline Stomt"));
+				this->SendStomt(stomt);
+			}
+
+			this->Config->ClearStomts();
+		}
+	}
+	else
+	{
+		this->Config->AddStomt(this->StomtToSend);
+	}
 }
 
 bool UStomtAPI::WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting)

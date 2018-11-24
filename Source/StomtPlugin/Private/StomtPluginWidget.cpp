@@ -34,6 +34,8 @@ void UStomtPluginWidget::OnConstruction(FString AppID)
 	//Lookup EMail
 	this->IsEMailAlreadyKnown = this->api->Config->GetSubscribed();
 	this->IsUserLoggedIn = this->api->Config->GetLoggedIn();
+
+	this->api->ConnectionTest();
 }
 
 void UStomtPluginWidget::OnMessageChanged(FString text)
@@ -63,6 +65,8 @@ void UStomtPluginWidget::OnSubmit()
 	this->api->SetStomtToSend(stomt);
 
 	FString LogFileName = FApp::GetProjectName() + FString(TEXT(".log"));
+
+	this->api->HandleOfflineStomts();
 
 	if (this->UploadLogs)
 	{
