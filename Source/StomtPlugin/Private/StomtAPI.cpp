@@ -583,6 +583,7 @@ void UStomtAPI::SendSubscription(FString EMailOrNumber, bool UseEmail)
 	if (UseEmail)
 	{
 		request->GetRequestObject()->SetStringField(TEXT("email"), EMailOrNumber);
+		request->GetRequestObject()->SetStringField(TEXT("message"), TEXT("Subscribe to STOMT to get notified about responses to your wish."));
 	}
 	else
 	{
