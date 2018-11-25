@@ -733,7 +733,7 @@ FString UStomtAPI::LoadLanguageFileContent()
 	TArray<FString> PluginFolders;
 
 	PluginFolders.Add( FPaths::EnginePluginsDir() + "Marketplace/"	);
-	PluginFolders.Add( FPaths::GamePluginsDir()						);
+	PluginFolders.Add( FPaths::ProjectPluginsDir()						);
 	PluginFolders.Add( FPaths::ProjectPluginsDir()					); 
 	PluginFolders.Add( FPaths::EnterprisePluginsDir()				);
 

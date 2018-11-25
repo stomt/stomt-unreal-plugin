@@ -290,7 +290,7 @@ bool UStomtConfig::SaveStomtToConf(UStomt& stomt)
 		UE_LOG(StomtNetwork, Log, TEXT("Add Offline Stomt: To existing field"));
 	}
 
-
+	UE_LOG(StomtNetwork, Log, TEXT("Add offline stomt: %s"), *jsonObj->EncodeJson());
 
 	return this->WriteFile(jsonObj->EncodeJson(), ConfigName, ConfigFolder, true);
 }
