@@ -15,7 +15,7 @@
 			"SDK_HEADER_TARGET_STOMTS": "STOMTS",
 			"SDK_HEADER_YOUR_STOMTS": "DEINE",
 			
-			"SDK_SUBSCRIBE_GET_NOTIFIED": "Abonniere STOMT um Antworten zu erhalten.",
+			"SDK_SUBSCRIBE_GET_NOTIFIED": "Abonniere STOMT um über Antworten auf Deinen Wunsch informiert zu werden.",
 			"SDK_SUBSCRIBE_TOGGLE_EMAIL": "E-Mail",
 			"SDK_SUBSCRIBE_TOGGLE_PHONE": "SMS",
 			"SDK_SUBSCRIBE_EMAIL_QUESTION": "Wie lautet deine E-Mail-Adresse?",
@@ -46,10 +46,10 @@
 			"SDK_LOGIN_SUCCESS": "Du bist eingeloggt!",
 			"SDK_LOGIN_WENT_WRONG": "Ups, da lief was schief.",
 			
-			"SDK_TERMS_LOGS_OPT_IN": "We would like to attach log files.",
-			"SDK_TERMS_LOGS_OPT_IN_DIS": "Yes, attach log files.",
-			"SDK_TERMS_LOGS_OPT_OUT": "We will attach log files to your stomt.",
-			"SDK_TERMS_LOGS_OPT_OUT_DIS": "Do not attach log files."
+			"SDK_TERMS_LOGS_OPT_IN": "Dürfen wir Log-Dateien mitsenden?",
+			"SDK_TERMS_LOGS_OPT_IN_DIS": "Ja, sende Log-Dateien.",
+			"SDK_TERMS_LOGS_OPT_OUT": "Wir werden Log-Dateien anhängen.",
+			"SDK_TERMS_LOGS_OPT_OUT_DIS": "Keine Log-Dateien anhängen."
 		},	
 		"en": 
 		{
@@ -65,7 +65,7 @@
 			"SDK_HEADER_TARGET_STOMTS": "STOMTS",
 			"SDK_HEADER_YOUR_STOMTS": "YOURS",
 			
-			"SDK_SUBSCRIBE_GET_NOTIFIED": "Subscribe to STOMT to get responses to your wish.",
+			"SDK_SUBSCRIBE_GET_NOTIFIED": "Subscribe to STOMT to get notified about responses to your wish.",
 			"SDK_SUBSCRIBE_TOGGLE_EMAIL": "E-Mail",
 			"SDK_SUBSCRIBE_TOGGLE_PHONE": "SMS",
 			"SDK_SUBSCRIBE_EMAIL_QUESTION": "What's your email address?",
