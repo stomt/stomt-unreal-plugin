@@ -314,8 +314,6 @@ public:
 	
 private:
 
-
-
 	bool				WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting);
 	bool				ReadFile(FString& Result, FString FileName, FString SaveDirectory);
 
