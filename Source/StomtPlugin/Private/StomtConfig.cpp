@@ -24,6 +24,8 @@ UStomtConfig* UStomtConfig::ConstructStomtConfig()
 	config->SubscribedFieldName = FString(TEXT("email"));
 	config->AccessTokenFieldName = FString(TEXT("accesstoken"));
 	config->StomtsFieldName = FString(TEXT("stomts"));
+	config->LogUploadFieldName = FString(TEXT("acceptLogUpload"));
+	config->ScreenshotUploadFieldName = FString(TEXT("acceptScreenshotUpload"));
 
 	config->Load();
 	
@@ -79,6 +81,26 @@ void UStomtConfig::Load()
 			this->LoggedIn = false;
 		}
 
+		if (configJsonObj->HasField(this->LogUploadFieldName))
+		{
+			this->AcceptLogUpload = configJsonObj->GetBoolField(this->LogUploadFieldName);
+			UE_LOG(StomtInit, Log, TEXT("Accept Log Upload: %s"), this->AcceptLogUpload ? TEXT("true") : TEXT("false"));
+		}
+		else
+		{
+			this->AcceptLogUpload = false;
+		}
+
+		if (configJsonObj->HasField(this->ScreenshotUploadFieldName))
+		{
+			this->AcceptScreenshotUpload = configJsonObj->GetBoolField(this->ScreenshotUploadFieldName);
+			UE_LOG(StomtInit, Log, TEXT("Accept Screenshot Upload: %s"), this->AcceptScreenshotUpload ? TEXT("true") : TEXT("false"));
+		}
+		else
+		{
+			this->AcceptScreenshotUpload = false;
+		}
+
 		if (configJsonObj->HasField(this->StomtsFieldName))
 		{
 			this->Stomts = configJsonObj->GetArrayField(this->StomtsFieldName);
@@ -88,8 +110,6 @@ void UStomtConfig::Load()
 		{
 			UE_LOG(StomtInit, Log, TEXT("Saved Offline Stomts: 0"));
 		}
-
-
 
 		OnConfigUpdated.Broadcast(this);
 	}
@@ -164,6 +184,38 @@ void UStomtConfig::SetLoggedIn(bool LoggedIn)
 	OnConfigUpdated.Broadcast(this);
 }
 
+bool UStomtConfig::GetAcceptScreenshotUpload()
+{
+	return this->AcceptScreenshotUpload;
+}
+
+void UStomtConfig::SetAcceptScreenshotUpload(bool acceptScreenshotUpload)
+{
+	if (this->AcceptScreenshotUpload == acceptScreenshotUpload) return;
+
+	this->AcceptScreenshotUpload = acceptScreenshotUpload;
+
+	this->SaveFlag(this->ScreenshotUploadFieldName, this->AcceptScreenshotUpload);
+
+	OnConfigUpdated.Broadcast(this);
+}
+
+bool UStomtConfig::GetAcceptLogUpload()
+{
+	return this->AcceptLogUpload;
+}
+
+void UStomtConfig::SetAcceptLogUpload(bool acceptLogUpload)
+{
+	if (this->AcceptLogUpload == acceptLogUpload) return;
+
+	this->AcceptLogUpload = acceptLogUpload;
+
+	this->SaveFlag(this->LogUploadFieldName, this->AcceptLogUpload);
+
+	OnConfigUpdated.Broadcast(this);
+}
+
 TArray<UStomtJsonValue*> UStomtConfig::GetStomtsAsJson()
 {
 	UStomtRestJsonObject* jsonObj = ReadStomtConfAsJson();
@@ -220,8 +272,6 @@ TArray<UStomt*> UStomtConfig::GetStomts()
 
 	return stomtObjects;
 }
-
-
 
 bool UStomtConfig::AddStomt(UStomt* stomt)
 {
@@ -313,9 +363,6 @@ bool UStomtConfig::ClearStomts()
 
 	return this->WriteFile(jsonObj->EncodeJson(), ConfigName, ConfigFolder, true);
 }
-
-
-
 
 bool UStomtConfig::SaveFlag(FString FlagName, bool FlagState)
 {

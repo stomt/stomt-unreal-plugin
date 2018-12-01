@@ -47,6 +47,16 @@ public:
 	bool	GetLoggedIn();
 	void	SetLoggedIn(bool LoggedIn);
 
+	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
+	bool	GetAcceptScreenshotUpload();
+	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
+	void	SetAcceptScreenshotUpload(bool acceptScreenshotUpload);
+
+	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
+	bool	GetAcceptLogUpload();
+	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
+	void	SetAcceptLogUpload(bool acceptLogUpload);
+
 	UPROPERTY(BlueprintAssignable, Category = "Stomt|Event")
 	FOnConfigUpdated OnConfigUpdated;
 
@@ -138,25 +148,22 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// Data
 
-
 	bool				Subscribed;
-
 	bool				LoggedIn;
+	bool				AcceptLogUpload;
+	bool				AcceptScreenshotUpload;
 
 	FString				SubscribedFieldName;
-
 	FString				LoggedInFieldName;
-
 	FString				AccessTokenFieldName;
-
 	FString				StomtsFieldName;
-
+	FString				LogUploadFieldName;
+	FString				ScreenshotUploadFieldName;
 
 	FString				Accesstoken;
-
 	FString				ConfigFolder;
-
 	FString				ConfigName;
+
 	UPROPERTY()
 	TArray<UStomtJsonValue*> Stomts;
 
