@@ -77,38 +77,38 @@ void UStomtJsonValue::SetRootValue(TSharedPtr<FJsonValue>& JsonValue)
 ////////////////////////////////////////////////////////////////////////////
 //// FJsonValue API
 
-EVaJson::Type UStomtJsonValue::GetType() const
+StomtEVaJson::Type UStomtJsonValue::GetType() const
 {
 	if (!(JsonVal.IsValid()))
 	{
-		return EVaJson::None;
+		return StomtEVaJson::None;
 	}
 
 	switch (JsonVal->Type)
 	{
 	case EJson::None:
-		return EVaJson::None;
+		return StomtEVaJson::None;
 
 	case EJson::Null:
-		return EVaJson::Null;
+		return StomtEVaJson::Null;
 
 	case EJson::String:
-		return EVaJson::String;
+		return StomtEVaJson::String;
 
 	case EJson::Number:
-		return EVaJson::Number;
+		return StomtEVaJson::Number;
 
 	case EJson::Boolean:
-		return EVaJson::Boolean;
+		return StomtEVaJson::Boolean;
 
 	case EJson::Array:
-		return EVaJson::Array;
+		return StomtEVaJson::Array;
 
 	case EJson::Object:
-		return EVaJson::Object;
+		return StomtEVaJson::Object;
 
 	default:
-		return EVaJson::None;
+		return StomtEVaJson::None;
 	}
 }
 
