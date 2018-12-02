@@ -212,7 +212,7 @@ void UStomtAPI::SendStomtLabels(UStomt * stomt)
 		this->Request->ResetRequestData();
 
 		UE_LOG(LogTemp, Warning, TEXT("nice1"));
-		this->Request->SetVerb(ERequestVerb::POST);
+		this->Request->SetVerb(StomtEnumRequestVerb::POST);
 		this->Request->SetHeader(TEXT("appid"), this->GetAppID() );
 
 		this->Request->GetRequestObject()->SetField(TEXT("name"),	UStomtJsonValue::ConstructJsonValueString(	this, TEXT("newlabeltest")	));
@@ -234,7 +234,7 @@ UStomtRestRequest* UStomtAPI::RequestSession(FString Accesstoken)
 	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnRequestSessionResponse);
 	request->OnRequestFail.AddDynamic(this, &UStomtAPI::OnARequestFailed);
 
-	request->SetVerb(ERequestVerb::GET);
+	request->SetVerb(StomtEnumRequestVerb::GET);
 	request->SetHeader(TEXT("appid"), this->GetAppID());
 	
 	request->SetHeader(TEXT("accesstoken"), this->Config->GetAccessToken());
@@ -276,7 +276,7 @@ UStomtRestRequest* UStomtAPI::RequestTargetByAppID()
 	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnRequestTargetResponse);
 	request->OnRequestFail.AddDynamic(this, &UStomtAPI::OnARequestFailed);
 
-	request->SetVerb(ERequestVerb::GET);
+	request->SetVerb(StomtEnumRequestVerb::GET);
 	request->SetHeader(TEXT("appid"), this->GetAppID());
 
 	request->ProcessURL(this->GetRestURL().Append("/targets/"));
@@ -290,7 +290,7 @@ UStomtRestRequest* UStomtAPI::RequestTarget(FString TargetID)
 	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnRequestTargetResponse);
 	request->OnRequestFail.AddDynamic(this, &UStomtAPI::OnARequestFailed);
 
-	request->SetVerb(ERequestVerb::GET);
+	request->SetVerb(StomtEnumRequestVerb::GET);
 	request->SetHeader(TEXT("appid"), this->GetAppID());
 
 	request->ProcessURL(this->GetRestURL().Append("/targets/").Append(TargetID));
@@ -945,7 +945,7 @@ UStomtRestRequest* UStomtAPI::SetupNewPostRequest()
 	UStomtRestRequest* request = NewObject<UStomtRestRequest>();
 	request->OnRequestFail.AddDynamic(this, &UStomtAPI::OnARequestFailed);
 
-	request->SetVerb(ERequestVerb::POST);
+	request->SetVerb(StomtEnumRequestVerb::POST);
 	request->SetHeader(TEXT("appid"), this->GetAppID());
 
 	this->AddAccesstokenToRequest(request);
@@ -958,7 +958,7 @@ UStomtRestRequest * UStomtAPI::SetupNewDeleteRequest()
 	UStomtRestRequest* request = NewObject<UStomtRestRequest>();
 	request->OnRequestFail.AddDynamic(this, &UStomtAPI::OnARequestFailed);
 
-	request->SetVerb(ERequestVerb::DEL);
+	request->SetVerb(StomtEnumRequestVerb::DEL);
 	request->SetHeader(TEXT("appid"), this->GetAppID());
 
 	this->AddAccesstokenToRequest(request);
