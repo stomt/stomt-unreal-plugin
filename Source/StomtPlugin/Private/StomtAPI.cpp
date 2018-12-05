@@ -38,6 +38,10 @@ UStomtAPI* UStomtAPI::ConstructStomtAPI(FString AppID)
 
 	UE_LOG(StomtInit, Log, TEXT("LangTest: %s"), *api->GetLangText("SDK_STOMT_WISH_BUBBLE"));
 
+	api->ConnectionTest();
+
+
+
 	return api;
 }
 
@@ -868,22 +872,27 @@ void UStomtAPI::HandleOfflineStomts()
 	if (IsConnected())
 	{
 		UE_LOG(StomtNetwork, Log, TEXT("Stomt API is connected."));
-		TArray<UStomt*> stomts = this->Config->GetStomts();
-		if (stomts.Num() > 0)
-		{
-			UE_LOG(StomtNetwork, Log, TEXT("Start sending offline stomts: %d"), stomts.Num());
-			for (UStomt* stomt : stomts)
-			{
-				UE_LOG(StomtNetwork, Log, TEXT("Sending Offline Stomt"));
-				this->SendStomt(stomt);
-			}
-
-			this->Config->ClearStomts();
-		}
+		this->SendOfflineStomts();
 	}
 	else
 	{
 		this->Config->AddStomt(this->StomtToSend);
+	}
+}
+
+void UStomtAPI::SendOfflineStomts()
+{
+	TArray<UStomt*> stomts = this->Config->GetStomts();
+	if (stomts.Num() > 0)
+	{
+		UE_LOG(StomtNetwork, Log, TEXT("Start sending offline stomts: %d"), stomts.Num());
+		for (UStomt* stomt : stomts)
+		{
+			UE_LOG(StomtNetwork, Log, TEXT("Sending Offline Stomt"));
+			this->SendStomt(stomt);
+		}
+
+		this->Config->ClearStomts();
 	}
 }
 

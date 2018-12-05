@@ -311,8 +311,13 @@ public:
 	void AddCustomKeyValuePair(FString key, FString value);
 
 	void				HandleOfflineStomts();
+
+	UFUNCTION(BlueprintCallable, Category = "Stomt API")
+	void				SendOfflineStomts();
 	
 private:
+
+
 
 	bool				WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting);
 	bool				ReadFile(FString& Result, FString FileName, FString SaveDirectory);
