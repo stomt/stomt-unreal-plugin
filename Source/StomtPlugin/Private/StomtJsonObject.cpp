@@ -250,30 +250,30 @@ void UStomtRestJsonObject::SetArrayField(const FString& FieldName, const TArray<
 
 		switch (InVal->GetType())
 		{
-		case EVaJson::None:
+		case StomtEnumJson::None:
 			break;
 
-		case EVaJson::Null:
+		case StomtEnumJson::Null:
 			ValArray.Add(MakeShareable(new FJsonValueNull()));
 			break;
 
-		case EVaJson::String:
+		case StomtEnumJson::String:
 			ValArray.Add(MakeShareable(new FJsonValueString(JsonVal->AsString())));
 			break;
 
-		case EVaJson::Number:
+		case StomtEnumJson::Number:
 			ValArray.Add(MakeShareable(new FJsonValueNumber(JsonVal->AsNumber())));
 			break;
 
-		case EVaJson::Boolean:
+		case StomtEnumJson::Boolean:
 			ValArray.Add(MakeShareable(new FJsonValueBoolean(JsonVal->AsBool())));
 			break;
 
-		case EVaJson::Array:
+		case StomtEnumJson::Array:
 			ValArray.Add(MakeShareable(new FJsonValueArray(JsonVal->AsArray())));
 			break;
 
-		case EVaJson::Object:
+		case StomtEnumJson::Object:
 			ValArray.Add(MakeShareable(new FJsonValueObject(JsonVal->AsObject())));
 			break;
 
