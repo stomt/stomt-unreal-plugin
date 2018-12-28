@@ -17,17 +17,6 @@ UStomtAPI* UStomtAPI::ConstructStomtAPI(FString AppID)
 {
 	UStomtAPI* api = NewObject<UStomtAPI>();
 
-	if (AppID.Equals("AKN5M7Ob0MqxKXYdE9i3IhQtF"))
-	{
-		api->SetRestURL("https://test.rest.stomt.com");
-		api->SetStomtURL("https://test.stomt.com/");
-	}
-	else
-	{
-		api->SetRestURL("https://rest.stomt.com");
-		api->SetStomtURL("https://www.stomt.com/");
-	}
-
 	api->SetAppID(AppID);
 
 	UE_LOG(StomtInit, Log, TEXT("Construct Stomt API"));
@@ -49,12 +38,13 @@ UStomtAPI::UStomtAPI()
 	IsLogUploadComplete = false;
 	UseImageUpload = true;
 	useDefaultLabels = true;
+	NetworkError = false;
 
 	this->Config = UStomtConfig::ConstructStomtConfig();
 	this->Track = UStomtTrack::ConstructStomtTrack();
 	DefaultScreenshotName = FString("HighresScreenshot00000.png");
 
-	 this->SetCurrentLanguage(this->GetSystemLanguage());
+	this->SetCurrentLanguage(this->GetSystemLanguage());
 }
 
 UStomtAPI::~UStomtAPI()
@@ -63,6 +53,11 @@ UStomtAPI::~UStomtAPI()
 
 void UStomtAPI::SendStomt(UStomt* stomt)
 {
+	if (!IsConnected())
+	{
+		this->Config->AddStomt(stomt);
+	}
+
 	UStomtRestRequest* request = this->SetupNewPostRequest();
 	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnSendStomtRequestResponse);
 
@@ -206,7 +201,7 @@ void UStomtAPI::SendStomtLabels(UStomt * stomt)
 		this->Request->ResetRequestData();
 
 		UE_LOG(LogTemp, Warning, TEXT("nice1"));
-		this->Request->SetVerb(ERequestVerb::POST);
+		this->Request->SetVerb(StomtEnumRequestVerb::POST);
 		this->Request->SetHeader(TEXT("appid"), this->GetAppID() );
 
 		this->Request->GetRequestObject()->SetField(TEXT("name"),	UStomtJsonValue::ConstructJsonValueString(	this, TEXT("newlabeltest")	));
@@ -228,7 +223,7 @@ UStomtRestRequest* UStomtAPI::RequestSession(FString Accesstoken)
 	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnRequestSessionResponse);
 	request->OnRequestFail.AddDynamic(this, &UStomtAPI::OnARequestFailed);
 
-	request->SetVerb(ERequestVerb::GET);
+	request->SetVerb(StomtEnumRequestVerb::GET);
 	request->SetHeader(TEXT("appid"), this->GetAppID());
 	
 	request->SetHeader(TEXT("accesstoken"), this->Config->GetAccessToken());
@@ -264,13 +259,13 @@ void UStomtAPI::OnRequestSessionResponse(UStomtRestRequest * Request)
 	UE_LOG(StomtNetwork, Log, TEXT("StomtsCreatedByUser: %d | StomtsReceivedByTarget: %d"), StomtsCreatedByUser, StomtsReceivedByTarget);
 }
 
-UStomtRestRequest * UStomtAPI::RequestTargetByAppID()
+UStomtRestRequest* UStomtAPI::RequestTargetByAppID()
 {
 	UStomtRestRequest* request = NewObject<UStomtRestRequest>();
 	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnRequestTargetResponse);
 	request->OnRequestFail.AddDynamic(this, &UStomtAPI::OnARequestFailed);
 
-	request->SetVerb(ERequestVerb::GET);
+	request->SetVerb(StomtEnumRequestVerb::GET);
 	request->SetHeader(TEXT("appid"), this->GetAppID());
 
 	request->ProcessURL(this->GetRestURL().Append("/targets/"));
@@ -284,7 +279,7 @@ UStomtRestRequest* UStomtAPI::RequestTarget(FString TargetID)
 	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnRequestTargetResponse);
 	request->OnRequestFail.AddDynamic(this, &UStomtAPI::OnARequestFailed);
 
-	request->SetVerb(ERequestVerb::GET);
+	request->SetVerb(StomtEnumRequestVerb::GET);
 	request->SetHeader(TEXT("appid"), this->GetAppID());
 
 	request->ProcessURL(this->GetRestURL().Append("/targets/").Append(TargetID));
@@ -317,6 +312,8 @@ void UStomtAPI::OnRequestTargetResponse(UStomtRestRequest * Request)
 	{
 		this->RequestSession(this->Config->GetAccessToken());
 	}
+
+	this->NetworkError = false;
 }
 
 void UStomtAPI::SetRestURL(FString URL)
@@ -341,7 +338,18 @@ FString UStomtAPI::GetStomtURL()
 
 void UStomtAPI::SetAppID(FString appID)
 {
-	this->AppID = appID;
+	if (appID.Equals("Copy_your_AppID_here") || appID.Equals("AKN5M7Ob0MqxKXYdE9i3IhQtF") || appID.Equals(""))
+	{
+		this->AppID = "AKN5M7Ob0MqxKXYdE9i3IhQtF";
+		this->SetRestURL("https://test.rest.stomt.com");
+		this->SetStomtURL("https://test.stomt.com/");
+	}
+	else
+	{
+		this->AppID = appID;
+		this->SetRestURL("https://rest.stomt.com");
+		this->SetStomtURL("https://www.stomt.com/");
+	}	
 }
 
 FString UStomtAPI::GetAppID()
@@ -581,6 +589,8 @@ void UStomtAPI::SendSubscription(FString EMailOrNumber, bool UseEmail)
 		request->GetRequestObject()->SetStringField(TEXT("phone"), EMailOrNumber);
 	}
 
+	request->GetRequestObject()->SetStringField(TEXT("message"), this->GetLangText("SDK_SUBSCRIBE_GET_NOTIFIED"));
+
 	request->ProcessURL(this->GetRestURL().Append(TEXT("/authentication/subscribe")));
 }
 
@@ -689,8 +699,20 @@ FString UStomtAPI::ReadScreenshotAsBase64()
 
 void UStomtAPI::OnARequestFailed(UStomtRestRequest * Request)
 {
+	this->NetworkError = true;
 	this->OnRequestFailed.Broadcast(Request);
 }
+
+bool UStomtAPI::IsConnected()
+{
+	return !NetworkError;
+}
+
+void UStomtAPI::ConnectionTest()
+{
+	this->RequestTargetByAppID();
+}
+
 
 UStomtRestJsonObject* UStomtAPI::LoadLanguageFile()
 {
@@ -713,7 +735,7 @@ FString UStomtAPI::LoadLanguageFileContent()
 	TArray<FString> PluginFolders;
 
 	PluginFolders.Add( FPaths::EnginePluginsDir() + "Marketplace/"	);
-	PluginFolders.Add( FPaths::GamePluginsDir()						);
+	PluginFolders.Add( FPaths::ProjectPluginsDir()						);
 	PluginFolders.Add( FPaths::ProjectPluginsDir()					); 
 	PluginFolders.Add( FPaths::EnterprisePluginsDir()				);
 
@@ -841,6 +863,35 @@ void UStomtAPI::AddCustomKeyValuePair(FString key, FString value)
 	CustomKeyValuePairs.Add(pair);
 }
 
+void UStomtAPI::HandleOfflineStomts()
+{
+	if (IsConnected())
+	{
+		UE_LOG(StomtNetwork, Log, TEXT("Stomt API is connected."));
+		this->SendOfflineStomts();
+	}
+	else
+	{
+		this->Config->AddStomt(this->StomtToSend);
+	}
+}
+
+void UStomtAPI::SendOfflineStomts()
+{
+	TArray<UStomt*> stomts = this->Config->GetStomts();
+	if (stomts.Num() > 0)
+	{
+		UE_LOG(StomtNetwork, Log, TEXT("Start sending offline stomts: %d"), stomts.Num());
+		for (UStomt* stomt : stomts)
+		{
+			UE_LOG(StomtNetwork, Log, TEXT("Sending Offline Stomt"));
+			this->SendStomt(stomt);
+		}
+
+		this->Config->ClearStomts();
+	}
+}
+
 bool UStomtAPI::WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting)
 {
 	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
@@ -899,7 +950,7 @@ UStomtRestRequest* UStomtAPI::SetupNewPostRequest()
 	UStomtRestRequest* request = NewObject<UStomtRestRequest>();
 	request->OnRequestFail.AddDynamic(this, &UStomtAPI::OnARequestFailed);
 
-	request->SetVerb(ERequestVerb::POST);
+	request->SetVerb(StomtEnumRequestVerb::POST);
 	request->SetHeader(TEXT("appid"), this->GetAppID());
 
 	this->AddAccesstokenToRequest(request);
@@ -912,7 +963,7 @@ UStomtRestRequest * UStomtAPI::SetupNewDeleteRequest()
 	UStomtRestRequest* request = NewObject<UStomtRestRequest>();
 	request->OnRequestFail.AddDynamic(this, &UStomtAPI::OnARequestFailed);
 
-	request->SetVerb(ERequestVerb::DEL);
+	request->SetVerb(StomtEnumRequestVerb::DEL);
 	request->SetHeader(TEXT("appid"), this->GetAppID());
 
 	this->AddAccesstokenToRequest(request);

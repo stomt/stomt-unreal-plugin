@@ -8,7 +8,7 @@
  * Represents all the types a Json Value can be.
  */
 UENUM(BlueprintType)
-namespace EVaJson
+namespace StomtEnumJson
 {
 	enum Type
 	{
@@ -64,7 +64,7 @@ public:
 
 	/** Get type of Json value (Enum) */
 	UFUNCTION(BlueprintCallable, Category = "Stomt|Json")
-		EVaJson::Type GetType() const;
+		StomtEnumJson::Type GetType() const;
 
 	/** Get type of Json value (String) */
 	UFUNCTION(BlueprintCallable, Category = "Stomt|Json")

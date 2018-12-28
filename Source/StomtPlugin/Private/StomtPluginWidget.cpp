@@ -64,6 +64,8 @@ void UStomtPluginWidget::OnSubmit()
 
 	FString LogFileName = FApp::GetProjectName() + FString(TEXT(".log"));
 
+	this->api->HandleOfflineStomts();
+
 	if (this->UploadLogs)
 	{
 		FString logFile = this->api->ReadLogFile(LogFileName);
