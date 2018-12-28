@@ -27,7 +27,7 @@ UStomtRestRequest * UStomtRestRequest::ConstructRequest()
 	return nullptr;
 }
 
-void UStomtRestRequest::SetVerb(ERequestVerb::Type Verb)
+void UStomtRestRequest::SetVerb(StomtEnumRequestVerb::Type Verb)
 {
 	this->RequestVerb = Verb;
 }
@@ -117,19 +117,19 @@ void UStomtRestRequest::ProcessRequest(TSharedRef<IHttpRequest> HttpRequest)
 	// Set verb
 	switch (RequestVerb)
 	{
-		case ERequestVerb::GET:
+		case StomtEnumRequestVerb::GET:
 			HttpRequest->SetVerb(TEXT("GET"));
 			break;
 
-		case ERequestVerb::POST:
+		case StomtEnumRequestVerb::POST:
 			HttpRequest->SetVerb(TEXT("POST"));
 			break;
 
-		case ERequestVerb::PUT:
+		case StomtEnumRequestVerb::PUT:
 			HttpRequest->SetVerb(TEXT("PUT"));
 			break;
 
-		case ERequestVerb::DEL:
+		case StomtEnumRequestVerb::DEL:
 			HttpRequest->SetVerb(TEXT("DELETE"));
 			break;
 
@@ -268,7 +268,7 @@ void UStomtRestRequest::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpR
 	// Finish the latent action
 	if (ContinueAction)
 	{
-		FVaRestLatentAction<UStomtRestJsonObject*> *K = ContinueAction;
+		StomtLatentAction<UStomtRestJsonObject*> *K = ContinueAction;
 		ContinueAction = nullptr;
 
 		K->Call(ResponseJsonObj);

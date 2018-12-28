@@ -38,9 +38,13 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// Data
 
+	UPROPERTY()
 	FString name;
+	UPROPERTY()
 	FString color;
+	UPROPERTY()
 	bool isPublic;
+	UPROPERTY()
 	bool asTargetOwner;
 
 };

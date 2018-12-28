@@ -207,6 +207,12 @@ public:
 	UFUNCTION()
 	void OnARequestFailed(UStomtRestRequest* Request);
 
+	UFUNCTION(BlueprintCallable, Category = "Stomt API")
+	bool IsConnected();
+
+	UFUNCTION(BlueprintCallable, Category = "Stomt API")
+	void ConnectionTest();
+
 	//////////////////////////////////////////////////////////////////////////
 	// Data
 public:
@@ -237,6 +243,8 @@ public:
 	bool			LoginRequestWasSend;
 	bool			EMailFlagWasSend;
 	bool			LogFileWasSend;
+
+	bool			NetworkError;
 
 	FString			RestURL;
 
@@ -281,8 +289,10 @@ private:
 
 	FString LoadLanguageFileContent();
 
+	UPROPERTY()
 	UStomtRestJsonObject* Languages;
 
+	UPROPERTY()
 	FString CurrentLanguage;
 
 	//////////////////////////////////////////////////////////////////////////
@@ -299,8 +309,15 @@ public:
 	void UseScreenshotUpload(bool UseUpload);
 
 	void AddCustomKeyValuePair(FString key, FString value);
+
+	void				HandleOfflineStomts();
+
+	UFUNCTION(BlueprintCallable, Category = "Stomt API")
+	void				SendOfflineStomts();
 	
 private:
+
+
 
 	bool				WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting);
 	bool				ReadFile(FString& Result, FString FileName, FString SaveDirectory);

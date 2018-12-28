@@ -1,9 +1,11 @@
 // Copyright 2018 STOMT GmbH. All Rights Reserved.
 #pragma once
-
+#include "StomtJsonObject.h"
+#include "Stomt.h"
 #include "StomtPluginPrivatePCH.h"
 #include "StomtRestRequest.h"
 #include "StomtConfig.generated.h"
+
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnConfigUpdated, class UStomtConfig*, Config);
 
@@ -45,8 +47,30 @@ public:
 	bool	GetLoggedIn();
 	void	SetLoggedIn(bool LoggedIn);
 
+	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
+	bool	GetAcceptScreenshotUpload();
+	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
+	void	SetAcceptScreenshotUpload(bool acceptScreenshotUpload);
+
+	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
+	bool	GetAcceptLogUpload();
+	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
+	void	SetAcceptLogUpload(bool acceptLogUpload);
+
 	UPROPERTY(BlueprintAssignable, Category = "Stomt|Event")
 	FOnConfigUpdated OnConfigUpdated;
+
+	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
+	TArray<UStomtJsonValue*> GetStomtsAsJson();
+	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
+	TArray<UStomt*> GetStomts();
+	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
+	bool	AddStomt(UStomt* stomt);
+
+	/**
+	* Clears the stomt array in /stomt/stomt.conf.json
+	*/
+	bool ClearStomts();
 
 
 	//////////////////////////////////////////////////////////////////////////
@@ -91,6 +115,11 @@ private:
 	bool SaveValueToStomtConf(FString FieldName, FString FieldValue);
 
 	/**
+	* Saves the a stomt in /stomt/stomt.conf.json
+	*/
+	bool SaveStomtToConf(UStomt& stomt);
+
+	/**
 	* Saves the flag in /stomt/stomt.conf.json
 	*/
 	bool SaveFlag(FString FlagName, bool FlagState);
@@ -121,13 +150,21 @@ private:
 
 	bool				Subscribed;
 	bool				LoggedIn;
+	bool				AcceptLogUpload;
+	bool				AcceptScreenshotUpload;
 
 	FString				SubscribedFieldName;
 	FString				LoggedInFieldName;
 	FString				AccessTokenFieldName;
+	FString				StomtsFieldName;
+	FString				LogUploadFieldName;
+	FString				ScreenshotUploadFieldName;
 
 	FString				Accesstoken;
 	FString				ConfigFolder;
 	FString				ConfigName;
+
+	UPROPERTY()
+	TArray<UStomtJsonValue*> Stomts;
 
 };
