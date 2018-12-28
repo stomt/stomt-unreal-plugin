@@ -47,7 +47,7 @@
 			"SDK_LOGIN_WENT_WRONG": "Ups, da lief was schief.",
 			
 			"SDK_TERMS_LOGS_OPT_IN": "Dürfen wir Log-Dateien mitsenden?",
-			"SDK_TERMS_LOGS_OPT_IN_DIS": "Ja, sende Log-Dateien.",
+			"SDK_TERMS_LOGS_OPT_IN_DIS": "Nein, bitte nicht.",
 			"SDK_TERMS_LOGS_OPT_OUT": "Wir werden Log-Dateien anhängen.",
 			"SDK_TERMS_LOGS_OPT_OUT_DIS": "Keine Log-Dateien anhängen."
 		},	
@@ -96,8 +96,8 @@
 			"SDK_LOGIN_SUCCESS": "You're now logged in!",
 			"SDK_LOGIN_WENT_WRONG": "Ups something went wrong.",
 			
-			"SDK_TERMS_LOGS_OPT_IN": "We would like to attach log files.",
-			"SDK_TERMS_LOGS_OPT_IN_DIS": "Yes, attach log files.",
+			"SDK_TERMS_LOGS_OPT_IN": "May we attach log files?",
+			"SDK_TERMS_LOGS_OPT_IN_DIS": "No, please don't.",
 			"SDK_TERMS_LOGS_OPT_OUT": "We will attach log files to your stomt.",
 			"SDK_TERMS_LOGS_OPT_OUT_DIS": "Do not attach log files."
 		},
