@@ -8,7 +8,7 @@
 /**
 * @author Original latent action class by https://github.com/unktomi
 */
-template <class T> class FVaRestLatentAction : public FPendingLatentAction
+template <class T> class StomtLatentAction : public FPendingLatentAction
 {
 public:
 	
@@ -25,7 +25,7 @@ public:
 
 	void Cancel();
 
-	FVaRestLatentAction(FWeakObjectPtr RequestObj, T& ResultParam, const FLatentActionInfo& LatentInfo) :
+	StomtLatentAction(FWeakObjectPtr RequestObj, T& ResultParam, const FLatentActionInfo& LatentInfo) :
 		Called(false),
 		Request(RequestObj),
 		ExecutionFunction(LatentInfo.ExecutionFunction),
@@ -64,7 +64,7 @@ public:
 
  /** Verb (GET, PUT, POST) */
 UENUM(BlueprintType)
-namespace ERequestVerb
+namespace StomtEnumRequestVerb
 {
 	enum Type
 	{
@@ -95,7 +95,7 @@ public:
 	static UStomtRestRequest* ConstructRequest();
 
 	/** Set verb to the Request */
-	void SetVerb(ERequestVerb::Type Verb);
+	void SetVerb(StomtEnumRequestVerb::Type Verb);
 
 	/** Sets header info */
 	void SetHeader(const FString &HeaderName, const FString &HeaderValue);
@@ -206,7 +206,7 @@ protected:
 	FString StaticJsonOutputString;
 
 	/** Latent action helper */
-	FVaRestLatentAction <UStomtRestJsonObject*> *ContinueAction;
+	StomtLatentAction <UStomtRestJsonObject*> *ContinueAction;
 
 	/** Internal Request data stored as JSON */
 	UPROPERTY()
@@ -217,7 +217,7 @@ protected:
 	UStomtRestJsonObject* ResponseJsonObj;
 
 	/** Verb for making Request (GET,POST,etc) */
-	ERequestVerb::Type RequestVerb;
+	StomtEnumRequestVerb::Type RequestVerb;
 
 	/** Mapping of header section to values. Used to generate final header string for Request */
 	TMap<FString, FString> RequestHeaders;

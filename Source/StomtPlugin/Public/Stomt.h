@@ -55,14 +55,23 @@ public:
 	// Data
 
 private:
+	UPROPERTY()
 	FString		serversideID;
+	UPROPERTY()
 	FString		target_id;
+	UPROPERTY()
 	bool		positive;
+	UPROPERTY()
 	FString		text;
+	UPROPERTY()
 	FString		url;
+	UPROPERTY()
 	bool		anonym;
+	UPROPERTY()
 	FString		img_name;
+	UPROPERTY()
 	FString		lonlat;
+	UPROPERTY()
 	TArray<UStomtLabel*> labels;
 };
 
