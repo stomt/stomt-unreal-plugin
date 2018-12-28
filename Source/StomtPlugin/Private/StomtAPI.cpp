@@ -17,17 +17,6 @@ UStomtAPI* UStomtAPI::ConstructStomtAPI(FString AppID)
 {
 	UStomtAPI* api = NewObject<UStomtAPI>();
 
-	if (AppID.Equals("AKN5M7Ob0MqxKXYdE9i3IhQtF"))
-	{
-		api->SetRestURL("https://test.rest.stomt.com");
-		api->SetStomtURL("https://test.stomt.com/");
-	}
-	else
-	{
-		api->SetRestURL("https://rest.stomt.com");
-		api->SetStomtURL("https://www.stomt.com/");
-	}
-
 	api->SetAppID(AppID);
 
 	UE_LOG(StomtInit, Log, TEXT("Construct Stomt API"));
@@ -39,8 +28,6 @@ UStomtAPI* UStomtAPI::ConstructStomtAPI(FString AppID)
 	UE_LOG(StomtInit, Log, TEXT("LangTest: %s"), *api->GetLangText("SDK_STOMT_WISH_BUBBLE"));
 
 	api->ConnectionTest();
-
-
 
 	return api;
 }
@@ -353,7 +340,18 @@ FString UStomtAPI::GetStomtURL()
 
 void UStomtAPI::SetAppID(FString appID)
 {
-	this->AppID = appID;
+	if (appID.Equals("Copy_your_AppID_here") || appID.Equals("AKN5M7Ob0MqxKXYdE9i3IhQtF") || appID.Equals(""))
+	{
+		this->AppID = "AKN5M7Ob0MqxKXYdE9i3IhQtF";
+		this->SetRestURL("https://test.rest.stomt.com");
+		this->SetStomtURL("https://test.stomt.com/");
+	}
+	else
+	{
+		this->AppID = appID;
+		this->SetRestURL("https://rest.stomt.com");
+		this->SetStomtURL("https://www.stomt.com/");
+	}	
 }
 
 FString UStomtAPI::GetAppID()
