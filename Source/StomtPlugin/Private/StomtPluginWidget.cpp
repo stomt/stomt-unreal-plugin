@@ -34,8 +34,6 @@ void UStomtPluginWidget::OnConstruction(FString AppID)
 	//Lookup EMail
 	this->IsEMailAlreadyKnown = this->api->Config->GetSubscribed();
 	this->IsUserLoggedIn = this->api->Config->GetLoggedIn();
-
-	this->api->ConnectionTest();
 }
 
 void UStomtPluginWidget::OnMessageChanged(FString text)

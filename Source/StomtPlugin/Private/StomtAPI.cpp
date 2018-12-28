@@ -27,8 +27,6 @@ UStomtAPI* UStomtAPI::ConstructStomtAPI(FString AppID)
 
 	UE_LOG(StomtInit, Log, TEXT("LangTest: %s"), *api->GetLangText("SDK_STOMT_WISH_BUBBLE"));
 
-	api->ConnectionTest();
-
 	return api;
 }
 
