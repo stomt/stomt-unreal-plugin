@@ -28,7 +28,7 @@ Example Games that use our integrations:
 
 <img alt="Enable StomtPlugin in Unreal Editor" width="600" src="https://github.com/stomt/stomt-unreal-plugin/raw/master/Docs/Images/unreal_enable_StomtPlugin.png" />
 
-3. Show the Engine Content in your Content Browser
+3. Enable "Show Engine Content" and "Show Plugin Content" in your Content Browser
 
 <img alt="Unhide the Engine Content in Unreal Editor" width="600" src="https://github.com/stomt/stomt-unreal-plugin/raw/master/Docs/Images/unreal_StomtPlugin_enable_engine_content.png" />
 
