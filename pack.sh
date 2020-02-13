@@ -40,6 +40,20 @@ rm ../stomt-unreal-plugin-4-23.zip
 zip -r -X ../stomt-unreal-plugin-4-23.zip . -x *.git* -x pack.sh -x *.DS_Store* -x LICENSE.md -x Binaries/ -x Intermediate/ -x Binaries/**\* -x Intermediate/**\*
 
 
+# next (4.24)
+git add .
+git stash
+git checkout UE/4.24
+
+# move root files
+mv README.md Docs/README.md
+mv CONTRIBUTING.md Docs/CONTRIBUTING.md
+
+# zip
+rm ../stomt-unreal-plugin-4-24.zip
+zip -r -X ../stomt-unreal-plugin-4-24.zip . -x *.git* -x pack.sh -x *.DS_Store* -x LICENSE.md -x Binaries/ -x Intermediate/ -x Binaries/**\* -x Intermediate/**\*
+
+
 # clean
 git add .
 git stash
