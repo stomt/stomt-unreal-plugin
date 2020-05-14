@@ -13,37 +13,35 @@
 #include "Runtime/Core/Public/Misc/App.h"
 #include "Runtime/Core/Public/Internationalization/Regex.h"
 
-UStomtAPI* UStomtAPI::ConstructStomtAPI(FString AppID)
+UStomtAPI* UStomtAPI::ConstructStomtAPI(FString NewAppId)
 {
-	UStomtAPI* api = NewObject<UStomtAPI>();
+	UStomtAPI* Api = NewObject<UStomtAPI>();
 
-	api->SetAppID(AppID);
+	Api->SetAppID(NewAppId);
 
 	UE_LOG(StomtInit, Log, TEXT("Construct Stomt API"));
-	UE_LOG(StomtInit, Log, TEXT("AppID: %s "), *api->GetAppID());
-	UE_LOG(StomtInit, Log, TEXT("RestURL: %s "), *api->GetRestURL());
+	UE_LOG(StomtInit, Log, TEXT("AppID: %s "), *Api->GetAppId());
+	UE_LOG(StomtInit, Log, TEXT("RestURL: %s "), *Api->GetRestUrl());
 
 	api->LoadLanguageFile();
 
 	UE_LOG(StomtInit, Log, TEXT("LangTest: %s"), *api->GetLangText("SDK_STOMT_WISH_BUBBLE"));
 
-	return api;
+	return Api;
 }
 
 UStomtAPI::UStomtAPI()
 {
-	LogFileWasSend = false;
-	EMailFlagWasSend = false;
-	IsImageUploadComplete = false;
-	IsLogUploadComplete = false;
-	UseImageUpload = true;
-	useDefaultLabels = true;
-	NetworkError = false;
+	this->bLogFileWasSend = false;
+	this->bEMailFlagWasSend = false;
+	this->bIsImageUploadComplete = false;
+	this->bIsLogUploadComplete = false;
+	this->bUseImageUpload = true;
+	this->bUseDefaultLabels = true;
+	this->bNetworkError = false;
 
 	this->Config = UStomtConfig::ConstructStomtConfig();
 	this->Track = UStomtTrack::ConstructStomtTrack();
-	DefaultScreenshotName = FString("HighresScreenshot00000.png");
-
 	this->SetCurrentLanguage(this->GetSystemLanguage());
 }
 
@@ -51,31 +49,31 @@ UStomtAPI::~UStomtAPI()
 {
 }
 
-void UStomtAPI::SendStomt(UStomt* stomt)
+void UStomtAPI::SendStomt(UStomt* Stomt)
 {
-	if (!IsConnected())
+	if (!this->bIsConnected())
 	{
-		this->Config->AddStomt(stomt);
+		this->Config->AddStomt(Stomt);
 	}
 
-	UStomtRestRequest* request = this->SetupNewPostRequest();
-	request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnSendStomtRequestResponse);
+	UStomtRestRequest* Request = this->SetupNewPostRequest();
+	Request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnSendStomtRequestResponse);
 
 	// Fields
-	request->GetRequestObject()->SetField(TEXT("target_id"),	UStomtJsonValue::ConstructJsonValueString(	this, stomt->GetTargetID()	));
-	request->GetRequestObject()->SetField(TEXT("positive"),	UStomtJsonValue::ConstructJsonValueBool(	this, stomt->GetPositive()	));
-	request->GetRequestObject()->SetField(TEXT("text"),		UStomtJsonValue::ConstructJsonValueString(	this, stomt->GetText()		));
-	request->GetRequestObject()->SetField(TEXT("anonym"),		UStomtJsonValue::ConstructJsonValueBool(	this, stomt->GetAnonym()	));
+	Request->GetRequestObject()->SetField(TEXT("target_id"), UStomtJsonValue::ConstructJsonValueString(this, Stomt->GetTargetId()));
+	Request->GetRequestObject()->SetField(TEXT("positive"), UStomtJsonValue::ConstructJsonValueBool(this, Stomt->GetPositive()));
+	Request->GetRequestObject()->SetField(TEXT("text"), UStomtJsonValue::ConstructJsonValueString(this, Stomt->GetText()));
+	Request->GetRequestObject()->SetField(TEXT("anonym"), UStomtJsonValue::ConstructJsonValueBool(this, Stomt->GetAnonym()));
 	
 	//Labels
 	UStomtRestJsonObject* jObjExtraData = UStomtRestJsonObject::ConstructJsonObject(this);
 	TArray<UStomtJsonValue*> labels = TArray<UStomtJsonValue*>();
 
-	for (int i = 0; i != stomt->GetLabels().Num(); ++i)
+	for (int i = 0; i != Stomt->GetLabels().Num(); ++i)
 	{
-		if (!stomt->GetLabels()[i]->GetName().IsEmpty())
+		if (!Stomt->GetLabels()[i]->GetName().IsEmpty())
 		{
-			labels.Add(UStomtJsonValue::ConstructJsonValueString(this, stomt->GetLabels()[i]->GetName()));
+			labels.Add(UStomtJsonValue::ConstructJsonValueString(this, Stomt->GetLabels()[i]->GetName()));
 		}
 	}
 
@@ -188,7 +186,7 @@ void UStomtAPI::OnLoginRequestResponse(UStomtRestRequest * Request)
 	}
 }
 
-void UStomtAPI::SendStomtLabels(UStomt * stomt)
+void UStomtAPI::SendStomtLabels(UStomt * Stomt)
 {
 	return;
 	//ToDo: Finish this some day. Works only with target owner login.
@@ -382,9 +380,9 @@ FString UStomtAPI::GetImageURL()
 	return this->ImageURL;
 }
 
-void UStomtAPI::SetStomtToSend(UStomt * stomt)
+void UStomtAPI::SetStomtToSend(UStomt * Stomt)
 {
-	this->StomtToSend = stomt;
+	this->StomtToSend = Stomt;
 }
 
 FString UStomtAPI::ReadLogFile(FString LogFileName)
@@ -882,10 +880,10 @@ void UStomtAPI::SendOfflineStomts()
 	if (stomts.Num() > 0)
 	{
 		UE_LOG(StomtNetwork, Log, TEXT("Start sending offline stomts: %d"), stomts.Num());
-		for (UStomt* stomt : stomts)
+		for (UStomt* Stomt : stomts)
 		{
 			UE_LOG(StomtNetwork, Log, TEXT("Sending Offline Stomt"));
-			this->SendStomt(stomt);
+			this->SendStomt(Stomt);
 		}
 
 		this->Config->ClearStomts();
