@@ -14,12 +14,12 @@ UStomt::UStomt()
 
 UStomt* UStomt::ConstructStomt(FString NewTargetId, bool bNewPositive, FString NewText)
 {
-	UStomt* stomt = NewObject<UStomt>();
-	stomt->SetTargetID(NewTargetId);
-	stomt->SetPositive(bNewPositive);
-	stomt->SetText(NewText);
+	UStomt* Stomt = NewObject<UStomt>();
+	Stomt->SetTargetID(NewTargetId);
+	Stomt->SetPositive(bNewPositive);
+	Stomt->SetText(NewText);
 
-	return stomt;
+	return Stomt;
 }
 
 //////////////////////////////////////////////////////////////////////////

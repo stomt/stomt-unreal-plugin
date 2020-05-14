@@ -30,7 +30,7 @@ public:
 	* Sends a stomt. 
 	* @param stomt - Stomt Object with some content.
 	*/
-	void SendStomt(UStomt* stomt);
+	void SendStomt(UStomt* Stomt);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Data accessors
@@ -41,26 +41,24 @@ public:
 	* @param URL - Stomt REST URL
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
-	void	SetRestURL(FString URL);
-	UFUNCTION(BlueprintCallable, Category = "Stomt API")
-	FString GetRestURL();
+	void SetRestURL(FString NewRestUrl);
 
-	/**
-	* Sets the Stomt rest Server URL.
-	* For example: https://rest.stomt.com
-	* @param URL - Stomt REST URL
-	*/
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
-	void	SetStomtURL(FString URL);
+	FString GetRestUrl();
+
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
-	FString GetStomtURL();
+	void SetStomtUrl(FString NewStomtUrl);
+
+	UFUNCTION(BlueprintCallable, Category = "Stomt API")
+	FString GetStomtUrl();
 
 	/**
 	* Sets the Stomt App ID.
 	* That was created here: https://www.stomt.com/dev/my-apps
 	* @param AppID - Stomt APP ID
 	*/
-	void	SetAppID(FString appID);
+	void SetAppID(FString NewAppId);
+
 	FString GetAppID();
 
 	/**
@@ -73,17 +71,19 @@ public:
 	* Sets a Stomt Target
 	* @param TargetID - ID of Stomt Target
 	*/
-	void	SetTargetID(FString targetID);
+	void SetTargetID(FString NewTargetID);
+
 	FString	GetTargetID();
 
 	/**
 	* Sets the URL for the target image.
 	* @param URL - Target-Image URL
 	*/
-	void	SetImageURL(FString URL);
+	void SetImageURL(FString NewImageUrl);
+	
 	FString	GetImageURL();
 
-	void SetStomtToSend(UStomt* stomt);
+	void SetStomtToSend(UStomt* Stomt);
 
 	/**
 	* Gets the Request object that contains Request/response information.
@@ -114,7 +114,7 @@ public:
 	* Sends stomt labels. (deprecated)
 	* @param stomt - Stomt Object with serverside ID set and labels set.
 	*/
-	void SendStomtLabels(UStomt* stomt);
+	void SendStomtLabels(UStomt* Stomt);
 
 	UStomtRestRequest* RequestSession(FString Accesstoken);
 
@@ -134,7 +134,7 @@ public:
 	* @param TargetID - ID of the requested stomt target.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
-	UStomtRestRequest* RequestTarget(FString targetID);
+	UStomtRestRequest* RequestTarget(FString TargetID);
 
 	UFUNCTION()
 	void OnRequestTargetResponse(UStomtRestRequest * Request);
@@ -157,7 +157,7 @@ public:
 
 	void SendSubscription(FString EMail);
 
-	void SendSubscription(FString EMailOrNumber, bool UseEmail);
+	void SendSubscription(FString EMailOrNumber, bool bUseEmail);
 
 	UFUNCTION()
 	void OnSendEMailResponse(UStomtRestRequest * Request);
@@ -171,7 +171,7 @@ public:
 	// Track SDK Usage
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt Track")
-	void SendTrack(UStomtTrack* Track);
+	void SendTrack(UStomtTrack* NewTrack);
 
 
 	//////////////////////////////////////////////////////////////////////////
@@ -218,17 +218,18 @@ public:
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt API")
-	UStomtConfig*	Config;
+	UStomtConfig* Config;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt API")
-	UStomtTrack*	Track;
+	UStomtTrack* Track;
 
-	UStomt*			StomtToSend;
+	UStomt* StomtToSend;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt API")
-	FString			ImageUploadName;
+	FString ImageUploadName;
 
-	FString errorLog_file_uid;
+	FString ErrorLogFileUid;
+
 	FString DefaultScreenshotName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
