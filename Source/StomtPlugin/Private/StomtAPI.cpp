@@ -247,7 +247,7 @@ UStomtRestRequest* UStomtAPI::RequestTargetByAppId()
 	return Request;
 }
 
-UStomtRestRequest* UStomtAPI::RequestTarget(FString TargetId)
+UStomtRestRequest* UStomtAPI::RequestTarget(FString RequestedTargetId)
 {
 	UStomtRestRequest* Request = NewObject<UStomtRestRequest>();
 	Request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnRequestTargetResponse);
@@ -256,7 +256,7 @@ UStomtRestRequest* UStomtAPI::RequestTarget(FString TargetId)
 	Request->SetVerb(StomtEnumRequestVerb::GET);
 	Request->SetHeader(TEXT("appid"), this->GetAppId());
 
-	Request->ProcessUrl(this->GetRestUrl().Append("/targets/").Append(TargetId));
+	Request->ProcessUrl(this->GetRestUrl().Append("/targets/").Append(RequestedTargetId));
 
 	return Request;
 }

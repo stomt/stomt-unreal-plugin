@@ -9,7 +9,7 @@
 
 UStomtRestRequest::UStomtRestRequest()
 {
-	this->useStaticJsonString = false;
+	this->bUseStaticJsonString = false;
 	this->UseRequestLogging(true);
 	this->ResponseJsonObj = NULL;
 	this->RequestJsonObj = NULL;
@@ -147,7 +147,7 @@ void UStomtRestRequest::ProcessRequest(TSharedRef<IHttpRequest> HttpRequest)
 	// Set Json content
 	if ( !HttpRequest->GetVerb().Equals( TEXT("GET") ) )
 	{
-		if (this->useStaticJsonString)
+		if (this->bUseStaticJsonString)
 		{
 			if (!this->StaticJsonOutputString.IsEmpty())
 			{
@@ -158,7 +158,7 @@ void UStomtRestRequest::ProcessRequest(TSharedRef<IHttpRequest> HttpRequest)
 		HttpRequest->SetContentAsString(OutputString);
 	}
 	
-	if (this->RequestLogging)
+	if (this->bRequestLogging)
 	{
 		if (OutputString.Len() > 256)
 		{
@@ -289,10 +289,10 @@ void UStomtRestRequest::SetStaticJsonString(FString JsonString)
 //////////////////////////////////////////////////////////////////////////
 // Destruction and reset
 
-void UStomtRestRequest::this->ResetData()
+void UStomtRestRequest::ResetData()
 {
-	ResetRequestData();
-	ResetResponseData();
+	this->ResetRequestData();
+	this->ResetResponseData();
 }
 
 void UStomtRestRequest::ResetRequestData()
