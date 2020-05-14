@@ -16,28 +16,28 @@
 
 UStomtTrack* UStomtTrack::ConstructStomtTrack()
 {
-	UStomtTrack* track = NewObject<UStomtTrack>();
-	return track;
+	UStomtTrack* Track = NewObject<UStomtTrack>();
+	return Track;
 }
 
 UStomtTrack::UStomtTrack()
 {
-	UE_LOG(StomtInit, Log, TEXT("Constuct Stomt SDK Track"));
+	UE_LOG(StomtInit, Log, TEXT("Constuct Stomt Sdk Track"));
 
 	this->SetDevicePlatform(UGameplayStatics::GetPlatformName());
 	UE_LOG(StomtInit, Log, TEXT("DevicePlatform: %s"), *this->DevicePlatform);
 
 	this->SetDeviceID(FGenericPlatformProcess::ComputerName());
-	UE_LOG(StomtInit, Log, TEXT("DeviceID: %s"), *this->DeviceID);
+	UE_LOG(StomtInit, Log, TEXT("DeviceId: %s"), *this->DeviceId);
 
-	this->SetSDKType(FString("UnrealEngine") + UKismetSystemLibrary::GetEngineVersion());
-	UE_LOG(StomtInit, Log, TEXT("SDKType: %s"), *this->SDKType);
+	this->SetSdkType(FString("UnrealEngine") + UKismetSystemLibrary::GetEngineVersion());
+	UE_LOG(StomtInit, Log, TEXT("SdkType: %s"), *this->SdkType);
 
-	this->SetSDKVersion("2.3.1");
-	UE_LOG(StomtInit, Log, TEXT("SDKVersion: %s"), *this->SDKVersion);
+	this->SetSdkVersion("2.3.1");
+	UE_LOG(StomtInit, Log, TEXT("SdkVersion: %s"), *this->SdkVersion);
 
-	this->SetSDKIntegration(UKismetSystemLibrary::GetGameName());
-	UE_LOG(StomtInit, Log, TEXT("SDKIntegration: %s"), *this->SDKIntegration);
+	this->SetSdkIntegration(UKismetSystemLibrary::GetGameName());
+	UE_LOG(StomtInit, Log, TEXT("SdkIntegration: %s"), *this->SdkIntegration);
 }
 
 UStomtTrack::~UStomtTrack()
@@ -47,107 +47,107 @@ UStomtTrack::~UStomtTrack()
 
 UStomtRestJsonObject * UStomtTrack::GetAsJsonObject()
 {
-	UStomtRestJsonObject* jsonObj = UStomtRestJsonObject::ConstructJsonObject(this);
+	UStomtRestJsonObject* JsonObj = UStomtRestJsonObject::ConstructJsonObject(this);
 
-	if (!DevicePlatform.IsEmpty())
+	if (!this->DevicePlatform.IsEmpty())
 	{
-		jsonObj->SetStringField("device_platform", DevicePlatform);
+		JsonObj->SetStringField("device_platform", this->DevicePlatform);
 	}
 
-	if (!DeviceID.IsEmpty())
+	if (!this->DeviceId.IsEmpty())
 	{
-		jsonObj->SetStringField("device_id", DeviceID);
+		JsonObj->SetStringField("device_id", this->DeviceId);
 	}
 
-	if (!SDKType.IsEmpty())
+	if (!this->SdkType.IsEmpty())
 	{
-		jsonObj->SetStringField("sdk_type", SDKType);
+		JsonObj->SetStringField("sdk_type", this->SdkType);
 	}
 
-	if (!SDKVersion.IsEmpty())
+	if (!this->SdkVersion.IsEmpty())
 	{
-		jsonObj->SetStringField("sdk_version", SDKVersion);
+		JsonObj->SetStringField("sdk_version", this->SdkVersion);
 	}
 
-	if (!SDKIntegration.IsEmpty())
+	if (!this->SdkIntegration.IsEmpty())
 	{
-		jsonObj->SetStringField("sdk_integration", SDKIntegration);
+		JsonObj->SetStringField("sdk_integration", this->SdkIntegration);
 	}
 
-	if (!TargetID.IsEmpty())
+	if (!this->TargetId.IsEmpty())
 	{
-		jsonObj->SetStringField("target_id", TargetID);
+		JsonObj->SetStringField("target_id", this->TargetId);
 	}
 
-	if (!StomtID.IsEmpty())
+	if (!this->StomtId.IsEmpty())
 	{
-		jsonObj->SetStringField("stomt_id", StomtID);
+		JsonObj->SetStringField("stomt_id", this->StomtId);
 	}
 
-	if (!EventCategory.IsEmpty())
+	if (!this->EventCategory.IsEmpty())
 	{
-		jsonObj->SetStringField("event_category", EventCategory);
+		JsonObj->SetStringField("event_category", this->EventCategory);
 	}
 
-	if (!EventAction.IsEmpty())
+	if (!this->EventAction.IsEmpty())
 	{
-		jsonObj->SetStringField("event_action", EventAction);
+		JsonObj->SetStringField("event_action", this->EventAction);
 	}
 
-	if (!EventLabel.IsEmpty())
+	if (!this->EventLabel.IsEmpty())
 	{
-		jsonObj->SetStringField("event_label", EventLabel);
+		JsonObj->SetStringField("event_label", this->EventLabel);
 	}
 
-	return jsonObj;
+	return JsonObj;
 }
 
-void UStomtTrack::SetDevicePlatform(FString DevicePlatform)
+void UStomtTrack::SetDevicePlatform(FString NewDevicePlatform)
 {
-	this->DevicePlatform = DevicePlatform;
+	this->DevicePlatform = NewDevicePlatform;
 }
 
-void  UStomtTrack::SetDeviceID(FString DeviceID)
+void  UStomtTrack::SetDeviceID(FString NewDeviceId)
 {
-	this->DeviceID = DeviceID;
+	this->DeviceId = NewDeviceId;
 }
 
-void UStomtTrack::SetSDKType(FString SDKType)
+void UStomtTrack::SetSdkType(FString NewSdkType)
 {
-	this->SDKType = SDKType;
+	this->SdkType = NewSdkType;
 }
 
-void UStomtTrack::SetSDKVersion(FString SDKVersion)
+void UStomtTrack::SetSdkVersion(FString NewSdkVersion)
 {
-	this->SDKVersion = SDKVersion;
+	this->SdkVersion = NewSdkVersion;
 }
 
-void UStomtTrack::SetSDKIntegration(FString SDKIntegration)
+void UStomtTrack::SetSdkIntegration(FString NewSdkIntegration)
 {
-	this->SDKIntegration = SDKIntegration;
+	this->SdkIntegration = NewSdkIntegration;
 }
 
-void UStomtTrack::SetTargetID(FString TargetID)
+void UStomtTrack::SetTargetId(FString NewTargetId)
 {
-	this->TargetID = TargetID;
+	this->TargetId = NewTargetId;
 }
 
-void UStomtTrack::SetStomtID(FString StomtID)
+void UStomtTrack::SetStomtId(FString NewStomtId)
 {
-	this->StomtID = StomtID;
+	this->StomtId = NewStomtId;
 }
 
-void UStomtTrack::SetEventCategory(FString EventCategory)
+void UStomtTrack::SetEventCategory(FString NewEventCategory)
 {
-	this->EventCategory = EventCategory;
+	this->EventCategory = NewEventCategory;
 }
 
-void UStomtTrack::SetEventAction(FString EventAction)
+void UStomtTrack::SetEventAction(FString NewEventAction)
 {
-	this->EventAction = EventAction;
+	this->EventAction = NewEventAction;
 }
 
-void UStomtTrack::SetEventLabel(FString EventLabel)
+void UStomtTrack::SetEventLabel(FString NewEventLabel)
 {
-	this->EventLabel = EventLabel;
+	this->EventLabel = NewEventLabel;
 }

@@ -17,16 +17,16 @@ public:
 	UStomtLabel();
 	//~UStomtLabel();
 
-	static UStomtLabel* ConstructLabel(FString name);
+	static UStomtLabel* ConstructLabel(FString NewName);
 
 
 	//////////////////////////////////////////////////////////////////////////
 	// Data accessors
 
-	void SetName(FString name);
-	void SetColor(FString color);
-	void SetIsPublic(bool isPublic);
-	void SetAsTargetOwner(bool asTargetOwner);
+	void SetName(FString NewName);
+	void SetColor(FString NewColor);
+	void SetIsPublic(bool bNewIsPublic);
+	void SetAsTargetOwner(bool bNewAsTargetOwner);
 
 	FString GetName();
 	FString GetColor();
@@ -39,13 +39,13 @@ private:
 	// Data
 
 	UPROPERTY()
-	FString name;
+	FString Name;
 	UPROPERTY()
-	FString color;
+	FString Color;
 	UPROPERTY()
-	bool isPublic;
+	bool bIsPublic;
 	UPROPERTY()
-	bool asTargetOwner;
+	bool bAsTargetOwner;
 
 };
 
