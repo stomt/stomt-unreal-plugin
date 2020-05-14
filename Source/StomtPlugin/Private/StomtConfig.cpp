@@ -13,23 +13,23 @@
 
 UStomtConfig* UStomtConfig::ConstructStomtConfig()
 {
-	UStomtConfig* config = NewObject<UStomtConfig>();
+	UStomtConfig* Config = NewObject<UStomtConfig>();
 
-	config->ConfigFolder = FPaths::EngineUserDir() + FString(TEXT("Saved/Config/stomt/"));
-	UE_LOG(StomtInit, Log, TEXT("Config-Folder: %s"), *config->ConfigFolder);
+	Config->ConfigFolder = FPaths::EngineUserDir() + FString(TEXT("Saved/Config/stomt/"));
+	UE_LOG(StomtInit, Log, TEXT("Config-Folder: %s"), *Config->ConfigFolder);
 
-	config->ConfigName = FString(TEXT("stomt.conf.json"));
-	config->Accesstoken = FString(TEXT(""));
-	config->LoggedInFieldName = FString(TEXT("loggedin"));
-	config->SubscribedFieldName = FString(TEXT("email"));
-	config->AccessTokenFieldName = FString(TEXT("accesstoken"));
-	config->StomtsFieldName = FString(TEXT("stomts"));
-	config->LogUploadFieldName = FString(TEXT("acceptLogUpload"));
-	config->ScreenshotUploadFieldName = FString(TEXT("acceptScreenshotUpload"));
+	Config->ConfigName = FString(TEXT("stomt.conf.json"));
+	Config->Accesstoken = FString(TEXT(""));
+	Config->LoggedInFieldName = FString(TEXT("loggedin"));
+	Config->SubscribedFieldName = FString(TEXT("email"));
+	Config->AccessTokenFieldName = FString(TEXT("accesstoken"));
+	Config->StomtsFieldName = FString(TEXT("stomts"));
+	Config->LogUploadFieldName = FString(TEXT("acceptLogUpload"));
+	Config->ScreenshotUploadFieldName = FString(TEXT("acceptScreenshotUpload"));
 
-	config->Load();
+	Config->Load();
 	
-	return config;
+	return Config;
 }
 
 UStomtConfig::UStomtConfig()
@@ -53,57 +53,57 @@ void UStomtConfig::Load()
 
 	if (FPaths::FileExists(this->ConfigFolder + this->ConfigName))
 	{
-		UStomtRestJsonObject* configJsonObj = ReadStomtConfAsJson();
+		UStomtRestJsonObject* ConfigJsonObj = ReadStomtConfAsJson();
 
-		if (configJsonObj->HasField(this->AccessTokenFieldName))
+		if (ConfigJsonObj->HasField(this->AccessTokenFieldName))
 		{
-			this->Accesstoken = configJsonObj->GetStringField(this->AccessTokenFieldName);
+			this->Accesstoken = ConfigJsonObj->GetStringField(this->AccessTokenFieldName);
 			UE_LOG(StomtInit, Log, TEXT("Accesstoken: %s"), *this->Accesstoken);
 		}
 
-		if (configJsonObj->HasField(this->SubscribedFieldName))
+		if (ConfigJsonObj->HasField(this->SubscribedFieldName))
 		{
-			this->Subscribed = configJsonObj->GetBoolField(this->SubscribedFieldName);
-			UE_LOG(StomtInit, Log, TEXT("Subscribed: %s"), this->Subscribed ? TEXT("true") : TEXT("false") );
+			this->bSubscribed = ConfigJsonObj->GetBoolField(this->SubscribedFieldName);
+			UE_LOG(StomtInit, Log, TEXT("Subscribed: %s"), this->bSubscribed ? TEXT("true") : TEXT("false"));
 		}
 		else
 		{
-			this->Subscribed = false;
+			this->bSubscribed = false;
 		}
 
-		if (configJsonObj->HasField(this->LoggedInFieldName))
+		if (ConfigJsonObj->HasField(this->LoggedInFieldName))
 		{
-			this->LoggedIn = configJsonObj->GetBoolField(this->LoggedInFieldName);
-			UE_LOG(StomtInit, Log, TEXT("LoggedIn: %s"), this->LoggedIn ? TEXT("true") : TEXT("false") );
+			this->bLoggedIn = ConfigJsonObj->GetBoolField(this->LoggedInFieldName);
+			UE_LOG(StomtInit, Log, TEXT("LoggedIn: %s"), this->bLoggedIn ? TEXT("true") : TEXT("false") );
 		}
 		else
 		{
-			this->LoggedIn = false;
+			this->bLoggedIn = false;
 		}
 
-		if (configJsonObj->HasField(this->LogUploadFieldName))
+		if (ConfigJsonObj->HasField(this->LogUploadFieldName))
 		{
-			this->AcceptLogUpload = configJsonObj->GetBoolField(this->LogUploadFieldName);
-			UE_LOG(StomtInit, Log, TEXT("Accept Log Upload: %s"), this->AcceptLogUpload ? TEXT("true") : TEXT("false"));
+			this->bAcceptLogUpload = ConfigJsonObj->GetBoolField(this->LogUploadFieldName);
+			UE_LOG(StomtInit, Log, TEXT("Accept Log Upload: %s"), this->bAcceptLogUpload ? TEXT("true") : TEXT("false"));
 		}
 		else
 		{
-			this->AcceptLogUpload = false;
+			this-b>AcceptLogUpload = false;
 		}
 
-		if (configJsonObj->HasField(this->ScreenshotUploadFieldName))
+		if (ConfigJsonObj->HasField(this->ScreenshotUploadFieldName))
 		{
-			this->AcceptScreenshotUpload = configJsonObj->GetBoolField(this->ScreenshotUploadFieldName);
-			UE_LOG(StomtInit, Log, TEXT("Accept Screenshot Upload: %s"), this->AcceptScreenshotUpload ? TEXT("true") : TEXT("false"));
+			this->bAcceptScreenshotUpload = ConfigJsonObj->GetBoolField(this->ScreenshotUploadFieldName);
+			UE_LOG(StomtInit, Log, TEXT("Accept Screenshot Upload: %s"), this->bAcceptScreenshotUpload ? TEXT("true") : TEXT("false"));
 		}
 		else
 		{
-			this->AcceptScreenshotUpload = false;
+			this->bAcceptScreenshotUpload = false;
 		}
 
-		if (configJsonObj->HasField(this->StomtsFieldName))
+		if (ConfigJsonObj->HasField(this->StomtsFieldName))
 		{
-			this->Stomts = configJsonObj->GetArrayField(this->StomtsFieldName);
+			this->Stomts = ConfigJsonObj->GetArrayField(this->StomtsFieldName);
 			UE_LOG(StomtInit, Log, TEXT("Saved Offline Stomts: %d"), this->Stomts.Num());
 		}
 		else
@@ -116,8 +116,8 @@ void UStomtConfig::Load()
 	else
 	{
 		// Force to create config file
-		this->Subscribed = true;
-		this->LoggedIn = true;
+		this->bSubscribed = true;
+		this->bLoggedIn = true;
 		this->SetSubscribed(false);
 		this->SetLoggedIn(false);
 
@@ -154,75 +154,75 @@ void UStomtConfig::SetAccessToken(FString AccessToken)
 
 bool UStomtConfig::GetSubscribed()
 {	
-	return this->Subscribed;
+	return this->bSubscribed;
 }
 
-void UStomtConfig::SetSubscribed(bool Subscribed)
+void UStomtConfig::SetSubscribed(bool bNewSubscribed)
 {
-	if (this->Subscribed == Subscribed) return;
+	if (this->bSubscribed === bNewSubscribed) return;
 
-	this->Subscribed = Subscribed;
+	this->bSubscribed = bNewSubscribed;
 
-	this->SaveFlag(this->SubscribedFieldName, this->Subscribed);
+	this->SaveFlag(this->SubscribedFieldName, this->bSubscribed);
 
 	OnConfigUpdated.Broadcast(this);
 }
 
 bool UStomtConfig::GetLoggedIn()
 {
-	return this->LoggedIn;
+	return this->bLoggedIn;
 }
 
-void UStomtConfig::SetLoggedIn(bool LoggedIn)
+void UStomtConfig::SetLoggedIn(bool bNewLoggedIn)
 {
-	if (this->LoggedIn == LoggedIn) return;
+	if (this->bLoggedIn === bNewLoggedIn) return;
 
-	this->LoggedIn = LoggedIn;
+	this->bLoggedIn = bNewLoggedIn;
 
-	this->SaveFlag(this->LoggedInFieldName, this->LoggedIn);
+	this->SaveFlag(this->LoggedInFieldName, this->bLoggedIn);
 
 	OnConfigUpdated.Broadcast(this);
 }
 
 bool UStomtConfig::GetAcceptScreenshotUpload()
 {
-	return this->AcceptScreenshotUpload;
+	return this->bAcceptScreenshotUpload;
 }
 
-void UStomtConfig::SetAcceptScreenshotUpload(bool acceptScreenshotUpload)
+void UStomtConfig::SetAcceptScreenshotUpload(bool bNewAcceptScreenshotUpload)
 {
-	if (this->AcceptScreenshotUpload == acceptScreenshotUpload) return;
+	if (this->bAcceptScreenshotUpload === bNewAcceptScreenshotUpload) return;
 
-	this->AcceptScreenshotUpload = acceptScreenshotUpload;
+	this->bAcceptScreenshotUpload = bNewAcceptScreenshotUpload;
 
-	this->SaveFlag(this->ScreenshotUploadFieldName, this->AcceptScreenshotUpload);
+	this->SaveFlag(this->ScreenshotUploadFieldName, this->bAcceptScreenshotUpload);
 
 	OnConfigUpdated.Broadcast(this);
 }
 
 bool UStomtConfig::GetAcceptLogUpload()
 {
-	return this->AcceptLogUpload;
+	return this->bAcceptLogUpload;
 }
 
-void UStomtConfig::SetAcceptLogUpload(bool acceptLogUpload)
+void UStomtConfig::SetAcceptLogUpload(bool bNewAcceptLogUpload)
 {
-	if (this->AcceptLogUpload == acceptLogUpload) return;
+	if (this->bAcceptLogUpload == bNewAcceptLogUpload) return;
 
-	this->AcceptLogUpload = acceptLogUpload;
+	this->bAcceptLogUpload = bNewAcceptLogUpload;
 
-	this->SaveFlag(this->LogUploadFieldName, this->AcceptLogUpload);
+	this->SaveFlag(this->LogUploadFieldName, this->bAcceptLogUpload);
 
 	OnConfigUpdated.Broadcast(this);
 }
 
 TArray<UStomtJsonValue*> UStomtConfig::GetStomtsAsJson()
 {
-	UStomtRestJsonObject* jsonObj = ReadStomtConfAsJson();
+	UStomtRestJsonObject* JsonObj = ReadStomtConfAsJson();
 
-	if (jsonObj->HasField(this->StomtsFieldName))
+	if (JsonObj->HasField(this->StomtsFieldName))
 	{
-		return jsonObj->GetArrayField(this->StomtsFieldName);
+		return JsonObj->GetArrayField(this->StomtsFieldName);
 	}
 	else
 	{
@@ -232,37 +232,20 @@ TArray<UStomtJsonValue*> UStomtConfig::GetStomtsAsJson()
 
 TArray<UStomt*> UStomtConfig::GetStomts()
 {
-	TArray<UStomt*> stomtObjects;
-	UStomtRestJsonObject* jsonObj = ReadStomtConfAsJson();
+	TArray<UStomt*> StomtObjects;
+	UStomtRestJsonObject* JsonObj = ReadStomtConfAsJson();
 
-	if (jsonObj->HasField(this->StomtsFieldName))
+	if (JsonObj->HasField(this->StomtsFieldName))
 	{
-
-		for (UStomtRestJsonObject* stomt : jsonObj->GetObjectArrayField(this->StomtsFieldName))
+		for (UStomtRestJsonObject* JObjStomt : JsonObj->GetObjectArrayField(this->StomtsFieldName))
 		{
-			UStomt* stomtObject = UStomt::ConstructStomt(
-				stomt->GetStringField("target_id"), 
-				stomt->GetBoolField("positive"),
-				stomt->GetStringField("text")	
+			UStomt* StomtObject = UStomt::ConstructStomt(
+				JObjStomt->GetStringField("target_id"), 
+				JObjStomt->GetBoolField("positive"),
+				JObjStomt->GetStringField("text")	
 			);
 
-			stomtObjects.Add(stomtObject);
-
-			/*
-			jObj->SetField(TEXT("target_id"), UStomtJsonValue::ConstructJsonValueString(this, stomt.GetTargetID()));
-			jObj->SetField(TEXT("positive"), UStomtJsonValue::ConstructJsonValueBool(this, stomt.GetPositive()));
-			jObj->SetField(TEXT("text"), UStomtJsonValue::ConstructJsonValueString(this, stomt.GetText()));
-			jObj->SetField(TEXT("anonym"), UStomtJsonValue::ConstructJsonValueBool(this, stomt.GetAnonym()));
-			jObj->SetArrayField(TEXT("labels"), labels);
-
-			for (int i = 0; i != stomt.GetLabels().Num(); ++i)
-			{
-				if (!stomt.GetLabels()[i]->GetName().IsEmpty())
-				{
-					labels.Add(UStomtJsonValue::ConstructJsonValueString(this, stomt.GetLabels()[i]->GetName()));
-				}
-			}
-			*/
+			StomtObjects.Add(StomtObject);
 		}
 	}
 	else
@@ -270,145 +253,144 @@ TArray<UStomt*> UStomtConfig::GetStomts()
 		return TArray<UStomt*>();
 	}
 
-	return stomtObjects;
+	return StomtObjects;
 }
 
-bool UStomtConfig::AddStomt(UStomt* stomt)
+bool UStomtConfig::AddStomt(UStomt* NewStomt)
 {
-	return SaveStomtToConf(*stomt);
+	return SaveStomtToConf(*NewStomt);
 }
 
-bool UStomtConfig::SaveAccesstoken(FString accesstoken)
+bool UStomtConfig::SaveAccesstoken(FString NewAccesstoken)
 {
-	return SaveValueToStomtConf(this->AccessTokenFieldName, accesstoken);
+	return SaveValueToStomtConf(this->AccessTokenFieldName, NewAccesstoken);
 }
 
 bool UStomtConfig::SaveValueToStomtConf(FString FieldName, FString FieldValue)
 {
-	UStomtRestJsonObject* jsonObj = ReadStomtConfAsJson();
+	UStomtRestJsonObject* JsonObj = ReadStomtConfAsJson();
 
-	if (jsonObj->HasField(FieldName))
+	if (JsonObj->HasField(FieldName))
 	{
-		if (jsonObj->GetStringField(FieldName).Equals(FieldValue))
+		if (JsonObj->GetStringField(FieldName).Equals(FieldValue))
 		{
 			return false;
 		}
 
-		jsonObj->RemoveField(FieldName);
+		JsonObj->RemoveField(FieldName);
 	}
 
-	jsonObj->SetStringField(FieldName, FieldValue);
+	JsonObj->SetStringField(FieldName, FieldValue);
 
-	return this->WriteFile(jsonObj->EncodeJson(), ConfigName, ConfigFolder, true);
+	return this->WriteFile(JsonObj->EncodeJson(), this->ConfigName, this->ConfigFolder, true);
 }
 
-bool UStomtConfig::SaveStomtToConf(UStomt& stomt)
+bool UStomtConfig::SaveStomtToConf(UStomt& NewStomt)
 {
-	UStomtRestJsonObject* jsonObj = ReadStomtConfAsJson();
+	UStomtRestJsonObject* JsonObj = ReadStomtConfAsJson();
 
-	UStomtRestJsonObject* jObj = UStomtRestJsonObject::ConstructJsonObject(this);
-	TArray<UStomtJsonValue*> labels = TArray<UStomtJsonValue*>();
+	UStomtRestJsonObject* JObjStomt = UStomtRestJsonObject::ConstructJsonObject(this);
+	TArray<UStomtJsonValue*> Labels = TArray<UStomtJsonValue*>();
 
-	for (int i = 0; i != stomt.GetLabels().Num(); ++i)
+	for (int i = 0; i != NewStomt.GetLabels().Num(); ++i)
 	{
-		if (!stomt.GetLabels()[i]->GetName().IsEmpty())
+		if (!NewStomt.GetLabels()[i]->GetName().IsEmpty())
 		{
-			labels.Add(UStomtJsonValue::ConstructJsonValueString(this, stomt.GetLabels()[i]->GetName()));
+			Labels.Add(UStomtJsonValue::ConstructJsonValueString(this, NewStomt.GetLabels()[i]->GetName()));
 		}
 	}
 
-	jObj->SetField(TEXT("target_id"), UStomtJsonValue::ConstructJsonValueString(this, stomt.GetTargetID()));
-	jObj->SetField(TEXT("positive"), UStomtJsonValue::ConstructJsonValueBool(this, stomt.GetPositive()));
-	jObj->SetField(TEXT("text"), UStomtJsonValue::ConstructJsonValueString(this, stomt.GetText()));
-	jObj->SetField(TEXT("anonym"), UStomtJsonValue::ConstructJsonValueBool(this, stomt.GetAnonym()));
-	jObj->SetArrayField(TEXT("labels"), labels);
+	JObjStomt->SetField(TEXT("target_id"), UStomtJsonValue::ConstructJsonValueString(this, NewStomt.GetTargetID()));
+	JObjStomt->SetField(TEXT("positive"), UStomtJsonValue::ConstructJsonValueBool(this, NewStomt.GetPositive()));
+	JObjStomt->SetField(TEXT("text"), UStomtJsonValue::ConstructJsonValueString(this, NewStomt.GetText()));
+	JObjStomt->SetField(TEXT("anonym"), UStomtJsonValue::ConstructJsonValueBool(this, NewStomt.GetAnonym()));
+	JObjStomt->SetArrayField(TEXT("labels"), Labels);
 
-	if (!jsonObj->HasField(StomtsFieldName))
+	if (!JsonObj->HasField(StomtsFieldName))
 	{
-		TArray<UStomtRestJsonObject*> objArray;
-		objArray.Add(jObj);
-		jsonObj->SetObjectArrayField(StomtsFieldName, objArray);
+		TArray<UStomtRestJsonObject*> JObjArray1;
+		JObjArray1.Add(JObjStomt);
+		JsonObj->SetObjectArrayField(StomtsFieldName, JObjArray1);
 
 		UE_LOG(StomtNetwork, Log, TEXT("Add Offline Stomt: To new field"));
 	}
 	else
 	{
-		TArray<UStomtRestJsonObject*> objArray2;
-		objArray2 = jsonObj->GetObjectArrayField(StomtsFieldName);
-		objArray2.Add(jObj);
-		jsonObj->SetObjectArrayField(StomtsFieldName, objArray2);
+		TArray<UStomtRestJsonObject*> JObjArray2;
+		JObjArray2 = JsonObj->GetObjectArrayField(StomtsFieldName);
+		JObjArray2.Add(JObjStomt);
+		JsonObj->SetObjectArrayField(StomtsFieldName, JObjArray2);
 		UE_LOG(StomtNetwork, Log, TEXT("Add Offline Stomt: To existing field"));
 	}
 
-	UE_LOG(StomtNetwork, Log, TEXT("Add offline stomt: %s"), *jsonObj->EncodeJson());
+	UE_LOG(StomtNetwork, Log, TEXT("Add offline stomt: %s"), *JsonObj->EncodeJson());
 
-	return this->WriteFile(jsonObj->EncodeJson(), ConfigName, ConfigFolder, true);
+	return this->WriteFile(JsonObj->EncodeJson(), this->ConfigName, this->ConfigFolder, true);
 }
 
 bool UStomtConfig::ClearStomts()
 {
-	UStomtRestJsonObject* jsonObj = ReadStomtConfAsJson();
+	UStomtRestJsonObject* JsonObj = ReadStomtConfAsJson();
 
-	if (jsonObj->HasField(StomtsFieldName))
+	if (JsonObj->HasField(StomtsFieldName))
 	{
 		UE_LOG(StomtNetwork, Log, TEXT("Clear offline stomts"));
-		// void RemoveField(const FString& FieldName);
-		jsonObj->GetArrayField(StomtsFieldName).Empty();
-		jsonObj->RemoveField(StomtsFieldName);
+		JsonObj->GetArrayField(StomtsFieldName).Empty();
+		JsonObj->RemoveField(StomtsFieldName);
 	}
 	else
 	{
 		return true;
 	}
 
-	return this->WriteFile(jsonObj->EncodeJson(), ConfigName, ConfigFolder, true);
+	return this->WriteFile(JsonObj->EncodeJson(), this->ConfigName, this->ConfigFolder, true);
 }
 
-bool UStomtConfig::SaveFlag(FString FlagName, bool FlagState)
+bool UStomtConfig::SaveFlag(FString FlagName, bool bFlagState)
 {
-	return SaveValueToStomtConf(FlagName, FlagState ? TEXT("true") : TEXT("false"));
+	return SaveValueToStomtConf(FlagName, bFlagState ? TEXT("true") : TEXT("false"));
 }
 
 FString UStomtConfig::ReadStomtConf(FString FieldName)
 {
-	FString result;
+	FString Result;
 
-	if (this->ReadFile(result, ConfigName, ConfigFolder))
+	if (this->ReadFile(Result, this->ConfigName, this->ConfigFolder))
 	{
-		UStomtRestJsonObject* jsonObj = UStomtRestJsonObject::ConstructJsonObject(this);
-		jsonObj->DecodeJson(result);
-		this->Accesstoken = jsonObj->GetField(FieldName)->AsString();
+		UStomtRestJsonObject* JsonObj = UStomtRestJsonObject::ConstructJsonObject(this);
+		JsonObj->DecodeJson(Result);
+		this->Accesstoken = JsonObj->GetField(FieldName)->AsString();
 	}
 
-	return result;
+	return Result;
 }
 
 bool UStomtConfig::ReadFlag(FString FlagName)
 {
-	FString result;
-	bool FlagState = false;
+	FString Result;
+	bool bFlagState = false;
 
-	if (this->ReadFile(result, ConfigName, ConfigFolder))
+	if (this->ReadFile(Result, this->ConfigName, this->ConfigFolder))
 	{
-		UStomtRestJsonObject* jsonObj = UStomtRestJsonObject::ConstructJsonObject(this);
-		jsonObj->DecodeJson(result);
-		FlagState = jsonObj->GetField(FlagName)->AsBool();
+		UStomtRestJsonObject* JsonObj = UStomtRestJsonObject::ConstructJsonObject(this);
+		JsonObj->DecodeJson(Result);
+		bFlagState = JsonObj->GetField(FlagName)->AsBool();
 	}
 
-	return FlagState;
+	return bFlagState;
 }
 
 UStomtRestJsonObject* UStomtConfig::ReadStomtConfAsJson()
 {
-	FString result;
-	UStomtRestJsonObject* jsonObj = UStomtRestJsonObject::ConstructJsonObject(this);
+	FString Result;
+	UStomtRestJsonObject* JsonObj = UStomtRestJsonObject::ConstructJsonObject(this);
 
-	if (this->ReadFile(result, ConfigName, ConfigFolder))
+	if (this->ReadFile(Result, this->ConfigName, this->ConfigFolder))
 	{
-		jsonObj->DecodeJson(result);
+		JsonObj->DecodeJson(Result);
 	}
 
-	return jsonObj;
+	return JsonObj;
 }
 
 FString UStomtConfig::ReadAccesstoken()
@@ -425,25 +407,25 @@ FString UStomtConfig::ReadAccesstoken()
 
 bool UStomtConfig::WriteStomtConfAsJson(UStomtRestJsonObject * StomtConf)
 {
-	return this->WriteFile(StomtConf->EncodeJson(), ConfigName, ConfigFolder, true);
+	return this->WriteFile(StomtConf->EncodeJson(), this->ConfigName, this->ConfigFolder, true);
 }
 
 void UStomtConfig::DeleteStomtConf()
 {
-	FString file = this->ConfigFolder + this->ConfigName;
-	if (!FPlatformFileManager::Get().GetPlatformFile().DeleteFile(*file))
+	FString File = this->ConfigFolder + this->ConfigName;
+	if (!FPlatformFileManager::Get().GetPlatformFile().DeleteFile(*File))
 	{
-		UE_LOG(StomtFileAccess, Warning, TEXT("Could not delete stomt.conf.json: %s"), *file);
+		UE_LOG(StomtFileAccess, Warning, TEXT("Could not delete stomt.conf.json: %s"), *File);
 	}
 	else
 	{
-		UE_LOG(StomtFileAccess, Warning, TEXT("Deleted stomt.conf.json because of wrong access token Path: %s"), *file);
+		UE_LOG(StomtFileAccess, Warning, TEXT("Deleted stomt.conf.json because of wrong access token Path: %s"), *File);
 	}
 }
 
 FString UStomtConfig::ReadLogFile(FString LogFileName)
 {
-	FString errorLog;
+	FString ErrorLog;
 
 	FString LogFilePath = FPaths::ProjectLogDir() + LogFileName;
 	FString LogFileCopyPath = FPaths::ProjectLogDir() + LogFileName + TEXT("Copy.log");
@@ -459,7 +441,7 @@ FString UStomtConfig::ReadLogFile(FString LogFileName)
 	}
 
 	// Read LogFileCopy from Disk
-	if (!this->ReadFile(errorLog, LogFileCopyName, FPaths::ProjectLogDir()))
+	if (!this->ReadFile(ErrorLog, LogFileCopyName, FPaths::ProjectLogDir()))
 	{
 		if (FPaths::FileExists(FPaths::ProjectLogDir() + LogFileCopyName))
 		{
@@ -477,10 +459,10 @@ FString UStomtConfig::ReadLogFile(FString LogFileName)
 		UE_LOG(StomtFileAccess, Warning, TEXT("Could not delete LogFileCopy %s"), *LogFileCopyPath);
 	}
 
-	return errorLog;
+	return ErrorLog;
 }
 
-bool UStomtConfig::WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting)
+bool UStomtConfig::WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool bAllowOverwriting)
 {
 	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
 
@@ -493,7 +475,7 @@ bool UStomtConfig::WriteFile(FString TextToSave, FString FileName, FString SaveD
 		FString AbsoluteFilePath = SaveDirectory + "/" + FileName;
 
 		// Allow overwriting or file doesn't already exist
-		if (AllowOverwriting || !FPaths::FileExists(*AbsoluteFilePath))
+		if (bAllowOverwriting || !FPaths::FileExists(*AbsoluteFilePath))
 		{
 			// Use " FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), EFileWrite::FILEWRITE_Append);" for append
 			return FFileHelper::SaveStringToFile(TextToSave, *AbsoluteFilePath);
@@ -505,12 +487,12 @@ bool UStomtConfig::WriteFile(FString TextToSave, FString FileName, FString SaveD
 
 bool UStomtConfig::ReadFile(FString& Result, FString FileName, FString SaveDirectory)
 {
-	FString path = SaveDirectory + FileName;
+	FString Path = SaveDirectory + FileName;
 
-	if (!FPaths::FileExists(path))
+	if (!FPaths::FileExists(Path))
 	{
-		UE_LOG(StomtFileAccess, Warning, TEXT("File with this path does not exist: %s "), *path);
+		UE_LOG(StomtFileAccess, Warning, TEXT("File with this path does not exist: %s "), *Path);
 	}
 
-	return FFileHelper::LoadFileToString(Result, *path);
+	return FFileHelper::LoadFileToString(Result, *Path);
 }
