@@ -93,7 +93,7 @@ void UStomtPluginWidget::OnSubmit()
 
 	// Check EMail
 	this->bIsEMailAlreadyKnown = this->Api->Config->GetSubscribed();
-	UE_LOG(Stomt, Log, TEXT("Is EMail Already Known: %s"), this->bIsEMailAlreadyKnown ? TEXT("true") : TEXT("false"));
+	UE_LOG(StomtLog, Log, TEXT("Is EMail Already Known: %s"), this->bIsEMailAlreadyKnown ? TEXT("true") : TEXT("false"));
 }
 
 void UStomtPluginWidget::OnSubmitLastLayer()
@@ -140,7 +140,7 @@ void UStomtPluginWidget::OnTargetResponse(UStomtRestRequest * TargetRequest)
 {
 	this->TargetName = this->Api->GetTargetName();
 
-	UE_LOG(Stomt, Log, TEXT("OnTargetResponse: %s"), *this->TargetName);
+	UE_LOG(StomtLog, Log, TEXT("OnTargetResponse: %s"), *this->TargetName);
 
 	this->ImageURL = this->Api->GetImageURL();
 

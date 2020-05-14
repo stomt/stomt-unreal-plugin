@@ -19,7 +19,7 @@ UStomtConfig* UStomtConfig::ConstructStomtConfig()
 	UE_LOG(StomtInit, Log, TEXT("Config-Folder: %s"), *Config->ConfigFolder);
 
 	Config->ConfigName = FString(TEXT("stomt.conf.json"));
-	Config->Accesstoken = FString(TEXT(""));
+	Config->AccessToken = FString(TEXT(""));
 	Config->LoggedInFieldName = FString(TEXT("loggedin"));
 	Config->SubscribedFieldName = FString(TEXT("email"));
 	Config->AccessTokenFieldName = FString(TEXT("accesstoken"));
@@ -57,8 +57,8 @@ void UStomtConfig::Load()
 
 		if (ConfigJsonObj->HasField(this->AccessTokenFieldName))
 		{
-			this->Accesstoken = ConfigJsonObj->GetStringField(this->AccessTokenFieldName);
-			UE_LOG(StomtInit, Log, TEXT("Accesstoken: %s"), *this->Accesstoken);
+			this->AccessToken = ConfigJsonObj->GetStringField(this->AccessTokenFieldName);
+			UE_LOG(StomtInit, Log, TEXT("AccessToken: %s"), *this->AccessToken);
 		}
 
 		if (ConfigJsonObj->HasField(this->SubscribedFieldName))
@@ -88,7 +88,7 @@ void UStomtConfig::Load()
 		}
 		else
 		{
-			this-b>AcceptLogUpload = false;
+			this->bAcceptLogUpload = false;
 		}
 
 		if (ConfigJsonObj->HasField(this->ScreenshotUploadFieldName))
@@ -133,21 +133,21 @@ void UStomtConfig::Delete()
 
 FString UStomtConfig::GetAccessToken()
 {
-	if (this->Accesstoken.IsEmpty())
+	if (this->AccessToken.IsEmpty())
 	{
-		this->Accesstoken = this->ReadAccesstoken();
+		this->AccessToken = this->ReadAccessToken();
 	}
 
-	return this->Accesstoken;
+	return this->AccessToken;
 }
 
-void UStomtConfig::SetAccessToken(FString AccessToken)
+void UStomtConfig::SetAccessToken(FString NewAccessToken)
 {
-	if (this->Accesstoken.Equals(AccessToken)) return;
+	if (this->AccessToken.Equals(NewAccessToken)) return;
 
-	this->Accesstoken = AccessToken;
+	this->AccessToken = NewAccessToken;
 
-	this->SaveAccesstoken(this->Accesstoken);
+	this->SaveAccessToken(this->AccessToken);
 
 	OnConfigUpdated.Broadcast(this);
 }
@@ -261,9 +261,9 @@ bool UStomtConfig::AddStomt(UStomt* NewStomt)
 	return SaveStomtToConf(*NewStomt);
 }
 
-bool UStomtConfig::SaveAccesstoken(FString NewAccesstoken)
+bool UStomtConfig::SaveAccessToken(FString NewAccessToken)
 {
-	return SaveValueToStomtConf(this->AccessTokenFieldName, NewAccesstoken);
+	return SaveValueToStomtConf(this->AccessTokenFieldName, NewAccessToken);
 }
 
 bool UStomtConfig::SaveValueToStomtConf(FString FieldName, FString FieldValue)

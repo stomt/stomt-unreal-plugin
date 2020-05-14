@@ -27,7 +27,7 @@ UStomtTrack::UStomtTrack()
 	this->SetDevicePlatform(UGameplayStatics::GetPlatformName());
 	UE_LOG(StomtInit, Log, TEXT("DevicePlatform: %s"), *this->DevicePlatform);
 
-	this->SetDeviceID(FGenericPlatformProcess::ComputerName());
+	this->SetDeviceId(FGenericPlatformProcess::ComputerName());
 	UE_LOG(StomtInit, Log, TEXT("DeviceId: %s"), *this->DeviceId);
 
 	this->SetSdkType(FString("UnrealEngine") + UKismetSystemLibrary::GetEngineVersion());
@@ -107,7 +107,7 @@ void UStomtTrack::SetDevicePlatform(FString NewDevicePlatform)
 	this->DevicePlatform = NewDevicePlatform;
 }
 
-void  UStomtTrack::SetDeviceID(FString NewDeviceId)
+void  UStomtTrack::SetDeviceId(FString NewDeviceId)
 {
 	this->DeviceId = NewDeviceId;
 }

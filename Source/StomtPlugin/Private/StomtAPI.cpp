@@ -49,31 +49,31 @@ UStomtAPI::~UStomtAPI()
 {
 }
 
-void UStomtAPI::SendStomt(UStomt* Stomt)
+void UStomtAPI::SendStomt(UStomt* NewStomt)
 {
-	if (!this->bIsConnected())
+	if (!this->IsConnected())
 	{
-		this->Config->AddStomt(Stomt);
+		this->Config->AddStomt(NewStomt);
 	}
 
 	UStomtRestRequest* Request = this->SetupNewPostRequest();
 	Request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnSendStomtRequestResponse);
 
 	// Fields
-	Request->GetRequestObject()->SetField(TEXT("target_id"), UStomtJsonValue::ConstructJsonValueString(this, Stomt->GetTargetId()));
-	Request->GetRequestObject()->SetField(TEXT("positive"), UStomtJsonValue::ConstructJsonValueBool(this, Stomt->GetPositive()));
-	Request->GetRequestObject()->SetField(TEXT("text"), UStomtJsonValue::ConstructJsonValueString(this, Stomt->GetText()));
-	Request->GetRequestObject()->SetField(TEXT("anonym"), UStomtJsonValue::ConstructJsonValueBool(this, Stomt->GetAnonym()));
+	Request->GetRequestObject()->SetField(TEXT("target_id"), UStomtJsonValue::ConstructJsonValueString(this, NewStomt->GetTargetId()));
+	Request->GetRequestObject()->SetField(TEXT("positive"), UStomtJsonValue::ConstructJsonValueBool(this, NewStomt->GetPositive()));
+	Request->GetRequestObject()->SetField(TEXT("text"), UStomtJsonValue::ConstructJsonValueString(this, NewStomt->GetText()));
+	Request->GetRequestObject()->SetField(TEXT("anonym"), UStomtJsonValue::ConstructJsonValueBool(this, NewStomt->GetAnonym()));
 	
 	//Labels
 	UStomtRestJsonObject* JObjExtraData = UStomtRestJsonObject::ConstructJsonObject(this);
 	TArray<UStomtJsonValue*> Labels = TArray<UStomtJsonValue*>();
 
-	for (int i = 0; i != Stomt->GetLabels().Num(); ++i)
+	for (int i = 0; i != NewStomt->GetLabels().Num(); ++i)
 	{
-		if (!Stomt->GetLabels()[i]->GetName().IsEmpty())
+		if (!NewStomt->GetLabels()[i]->GetName().IsEmpty())
 		{
-			Labels.Add(UStomtJsonValue::ConstructJsonValueString(this, Stomt->GetLabels()[i]->GetName()));
+			Labels.Add(UStomtJsonValue::ConstructJsonValueString(this, NewStomt->GetLabels()[i]->GetName()));
 		}
 	}
 
@@ -356,9 +356,9 @@ FString UStomtAPI::GetImageUrl()
 	return this->ImageUrl;
 }
 
-void UStomtAPI::SetStomtToSend(UStomt * Stomt)
+void UStomtAPI::SetStomtToSend(UStomt * NewStomt)
 {
-	this->StomtToSend = Stomt;
+	this->StomtToSend = NewStomt;
 }
 
 FString UStomtAPI::ReadLogFile(FString LogFileName)
@@ -412,10 +412,10 @@ void UStomtAPI::SendLogFile(FString LogFileData, FString LogFileName)
 	UStomtRestRequest* Request = this->SetupNewPostRequest();
 	Request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnSendLogFileResponse);
 
-	FString LogJson = FString(TEXT("{ \"files\": { \"stomt\": [ { \"data\":\"") + FBase64::Encode(LogFileData) + TEXT("\", \"filename\" : \"") + LogFileName + TEXT("\" } ] } }"));
+	FString LogJsonString = FString(TEXT("{ \"files\": { \"stomt\": [ { \"data\":\"") + FBase64::Encode(LogFileData) + TEXT("\", \"filename\" : \"") + LogFileName + TEXT("\" } ] } }"));
 
 	Request->UseStaticJsonString(true);
-	Request->SetStaticJsonString(LogJson);
+	Request->SetStaticJsonString(LogJsonString);
 
 	Request->ProcessUrl(this->GetRestUrl().Append(TEXT("/files")));
 
@@ -656,8 +656,8 @@ FString UStomtAPI::ReadScreenshotAsBase64()
 	FString ScreenDir = FPaths::ScreenShotDir();
 	FString FilePath = ScreenDir + this->DefaultScreenshotName;
 
-	UE_LOG(Stomt, Log, TEXT("TakeScreenshot | FilePath: %s"), *FilePath);
-	UE_LOG(Stomt, Log, TEXT("Screenshot | AllocatedSize: %d"), this->ReadBinaryFile(FilePath).GetAllocatedSize());
+	UE_LOG(StomtLog, Log, TEXT("TakeScreenshot | FilePath: %s"), *FilePath);
+	UE_LOG(StomtLog, Log, TEXT("Screenshot | AllocatedSize: %d"), this->ReadBinaryFile(FilePath).GetAllocatedSize());
 
 	TArray<uint8> File = this->ReadBinaryFile(FilePath);
 
@@ -673,13 +673,13 @@ FString UStomtAPI::ReadScreenshotAsBase64()
 
 void UStomtAPI::OnARequestFailed(UStomtRestRequest * Request)
 {
-	this->NetworkError = true;
+	this->bNetworkError = true;
 	this->OnRequestFailed.Broadcast(Request);
 }
 
 bool UStomtAPI::IsConnected()
 {
-	return !NetworkError;
+	return !bNetworkError;
 }
 
 void UStomtAPI::ConnectionTest()
@@ -837,7 +837,7 @@ void UStomtAPI::AddCustomKeyValuePair(FString Key, FString Value)
 
 void UStomtAPI::HandleOfflineStomts()
 {
-	if (this->bIsConnected())
+	if (this->IsConnected())
 	{
 		UE_LOG(StomtNetwork, Log, TEXT("Stomt API is connected."));
 		this->SendOfflineStomts();
@@ -854,10 +854,10 @@ void UStomtAPI::SendOfflineStomts()
 	if (Stomts.Num() > 0)
 	{
 		UE_LOG(StomtNetwork, Log, TEXT("Start sending offline stomts: %d"), Stomts.Num());
-		for (UStomt* Stomt : Stomts)
+		for (UStomt* StomtToSend : Stomts)
 		{
 			UE_LOG(StomtNetwork, Log, TEXT("Sending Offline Stomt"));
-			this->SendStomt(Stomt);
+			this->SendStomt(StomtToSend);
 		}
 
 		this->Config->ClearStomts();

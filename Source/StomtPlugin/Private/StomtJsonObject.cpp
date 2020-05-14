@@ -79,7 +79,7 @@ bool UStomtRestJsonObject::DecodeJson(const FString& JsonString)
 	// If we've failed to deserialize the string, we should clear our internal data
 	Reset();
 
-	UE_LOG(Stomt, Error, TEXT("Json decoding failed for: %s"), *JsonString);
+	UE_LOG(StomtLog, Error, TEXT("Json decoding failed for: %s"), *JsonString);
 
 	return false;
 }

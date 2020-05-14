@@ -110,7 +110,7 @@ private:
 	/**
 	* Saves the access token in /stomt/stomt.conf.json
 	*/
-	bool SaveAccesstoken(FString NewAccessToken);
+	bool SaveAccessToken(FString NewAccessToken);
 
 	/**
 	* Saves the a value in /stomt/stomt.conf.json

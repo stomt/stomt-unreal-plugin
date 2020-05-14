@@ -20,7 +20,7 @@ class STOMTPLUGIN_API UStomtAPI : public UObject
 
 public:
 
-	static UStomtAPI* ConstructStomtAPI(FString AppID);
+	static UStomtAPI* ConstructStomtAPI(FString AppId);
 
 	UStomtAPI();
 
@@ -62,7 +62,7 @@ public:
 	* That was created here: https://www.stomt.com/dev/my-apps
 	* @param AppID - Stomt APP ID
 	*/
-	void SetAppID(FString NewAppId);
+	void SetAppId(FString NewAppId);
 
 	FString GetAppId();
 
@@ -124,7 +124,7 @@ public:
 	* Sends an REST Request for a stomt target.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
-	UStomtRestRequest* RequestTargetByAppID();
+	UStomtRestRequest* RequestTargetByAppId();
 
 	/**
 	* Sends an REST Request for a stomt target.
@@ -207,7 +207,7 @@ public:
 	void OnARequestFailed(UStomtRestRequest* Request);
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
-	bool bIsConnected();
+	bool IsConnected();
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
 	void ConnectionTest();
