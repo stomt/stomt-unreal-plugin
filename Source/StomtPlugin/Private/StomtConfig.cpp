@@ -159,7 +159,7 @@ bool UStomtConfig::GetSubscribed()
 
 void UStomtConfig::SetSubscribed(bool bNewSubscribed)
 {
-	if (this->bSubscribed === bNewSubscribed) return;
+	if (this->bSubscribed == bNewSubscribed) return;
 
 	this->bSubscribed = bNewSubscribed;
 
@@ -175,7 +175,7 @@ bool UStomtConfig::GetLoggedIn()
 
 void UStomtConfig::SetLoggedIn(bool bNewLoggedIn)
 {
-	if (this->bLoggedIn === bNewLoggedIn) return;
+	if (this->bLoggedIn == bNewLoggedIn) return;
 
 	this->bLoggedIn = bNewLoggedIn;
 
@@ -191,7 +191,7 @@ bool UStomtConfig::GetAcceptScreenshotUpload()
 
 void UStomtConfig::SetAcceptScreenshotUpload(bool bNewAcceptScreenshotUpload)
 {
-	if (this->bAcceptScreenshotUpload === bNewAcceptScreenshotUpload) return;
+	if (this->bAcceptScreenshotUpload == bNewAcceptScreenshotUpload) return;
 
 	this->bAcceptScreenshotUpload = bNewAcceptScreenshotUpload;
 

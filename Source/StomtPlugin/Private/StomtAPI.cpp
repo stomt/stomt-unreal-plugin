@@ -467,7 +467,7 @@ void UStomtAPI::OnSendLogFileResponse(UStomtRestRequest * Request)
 
 	if (Request->GetResponseCode() == 403 || Request->GetResponseCode() == 419 || Request->GetResponseCode() == 413)
 	{
-		if (this->StomtToSend !== NULL)
+		if (this->StomtToSend != NULL)
 		{
 			this->SendStomt(this->StomtToSend);
 			this->bLogFileWasSend = false;
@@ -632,7 +632,7 @@ void UStomtAPI::SendTrack(UStomtTrack * NewTrack)
 	
 	UStomtRestJsonObject* JObjTrack = NewTrack->GetAsJsonObject();
 
-	if (JObjTrack !== NULL)
+	if (JObjTrack != NULL)
 	{
 		if (!JObjTrack->IsValidLowLevel())
 		{
@@ -760,14 +760,14 @@ FString UStomtAPI::GetLangText(FString Text)
 		this->CurrentLanguage = "en";
 	}
 
-	if (this->Languages !== NULL)
+	if (this->Languages != NULL)
 	{
 		if (!this->Languages->HasField("data"))
 		{
 			return "";
 		}
 
-		if (this->Languages->GetObjectField("data") !== NULL)
+		if (this->Languages->GetObjectField("data") != NULL)
 		{
 			if (!this->Languages->GetObjectField("data")->HasField(this->CurrentLanguage))
 			{

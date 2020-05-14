@@ -11,10 +11,9 @@ UStomtRestRequest::UStomtRestRequest()
 {
 	this->useStaticJsonString = false;
 	this->UseRequestLogging(true);
-	ResponseJsonObj = NULL;
-	RequestJsonObj = NULL;
-
-	ResetData();
+	this->ResponseJsonObj = NULL;
+	this->RequestJsonObj = NULL;
+	this->ResetData();
 }
 
 UStomtRestRequest::~UStomtRestRequest()
@@ -34,7 +33,7 @@ void UStomtRestRequest::SetVerb(StomtEnumRequestVerb::Type Verb)
 
 void UStomtRestRequest::SetHeader(const FString &HeaderName, const FString &HeaderValue)
 {
-	this->RequestHeaders.Add( HeaderName, HeaderValue);
+	this->RequestHeaders.Add(HeaderName, HeaderValue);
 }
 
 void UStomtRestRequest::OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
@@ -45,7 +44,7 @@ void UStomtRestRequest::OnResponseReceived(FHttpRequestPtr Request, FHttpRespons
 		UE_LOG(StomtNetwork, Error, TEXT("Request failed: %s ResponseCode: %d "), *Request->GetURL(), *Response->GetContentAsString());
 
 		// Broadcast the result event
-		OnRequestFail.Broadcast(this);
+		this->OnRequestFail.Broadcast(this);
 		return;
 	}
 
@@ -109,7 +108,7 @@ void UStomtRestRequest::ProcessURL(const FString& Url)
 	TSharedRef<IHttpRequest> HttpRequest = FHttpModule::Get().CreateRequest();
 	HttpRequest->SetURL(Url);
 
-	ProcessRequest(HttpRequest);
+	this->ProcessRequest(HttpRequest);
 }
 
 void UStomtRestRequest::ProcessRequest(TSharedRef<IHttpRequest> HttpRequest)
@@ -142,7 +141,7 @@ void UStomtRestRequest::ProcessRequest(TSharedRef<IHttpRequest> HttpRequest)
 	// Serialize data to json string
 	FString OutputString;
 	TSharedRef< TJsonWriter<> > Writer = TJsonWriterFactory<>::Create(&OutputString);
-	FJsonSerializer::Serialize(RequestJsonObj->GetRootObject().ToSharedRef(), Writer); 
+	FJsonSerializer::Serialize(this->RequestJsonObj->GetRootObject().ToSharedRef(), Writer); 
 
 
 	// Set Json content
@@ -198,7 +197,7 @@ void UStomtRestRequest::ProcessRequest(TSharedRef<IHttpRequest> HttpRequest)
 void UStomtRestRequest::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
 	// Be sure that we have no data from previous response
-	ResetResponseData();
+	this->ResetResponseData();
 
 	// Check we have result to process futher
 	if (!bWasSuccessful)
@@ -206,15 +205,15 @@ void UStomtRestRequest::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpR
 		UE_LOG(StomtNetwork, Error, TEXT("Request failed: %s"), *Request->GetURL());
 
 		// Broadcast the result event
-		OnRequestFail.Broadcast(this);
+		this->OnRequestFail.Broadcast(this);
 		return;
 	}
 
 	// Save response data as a string
-	ResponseContent = Response->GetContentAsString();
+	this->ResponseContent = Response->GetContentAsString();
 
 	// Save response code as int32
-	ResponseCode = Response->GetResponseCode();
+	this->ResponseCode = Response->GetResponseCode();
 
 	// Log response state
 
@@ -237,21 +236,21 @@ void UStomtRestRequest::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpR
 		FString Value;
 		if (Header.Split(TEXT(": "), &Key, &Value))
 		{
-			ResponseHeaders.Add(Key, Value);
+			this->ResponseHeaders.Add(Key, Value);
 		}
 	}
 
 	// Try to deserialize data to JSON
-	TSharedRef<TJsonReader<TCHAR>> JsonReader = TJsonReaderFactory<TCHAR>::Create(ResponseContent);
-	FJsonSerializer::Deserialize(JsonReader, ResponseJsonObj->GetRootObject());
+	TSharedRef<TJsonReader<TCHAR>> JsonReader = TJsonReaderFactory<TCHAR>::Create(this->ResponseContent);
+	FJsonSerializer::Deserialize(JsonReader, this->ResponseJsonObj->GetRootObject());
 
 	// Decide whether the Request was successful
-	bIsValidJsonResponse = bWasSuccessful && ResponseJsonObj->GetRootObject().IsValid();
+	this->bIsValidJsonResponse = bWasSuccessful && this->ResponseJsonObj->GetRootObject().IsValid();
 
 	// Log errors
-	if (!bIsValidJsonResponse)
+	if (!this->bIsValidJsonResponse)
 	{
-		if (!ResponseJsonObj->GetRootObject().IsValid())
+		if (!this->ResponseJsonObj->GetRootObject().IsValid())
 		{
 			// As we assume it's recommended way to use current class, but not the only one,
 			// it will be the warning instead of error
@@ -259,31 +258,27 @@ void UStomtRestRequest::OnProcessRequestComplete(FHttpRequestPtr Request, FHttpR
 		}
 	}
 
-	
-	//UE_LOG(LogTemp, Log, TEXT("Response (json): %s "), this->ResponseJsonObj->GetRootObject()-> );
 	// Broadcast the result event
-	OnRequestComplete.Broadcast(this);
-
+	this->OnRequestComplete.Broadcast(this);
 	
 	// Finish the latent action
-	if (ContinueAction)
+	if (this->ContinueAction)
 	{
-		StomtLatentAction<UStomtRestJsonObject*> *K = ContinueAction;
-		ContinueAction = nullptr;
+		StomtLatentAction<UStomtRestJsonObject*> *K = this->ContinueAction;
+		this->ContinueAction = nullptr;
 
-		K->Call(ResponseJsonObj);
-	}
-	
+		K->Call(this->ResponseJsonObj);
+	}	
 }
 
-void UStomtRestRequest::UseStaticJsonString(bool use)
+void UStomtRestRequest::UseStaticJsonString(bool bNewUseStaticJsonString)
 {
-	this->useStaticJsonString = use;
+	this->bUseStaticJsonString = bNewUseStaticJsonString;
 }
 
-void UStomtRestRequest::UseRequestLogging(bool use)
+void UStomtRestRequest::UseRequestLogging(bool bNewRequestLogging)
 {
-	this->RequestLogging = use;
+	this->bRequestLogging = bNewRequestLogging;
 }
 
 void UStomtRestRequest::SetStaticJsonString(FString JsonString)
@@ -294,7 +289,7 @@ void UStomtRestRequest::SetStaticJsonString(FString JsonString)
 //////////////////////////////////////////////////////////////////////////
 // Destruction and reset
 
-void UStomtRestRequest::ResetData()
+void UStomtRestRequest::this->ResetData()
 {
 	ResetRequestData();
 	ResetResponseData();
@@ -302,33 +297,33 @@ void UStomtRestRequest::ResetData()
 
 void UStomtRestRequest::ResetRequestData()
 {
-	if (RequestJsonObj != NULL)
+	if (this->RequestJsonObj != NULL)
 	{
-		RequestJsonObj->Reset();
+		this->RequestJsonObj->Reset();
 	}
 	else
 	{
-		RequestJsonObj = NewObject<UStomtRestJsonObject>();
+		this->RequestJsonObj = NewObject<UStomtRestJsonObject>();
 	}
 
-	this->useStaticJsonString = false;
+	this->bUseStaticJsonString = false;
 }
 
 void UStomtRestRequest::ResetResponseData()
 {
-	if (ResponseJsonObj != NULL)
+	if (this->ResponseJsonObj != NULL)
 	{
-		ResponseJsonObj->Reset();
+		this->ResponseJsonObj->Reset();
 	}
 	else
 	{
-		ResponseJsonObj = NewObject<UStomtRestJsonObject>();
+		this->ResponseJsonObj = NewObject<UStomtRestJsonObject>();
 	}
 
-	ResponseHeaders.Empty();
-	ResponseCode = -1;
+	this->ResponseHeaders.Empty();
+	this->ResponseCode = -1;
 
-	bIsValidJsonResponse = false;
+	this->bIsValidJsonResponse = false;
 }
 
 
@@ -337,17 +332,17 @@ void UStomtRestRequest::ResetResponseData()
 
 UStomtRestJsonObject* UStomtRestRequest::GetRequestObject()
 {
-	return RequestJsonObj;
+	return this->RequestJsonObj;
 }
 
 void UStomtRestRequest::SetRequestObject(UStomtRestJsonObject* JsonObject)
 {
-	RequestJsonObj = JsonObject;
+	this->RequestJsonObj = JsonObject;
 }
 
 UStomtRestJsonObject* UStomtRestRequest::GetResponseObject()
 {
-	return ResponseJsonObj;
+	return this->ResponseJsonObj;
 }
 
 void UStomtRestRequest::SetResponseObject(UStomtRestJsonObject* JsonObject)
