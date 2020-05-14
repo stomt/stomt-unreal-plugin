@@ -14,18 +14,18 @@ UStomt::UStomt()
 
 UStomt* UStomt::ConstructStomt(FString NewTargetId, bool bNewPositive, FString NewText)
 {
-	UStomt* Stomt = NewObject<UStomt>();
-	Stomt->SetTargetID(NewTargetId);
-	Stomt->SetPositive(bNewPositive);
-	Stomt->SetText(NewText);
+	UStomt* NewStomt = NewObject<UStomt>();
+	NewStomt->SetTargetId(NewTargetId);
+	NewStomt->SetPositive(bNewPositive);
+	NewStomt->SetText(NewText);
 
-	return Stomt;
+	return NewStomt;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Data accessors
 
-void UStomt::SetTargetID(FString NewTargetId)
+void UStomt::SetTargetId(FString NewTargetId)
 {
 	this->TargetId = NewTargetId;
 }
@@ -45,9 +45,9 @@ void UStomt::SetAnonym(bool bNewAnonym)
 	this->bAnonym = bNewAnonym;
 }
 
-void UStomt::SetServersideID(FString NewServersideID)
+void UStomt::SetServersideId(FString NewServersideId)
 {
-	this->ServersideID = NewServersideID;
+	this->ServersideId = NewServersideId;
 }
 
 void UStomt::AddLabel(UStomtLabel* newLabel)
@@ -72,7 +72,7 @@ void UStomt::SetLabels(TArray<FString> NewLabels)
 	}
 }
 
-FString UStomt::GetTargetID()
+FString UStomt::GetTargetId()
 {
 	return this->TargetId;
 }
@@ -96,7 +96,7 @@ TArray<UStomtLabel*> UStomt::GetLabels()
 	return this->Labels;
 }
 
-FString UStomt::GetServersideID()
+FString UStomt::GetServersideId()
 {
-	return this->ServersideID;
+	return this->ServersideId;
 }

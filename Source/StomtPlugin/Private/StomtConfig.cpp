@@ -300,7 +300,7 @@ bool UStomtConfig::SaveStomtToConf(UStomt& NewStomt)
 		}
 	}
 
-	JObjStomt->SetField(TEXT("target_id"), UStomtJsonValue::ConstructJsonValueString(this, NewStomt.GetTargetID()));
+	JObjStomt->SetField(TEXT("target_id"), UStomtJsonValue::ConstructJsonValueString(this, NewStomt.GetTargetId()));
 	JObjStomt->SetField(TEXT("positive"), UStomtJsonValue::ConstructJsonValueBool(this, NewStomt.GetPositive()));
 	JObjStomt->SetField(TEXT("text"), UStomtJsonValue::ConstructJsonValueString(this, NewStomt.GetText()));
 	JObjStomt->SetField(TEXT("anonym"), UStomtJsonValue::ConstructJsonValueBool(this, NewStomt.GetAnonym()));

@@ -41,7 +41,7 @@ public:
 	* @param URL - Stomt REST URL
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
-	void SetRestURL(FString NewRestUrl);
+	void SetRestUrl(FString NewRestUrl);
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
 	FString GetRestUrl();
@@ -64,7 +64,7 @@ public:
 	*/
 	void SetAppID(FString NewAppId);
 
-	FString GetAppID();
+	FString GetAppId();
 
 	/**
 	* Returns the Target-Name that can be displayed.
@@ -76,17 +76,17 @@ public:
 	* Sets a Stomt Target
 	* @param TargetID - ID of Stomt Target
 	*/
-	void SetTargetID(FString NewTargetID);
+	void SetTargetId(FString NewTargetId);
 
-	FString	GetTargetID();
+	FString	GetTargetId();
 
 	/**
 	* Sets the URL for the target image.
 	* @param URL - Target-Image URL
 	*/
-	void SetImageURL(FString NewImageUrl);
+	void SetImageUrl(FString NewImageUrl);
 	
-	FString	GetImageURL();
+	FString	GetImageUrl();
 
 	void SetStomtToSend(UStomt* Stomt);
 
@@ -133,7 +133,7 @@ public:
 	* @param TargetID - ID of the requested stomt target.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
-	UStomtRestRequest* RequestTarget(FString TargetID);
+	UStomtRestRequest* RequestTarget(FString TargetId);
 
 	UFUNCTION()
 	void OnRequestTargetResponse(UStomtRestRequest * Request);
@@ -207,7 +207,7 @@ public:
 	void OnARequestFailed(UStomtRestRequest* Request);
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
-	bool IsConnected();
+	bool bIsConnected();
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
 	void ConnectionTest();
@@ -249,29 +249,29 @@ public:
 
 	bool bNetworkError;
 
-	FString RestURL;
+	FString RestUrl;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
-	FString StomtURL;
+	FString StomtUrl;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
 	FString TargetName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
-	FString TargetID;
+	FString TargetId;
 
-	FString AppID;
+	FString AppId;
 	
-	FString ImageURL;
+	FString ImageUrl;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
-	in tStomtsCreatedByUser;
+	int StomtsCreatedByUser;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
 	int StomtsReceivedByTarget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
-	FString UserID;
+	FString UserId;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Multi-Language

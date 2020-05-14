@@ -103,7 +103,7 @@ TArray<FString> UStomtRestRequest::GetAllResponseHeaders()
 //////////////////////////////////////////////////////////////////////////
 // URL processing
 
-void UStomtRestRequest::ProcessURL(const FString& Url)
+void UStomtRestRequest::ProcessUrl(const FString& Url)
 {
 	TSharedRef<IHttpRequest> HttpRequest = FHttpModule::Get().CreateRequest();
 	HttpRequest->SetURL(Url);

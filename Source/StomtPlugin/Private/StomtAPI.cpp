@@ -17,13 +17,13 @@ UStomtAPI* UStomtAPI::ConstructStomtAPI(FString NewAppId)
 {
 	UStomtAPI* Api = NewObject<UStomtAPI>();
 
-	Api->SetAppID(NewAppId);
+	Api->SetAppId(NewAppId);
 
 	UE_LOG(StomtInit, Log, TEXT("Construct Stomt API"));
-	UE_LOG(StomtInit, Log, TEXT("AppID: %s "), *Api->GetAppId());
-	UE_LOG(StomtInit, Log, TEXT("RestURL: %s "), *Api->GetRestUrl());
+	UE_LOG(StomtInit, Log, TEXT("AppId: %s "), *Api->GetAppId());
+	UE_LOG(StomtInit, Log, TEXT("RestUrl: %s "), *Api->GetRestUrl());
 
-	api->LoadLanguageFile();
+	Api->LoadLanguageFile();
 
 	UE_LOG(StomtInit, Log, TEXT("LangTest: %s"), *Api->GetLangText("SDK_STOMT_WISH_BUBBLE"));
 
@@ -90,18 +90,18 @@ void UStomtAPI::SendStomt(UStomt* Stomt)
 		Request->GetRequestObject()->SetObjectField(TEXT("extradata"), JObjExtraData);
 	}
 
-	if (CustomKeyValuePairs.Num() > 0)
+	if (this->CustomKeyValuePairs.Num() > 0)
 	{
-		for (int i = 0; i != CustomKeyValuePairs.Num(); ++i)
+		for (int i = 0; i != this->CustomKeyValuePairs.Num(); ++i)
 		{
-			JObjExtraData->SetStringField(CustomKeyValuePairs[i][0], CustomKeyValuePairs[i][1]);
+			JObjExtraData->SetStringField(this->CustomKeyValuePairs[i][0], this->CustomKeyValuePairs[i][1]);
 		}	
 	}
 
 	// Stomt Image
-	if (!this->ImageUploadName.IsEmpty() && UseImageUpload)
+	if (!this->ImageUploadName.IsEmpty() && this->bUseImageUpload)
 	{
-		request->GetRequestObject()->SetStringField(TEXT("img_name"), ImageUploadName);
+		Request->GetRequestObject()->SetStringField(TEXT("img_name"), this->ImageUploadName);
 		UE_LOG(StomtNetwork, Log, TEXT("Append Image"));
 	}
 	else
@@ -117,10 +117,10 @@ void UStomtAPI::SendStomt(UStomt* Stomt)
 		JObjFileContext->SetField(TEXT("file_uid"), UStomtJsonValue::ConstructJsonValueString(this, this->ErrorLogFileUid));
 
 		JObjFile->SetObjectField(TEXT("stomt"), JObjFileContext);
-		request->GetRequestObject()->SetObjectField(TEXT("files"), JObjFile);
+		Request->GetRequestObject()->SetObjectField(TEXT("files"), JObjFile);
 	}
 
-	request->ProcessURL(this->GetRestUrl().Append(TEXT("/stomts")));
+	Request->ProcessUrl(this->GetRestUrl().Append(TEXT("/stomts")));
 }
 
 void UStomtAPI::OnSendStomtRequestResponse(UStomtRestRequest * Request)
@@ -132,7 +132,7 @@ void UStomtAPI::OnSendStomtRequestResponse(UStomtRestRequest * Request)
 			if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("id")))
 			{
 				FString Id = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetStringField(TEXT("id"));
-				this->Track->SetStomtID(Id);
+				this->Track->SetStomtId(Id);
 				this->Track->SetEventCategory("stomt");
 				this->Track->SetEventAction("submit");
 				this->SendTrack(this->Track);
@@ -158,7 +158,7 @@ UStomtRestRequest* UStomtAPI::SendLoginRequest(FString UserName, FString Passwor
 	Request->GetRequestObject()->SetStringField(TEXT("emailusername"), UserName);
 	Request->GetRequestObject()->SetStringField(TEXT("password"), Password);
 
-	Request->ProcessURL(this->GetRestUrl().Append(TEXT("/authentication/session")));
+	Request->ProcessUrl(this->GetRestUrl().Append(TEXT("/authentication/session")));
 
 	Request->UseRequestLogging(true);
 
@@ -203,7 +203,7 @@ UStomtRestRequest* UStomtAPI::RequestSession(FString Accesstoken)
 	Request->SetHeader(TEXT("accesstoken"), this->Config->GetAccessToken());
 	UE_LOG(StomtNetwork, Log, TEXT("RequestSession: AddAccesstoken: %s "), *this->Config->GetAccessToken());
 
-	Request->ProcessURL(this->GetRestUrl().Append("/authentication/session"));
+	Request->ProcessUrl(this->GetRestUrl().Append("/authentication/session"));
 
 	return Request;
 }
@@ -226,14 +226,14 @@ void UStomtAPI::OnRequestSessionResponse(UStomtRestRequest * Request)
 	if (!Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("user"))) return;
 
 	this->StomtsCreatedByUser = (int)Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetObjectField(TEXT("user"))->GetObjectField(TEXT("stats"))->GetNumberField(TEXT("amountStomtsCreated"));
-	this->UserID = (FString)Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetObjectField(TEXT("user"))->GetStringField("id");
+	this->UserId = (FString)Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetObjectField(TEXT("user"))->GetStringField("id");
 
 	OnSessionRequestComplete.Broadcast(Request);
 
 	UE_LOG(StomtNetwork, Log, TEXT("StomtsCreatedByUser: %d | StomtsReceivedByTarget: %d"), StomtsCreatedByUser, StomtsReceivedByTarget);
 }
 
-UStomtRestRequest* UStomtAPI::RequestTargetByAppID()
+UStomtRestRequest* UStomtAPI::RequestTargetByAppId()
 {
 	UStomtRestRequest* Request = NewObject<UStomtRestRequest>();
 	Request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnRequestTargetResponse);
@@ -242,7 +242,7 @@ UStomtRestRequest* UStomtAPI::RequestTargetByAppID()
 	Request->SetVerb(StomtEnumRequestVerb::GET);
 	Request->SetHeader(TEXT("appid"), this->GetAppId());
 
-	Request->ProcessURL(this->GetRestUrl().Append("/targets/"));
+	Request->ProcessUrl(this->GetRestUrl().Append("/targets/"));
 
 	return Request;
 }
@@ -256,7 +256,7 @@ UStomtRestRequest* UStomtAPI::RequestTarget(FString TargetId)
 	Request->SetVerb(StomtEnumRequestVerb::GET);
 	Request->SetHeader(TEXT("appid"), this->GetAppId());
 
-	Request->ProcessURL(this->GetRestUrl().Append("/targets/").Append(TargetId));
+	Request->ProcessUrl(this->GetRestUrl().Append("/targets/").Append(TargetId));
 
 	return Request;
 }
@@ -271,7 +271,7 @@ void UStomtAPI::OnRequestTargetResponse(UStomtRestRequest * Request)
 	
 	this->TargetName = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetStringField(TEXT("displayname"));
 	this->TargetId = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetStringField(TEXT("id"));
-	this->SetImageURL(Request->GetResponseObject()
+	this->SetImageUrl(Request->GetResponseObject()
 		->GetObjectField(TEXT("data"))
 		->GetObjectField(TEXT("images"))
 		->GetObjectField(TEXT("profile"))
@@ -290,7 +290,7 @@ void UStomtAPI::OnRequestTargetResponse(UStomtRestRequest * Request)
 	this->bNetworkError = false;
 }
 
-void UStomtAPI::SetRestURL(FString NewRestUrl)
+void UStomtAPI::SetRestUrl(FString NewRestUrl)
 {
 	this->RestUrl = NewRestUrl;
 }
@@ -300,27 +300,27 @@ FString UStomtAPI::GetRestUrl()
 	return this->RestUrl;
 }
 
-void UStomtAPI::SetStomtURL(FString NewStomtUrl)
+void UStomtAPI::SetStomtUrl(FString NewStomtUrl)
 {
 	this->StomtUrl = NewStomtUrl;
 }
 
-FString UStomtAPI::GetStomtURL()
+FString UStomtAPI::GetStomtUrl()
 {
-	return this->StomtURL;
+	return this->StomtUrl;
 }
 
-void UStomtAPI::SetAppID(FString NewAppId)
+void UStomtAPI::SetAppId(FString NewAppId)
 {
-	if (NewAppId.Equals("Copy_your_AppID_here") || NewAppId.Equals("AKN5M7Ob0MqxKXYdE9i3IhQtF") || NewAppId.Equals(""))
+	if (NewAppId.Equals("Copy_your_AppId_here") || NewAppId.Equals("AKN5M7Ob0MqxKXYdE9i3IhQtF") || NewAppId.Equals(""))
 	{
-		this->AppID = "AKN5M7Ob0MqxKXYdE9i3IhQtF";
+		this->AppId = "AKN5M7Ob0MqxKXYdE9i3IhQtF";
 		this->SetRestUrl("https://test.rest.stomt.com");
 		this->SetStomtUrl("https://test.stomt.com/");
 	}
 	else
 	{
-		this->AppID = NewAppId;
+		this->AppId = NewAppId;
 		this->SetRestUrl("https://rest.stomt.com");
 		this->SetStomtUrl("https://www.stomt.com/");
 	}	
@@ -328,7 +328,7 @@ void UStomtAPI::SetAppID(FString NewAppId)
 
 FString UStomtAPI::GetAppId()
 {
-	return this->AppID;
+	return this->AppId;
 }
 
 FString UStomtAPI::GetTargetName()
@@ -346,14 +346,14 @@ FString UStomtAPI::GetTargetId()
 	return this->TargetId;
 }
 
-void UStomtAPI::SetImageURL(FString URL)
+void UStomtAPI::SetImageUrl(FString NewImageUrl)
 {
-	this->ImageURL = URL;
+	this->ImageUrl = NewImageUrl;
 }
 
-FString UStomtAPI::GetImageURL()
+FString UStomtAPI::GetImageUrl()
 {
-	return this->ImageURL;
+	return this->ImageUrl;
 }
 
 void UStomtAPI::SetStomtToSend(UStomt * Stomt)
@@ -417,7 +417,7 @@ void UStomtAPI::SendLogFile(FString LogFileData, FString LogFileName)
 	Request->UseStaticJsonString(true);
 	Request->SetStaticJsonString(LogJson);
 
-	Request->ProcessURL(this->GetRestUrl().Append(TEXT("/files")));
+	Request->ProcessUrl(this->GetRestUrl().Append(TEXT("/files")));
 
 	this->bLogFileWasSend = true;
 }
@@ -493,7 +493,7 @@ void UStomtAPI::SendImageFile(FString ImageFileDataBase64)
 	Request->UseStaticJsonString(true);
 	Request->SetStaticJsonString(ImageJson);
 
-	Request->ProcessURL(this->GetRestUrl().Append(TEXT("/images")));
+	Request->ProcessUrl(this->GetRestUrl().Append(TEXT("/images")));
 
 }
 
@@ -565,7 +565,7 @@ void UStomtAPI::SendSubscription(FString EMailOrNumber, bool bUseEmail)
 
 	Request->GetRequestObject()->SetStringField(TEXT("message"), this->GetLangText("SDK_SUBSCRIBE_GET_NOTIFIED"));
 
-	Request->ProcessURL(this->GetRestUrl().Append(TEXT("/authentication/subscribe")));
+	Request->ProcessUrl(this->GetRestUrl().Append(TEXT("/authentication/subscribe")));
 }
 
 void UStomtAPI::OnSendEMailResponse(UStomtRestRequest * Request)
@@ -597,7 +597,7 @@ void UStomtAPI::SendLogoutRequest()
 	UStomtRestRequest* Request = this->SetupNewDeleteRequest();
 	Request->OnRequestComplete.AddDynamic(this, &UStomtAPI::UStomtAPI::OnSendLogoutResponse);
 
-	Request->ProcessURL(this->GetRestUrl().Append(TEXT("/authentication/session")));
+	Request->ProcessUrl(this->GetRestUrl().Append(TEXT("/authentication/session")));
 
 	this->Config->SetAccessToken(TEXT(""));
 	this->Config->SetLoggedIn(false);
@@ -648,7 +648,7 @@ void UStomtAPI::SendTrack(UStomtTrack * NewTrack)
 
 	Request->SetRequestObject(JObjTrack);
 
-	Request->ProcessURL(this->GetRestUrl().Append(TEXT("/tracks")));
+	Request->ProcessUrl(this->GetRestUrl().Append(TEXT("/tracks")));
 }
 
 FString UStomtAPI::ReadScreenshotAsBase64()
@@ -684,7 +684,7 @@ bool UStomtAPI::IsConnected()
 
 void UStomtAPI::ConnectionTest()
 {
-	this->RequestTargetByAppID();
+	this->RequestTargetByAppId();
 }
 
 

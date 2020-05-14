@@ -13,27 +13,27 @@ UStomtPluginWidget::~UStomtPluginWidget()
 	this->LoginErrorCode = 0;
 }
 
-void UStomtPluginWidget::OnConstruction(FString AppID)
+void UStomtPluginWidget::OnConstruction(FString AppId)
 {
 	// Create API Object
-	if (api == NULL)
+	if (this->Api == NULL)
 	{
-		api = UStomtAPI::ConstructStomtAPI(AppID);
+		this->Api = UStomtAPI::ConstructStomtAPI(AppId);
 	}
 	else
 	{
-		this->api->SetAppID(AppID);
+		this->Api->SetAppId(AppId);
 	}
 
-	this->Config = this->api->Config;
+	this->Config = this->Api->Config;
 
 	// Request Target Name
-	UStomtRestRequest* request = this->api->RequestTargetByAppID();
-	request->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnTargetResponse);
+	UStomtRestRequest* Request = this->Api->RequestTargetByAppId();
+	Request->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnTargetResponse);
 
 	//Lookup EMail
-	this->IsEMailAlreadyKnown = this->api->Config->GetSubscribed();
-	this->IsUserLoggedIn = this->api->Config->GetLoggedIn();
+	this->bIsEMailAlreadyKnown = this->Api->Config->GetSubscribed();
+	this->bIsUserLoggedIn = this->Api->Config->GetLoggedIn();
 }
 
 void UStomtPluginWidget::OnMessageChanged(FString text)
@@ -56,44 +56,44 @@ void UStomtPluginWidget::OnSubmit()
 	}
 
 	// Create Stomt Instance
-	this->stomt = UStomt::ConstructStomt(this->api->GetTargetID(), !this->IsWish, this->Message);
-	this->stomt->SetLabels(this->Labels);
-	this->stomt->SetAnonym(false);
+	this->Stomt = UStomt::ConstructStomt(this->Api->GetTargetId(), !this->bIsWish, this->Message);
+	this->Stomt->SetLabels(this->Labels);
+	this->Stomt->SetAnonym(false);
 
-	this->api->SetStomtToSend(stomt);
+	this->Api->SetStomtToSend(this->Stomt);
 
 	FString LogFileName = FApp::GetProjectName() + FString(TEXT(".log"));
 
-	this->api->HandleOfflineStomts();
+	this->Api->HandleOfflineStomts();
 
-	if (this->UploadLogs)
+	if (this->bUploadLogs)
 	{
-		FString logFile = this->api->ReadLogFile(LogFileName);
-		if (!logFile.IsEmpty())
+		FString LogFile = this->Api->ReadLogFile(LogFileName);
+		if (!LogFile.IsEmpty())
 		{
-			this->api->SendLogFile(logFile, LogFileName);
+			this->Api->SendLogFile(LogFile, LogFileName);
 		}
 		else
 		{
-			this->api->IsLogUploadComplete = true;
-			if (!this->api->UseImageUpload)
+			this->Api->bIsLogUploadComplete = true;
+			if (!this->Api->bUseImageUpload)
 			{
-				this->api->SendStomt(stomt);
+				this->Api->SendStomt(this->Stomt);
 			}
 		}
 	}
 	else
 	{
-		this->api->IsLogUploadComplete = true;
-		if (!this->api->UseImageUpload)
+		this->Api->bIsLogUploadComplete = true;
+		if (!this->Api->bUseImageUpload)
 		{
-			this->api->SendStomt(stomt);
+			this->Api->SendStomt(this->Stomt);
 		}
 	}
 
 	// Check EMail
-	this->IsEMailAlreadyKnown = this->api->Config->GetSubscribed();
-	UE_LOG(Stomt, Log, TEXT("Is EMail Already Known: %s"), this->IsEMailAlreadyKnown ? TEXT("true") : TEXT("false"));
+	this->bIsEMailAlreadyKnown = this->Api->Config->GetSubscribed();
+	UE_LOG(Stomt, Log, TEXT("Is EMail Already Known: %s"), this->bIsEMailAlreadyKnown ? TEXT("true") : TEXT("false"));
 }
 
 void UStomtPluginWidget::OnSubmitLastLayer()
@@ -105,8 +105,8 @@ bool UStomtPluginWidget::OnSubmitLogin()
 {
 	if (!this->UserName.IsEmpty() && !this->UserPassword.IsEmpty())
 	{
-		UStomtRestRequest* request = this->api->SendLoginRequest(this->UserName, this->UserPassword);
-		request->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnLoginResponse);
+		UStomtRestRequest* Request = this->Api->SendLoginRequest(this->UserName, this->UserPassword);
+		Request->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnLoginResponse);
 		this->LoginErrorCode = 0;
 		return true;
 	}
@@ -120,54 +120,54 @@ void UStomtPluginWidget::OnSubmitEMail()
 {
 	if (!this->EMail.IsEmpty())
 	{
-		this->api->SendSubscription(this->EMail, !UsePhoneNumber);
+		this->Api->SendSubscription(this->EMail, !this->bUsePhoneNumber);
 	}
 }
 
 void UStomtPluginWidget::OnLogout()
 {
-	this->api->SendLogoutRequest();
+	this->Api->SendLogoutRequest();
 }
 
 void UStomtPluginWidget::OnLoginResponse(UStomtRestRequest * LoginRequest)
 {
 	this->LoginErrorCode = LoginRequest->GetResponseCode();
-	this->IsUserLoggedIn = this->api->Config->GetLoggedIn();
-	this->api->OnLoginRequestComplete.Broadcast(LoginRequest);
+	this->bIsUserLoggedIn = this->Api->Config->GetLoggedIn();
+	this->Api->OnLoginRequestComplete.Broadcast(LoginRequest);
 }
 
 void UStomtPluginWidget::OnTargetResponse(UStomtRestRequest * TargetRequest)
 {
-	this->TargetName = this->api->GetTargetName();
+	this->TargetName = this->Api->GetTargetName();
 
 	UE_LOG(Stomt, Log, TEXT("OnTargetResponse: %s"), *this->TargetName);
 
-	this->ImageURL = this->api->GetImageURL();
+	this->ImageURL = this->Api->GetImageURL();
 
-	this->api->OnTargetRequestComplete.Broadcast(TargetRequest);
+	this->Api->OnTargetRequestComplete.Broadcast(TargetRequest);
 }
 
-FString UStomtPluginWidget::AppendStomtURLParams(FString url, FString utm_content)
+FString UStomtPluginWidget::AppendStomtURLParams(FString Url, FString UtmContent)
 {
-	url += FString("?utm_source=" + FString("stomt"));
-	url += FString("&utm_medium=" + FString("sdk"));
-	url += FString("&utm_campaign=" + FString("unreal"));
-	url += FString("&utm_term=" + FString(FApp::GetProjectName()) );
+	Url += FString("?utm_source=" + FString("stomt"));
+	Url += FString("&utm_medium=" + FString("sdk"));
+	Url += FString("&utm_campaign=" + FString("unreal"));
+	Url += FString("&utm_term=" + FString(FApp::GetProjectName()) );
 
-	if ( !utm_content.IsEmpty() )
+	if (!UtmContent.IsEmpty())
 	{
-		url += FString("&utm_content=" + utm_content);
+		Url += FString("&utm_content=" + UtmContent);
 	}
 
-	if ( !this->api->Config->GetAccessToken().IsEmpty() )
+	if (!this->Api->Config->GetAccessToken().IsEmpty())
 	{
-		url += FString("&accesstoken=" + this->api->Config->GetAccessToken() );
+		Url += FString("&accesstoken=" + this->Api->Config->GetAccessToken());
 	}
 	
-	return url;
+	return Url;
 }
 
 void UStomtPluginWidget::UploadScreenshot()
 {
-	this->api->SendImageFile(this->api->ReadScreenshotAsBase64());
+	this->Api->SendImageFile(this->Api->ReadScreenshotAsBase64());
 }

@@ -154,7 +154,7 @@ public:
 	// URL processing
 
 	/** Open URL with current setup */
-	virtual void ProcessURL(const FString& Url = TEXT("http://alyamkin.com"));
+	virtual void ProcessUrl(const FString& Url = TEXT("http://alyamkin.com"));
 
 	/** Apply current internal setup to Request and process it */
 	void ProcessRequest(TSharedRef<IHttpRequest> HttpRequest);
