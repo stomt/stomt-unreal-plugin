@@ -36,7 +36,7 @@ public:
 	// Data accessors
 
 	/**
-	* Sets the Stomt rest Server URL.
+	* Sets the STOMT REST API Server URL.
 	* For example: https://rest.stomt.com
 	* @param URL - Stomt REST URL
 	*/
@@ -46,6 +46,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
 	FString GetRestUrl();
 
+	/**
+	* Sets the STOMT Website Server URL.
+	* For example: https://www.stomt.com
+	* @param URL - Stomt REST URL
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
 	void SetStomtUrl(FString NewStomtUrl);
 
@@ -109,12 +114,6 @@ public:
 
 	UFUNCTION()
 	void OnLoginRequestResponse(UStomtRestRequest * Request);
-
-	/**
-	* Sends stomt labels. (deprecated)
-	* @param stomt - Stomt Object with serverside ID set and labels set.
-	*/
-	void SendStomtLabels(UStomt* Stomt);
 
 	UStomtRestRequest* RequestSession(FString Accesstoken);
 
