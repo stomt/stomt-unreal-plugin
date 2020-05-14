@@ -228,61 +228,66 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt API")
 	FString			ImageUploadName;
 
-	FString			errorLog_file_uid;
-	FString			DefaultScreenshotName;
+	FString errorLog_file_uid;
+	FString DefaultScreenshotName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
-	bool			UseImageUpload;
+	bool bUseImageUpload;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
-	bool			useDefaultLabels;
+	bool bUseDefaultLabels;
 
-	bool			IsLogUploadComplete;
-	bool			IsImageUploadComplete;
+	bool bIsLogUploadComplete;
+	
+	bool bIsImageUploadComplete;
 
-	bool			LoginRequestWasSend;
-	bool			EMailFlagWasSend;
-	bool			LogFileWasSend;
+	bool bLoginRequestWasSend;
+	
+	bool bEMailFlagWasSend;
 
-	bool			NetworkError;
+	bool bLogFileWasSend;
 
-	FString			RestURL;
+	bool bNetworkError;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
-	FString			StomtURL;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
-	FString			TargetName;
+	FString RestURL;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
-	FString			TargetID;
-	FString			AppID;
-	FString			ImageURL;
+	FString StomtURL;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
-	int			StomtsCreatedByUser;
+	FString TargetName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
-	int			StomtsReceivedByTarget;
+	FString TargetID;
+
+	FString AppID;
+	
+	FString ImageURL;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
-	FString			UserID;
+	in tStomtsCreatedByUser;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
+	int StomtsReceivedByTarget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
+	FString UserID;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Multi-Language
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
-		UStomtRestJsonObject* LoadLanguageFile();
+	UStomtRestJsonObject* LoadLanguageFile();
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
-		FString GetLangText(FString text);
+	FString GetLangText(FString Text);
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
-		FString GetCurrentLanguage();
+	FString GetCurrentLanguage();
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
-		bool SetCurrentLanguage(FString language);
+	bool SetCurrentLanguage(FString newLanguage);
 
 private:
 	FString GetSystemLanguage();
@@ -306,27 +311,24 @@ public:
 	bool DoesScreenshotFileExist();
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
-	void UseScreenshotUpload(bool UseUpload);
+	void UseScreenshotUpload(bool bUseUpload);
 
 	void AddCustomKeyValuePair(FString key, FString value);
 
-	void				HandleOfflineStomts();
+	void HandleOfflineStomts();
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
-	void				SendOfflineStomts();
+	void SendOfflineStomts();
 	
 private:
+	bool WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool bAllowOverwriting);
+	bool ReadFile(FString& Result, FString FileName, FString SaveDirectory);
 
+	TArray<uint8> ReadBinaryFile(FString FilePath);
 
-
-	bool				WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting);
-	bool				ReadFile(FString& Result, FString FileName, FString SaveDirectory);
-
-	TArray<uint8>		ReadBinaryFile(FString FilePath);
-
-	UStomtRestRequest*	SetupNewPostRequest();
-	UStomtRestRequest*	SetupNewDeleteRequest();
-	void				AddAccesstokenToRequest(UStomtRestRequest* Request);
+	UStomtRestRequest* SetupNewPostRequest();
+	UStomtRestRequest* SetupNewDeleteRequest();
+	void AddAccesstokenToRequest(UStomtRestRequest* Request);
 
 	TArray<TArray<FString>> CustomKeyValuePairs;
 };

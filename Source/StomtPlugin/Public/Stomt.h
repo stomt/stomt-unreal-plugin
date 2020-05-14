@@ -19,11 +19,11 @@ public:
 
 	/** 
 	* Creates new Stomt object 
-	* @param target_id - Stomt target ID
-	* @param positive - whether it is wish(false) or like(true)
-	* @param text - Stomt content text.
+	* @param NewTargetId - Stomt target ID
+	* @param bNewPositive - whether it is wish(false) or like(true)
+	* @param NewText - Stomt content text.
 	*/
-	static UStomt* ConstructStomt(FString target_id, bool positive, FString text);
+	static UStomt* ConstructStomt(FString NewTargetId, bool bNewPositive, FString NewText);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Destruction and reset
@@ -32,16 +32,16 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	// Data accessors
 
-	void SetTargetID(FString target_id);
-	void SetPositive(bool positive);
-	void SetText(FString text);
-	void SetAnonym(bool IsAnonym);
-	void SetServersideID(FString serversideID);
+	void SetTargetID(FString NewTargetId);
+	void SetPositive(bool bNewPositive);
+	void SetText(FString NewText);
+	void SetAnonym(bool bNewAnonym);
+	void SetServersideID(FString NewServersideID);
 
 	// Labels
-	void AddLabel(UStomtLabel* label);
-	void SetLabels(TArray<UStomtLabel*> labels);
-	void SetLabels(TArray<FString> labels);
+	void AddLabel(UStomtLabel* NewLabel);
+	void SetLabels(TArray<UStomtLabel*> NewLabels);
+	void SetLabels(TArray<FString> NewLabels);
 
 	FString					GetTargetID();
 	bool					GetPositive();
@@ -56,22 +56,21 @@ public:
 
 private:
 	UPROPERTY()
-	FString		serversideID;
+	FString		ServersideID;
 	UPROPERTY()
-	FString		target_id;
+	FString		TargetId;
 	UPROPERTY()
-	bool		positive;
+	bool		bPositive;
 	UPROPERTY()
-	FString		text;
+	FString		Text;
 	UPROPERTY()
-	FString		url;
+	FString		Url;
 	UPROPERTY()
-	bool		anonym;
+	bool		bAnonym;
 	UPROPERTY()
-	FString		img_name;
+	FString		ImgName;
 	UPROPERTY()
-	FString		lonlat;
+	FString		LonLat;
 	UPROPERTY()
-	TArray<UStomtLabel*> labels;
+	TArray<UStomtLabel*> Labels;
 };
-

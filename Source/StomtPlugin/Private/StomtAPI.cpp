@@ -112,11 +112,11 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 	}
 
 	// Error Logs
-	if (!this->errorLog_file_uid.IsEmpty())
+	if (!this->ErrorLogFileUid.IsEmpty())
 	{
 		UStomtRestJsonObject* jObjFile = UStomtRestJsonObject::ConstructJsonObject(this);
 		UStomtRestJsonObject* jObjFileContext = UStomtRestJsonObject::ConstructJsonObject(this);
-		jObjFileContext->SetField(TEXT("file_uid"), UStomtJsonValue::ConstructJsonValueString(this, this->errorLog_file_uid));
+		jObjFileContext->SetField(TEXT("file_uid"), UStomtJsonValue::ConstructJsonValueString(this, this->ErrorLogFileUid));
 
 		jObjFile->SetObjectField(TEXT("stomt"), jObjFileContext);
 		request->GetRequestObject()->SetObjectField(TEXT("files"), jObjFile);
@@ -468,7 +468,7 @@ void UStomtAPI::OnSendLogFileResponse(UStomtRestRequest * Request)
 	{
 		if (Request->GetResponseObject()->GetObjectField(TEXT("data"))->HasField(TEXT("files")))
 		{
-			this->errorLog_file_uid = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetObjectField(TEXT("files"))->GetObjectField(TEXT("stomt"))->GetStringField("file_uid");
+			this->ErrorLogFileUid = Request->GetResponseObject()->GetObjectField(TEXT("data"))->GetObjectField(TEXT("files"))->GetObjectField(TEXT("stomt"))->GetStringField("file_uid");
 			this->LogFileWasSend = false;
 
 			if (IsImageUploadComplete)
@@ -649,18 +649,18 @@ void UStomtAPI::OnSendLogoutResponse(UStomtRestRequest * Request)
 	UE_LOG(StomtNetwork, Warning, TEXT("Logout failed"));
 }
 
-void UStomtAPI::SendTrack(UStomtTrack * Track)
+void UStomtAPI::SendTrack(UStomtTrack * NewTrack)
 {
 	UStomtRestRequest* request = this->SetupNewPostRequest();
 
 	// Add target id
-	Track->SetTargetID(this->GetTargetID());
+	NewTrack->SetTargetID(this->GetTargetID());
 	
-	UStomtRestJsonObject* track = Track->GetAsJsonObject();
+	UStomtRestJsonObject* track = NewTrack->GetAsJsonObject();
 
-	if (track != NULL)
+	if (NewTrack != NULL)
 	{
-		if (!track->IsValidLowLevel())
+		if (!NewTrack->IsValidLowLevel())
 		{
 			UE_LOG(StomtNetwork, Warning, TEXT("SendTrack: track not valid"));
 			return;
@@ -672,7 +672,7 @@ void UStomtAPI::SendTrack(UStomtTrack * Track)
 		return;
 	}
 
-	request->SetRequestObject(track);
+	request->SetRequestObject(NewTrack);
 
 	request->ProcessURL(this->GetRestURL().Append(TEXT("/tracks")));
 }
@@ -836,7 +836,7 @@ FString UStomtAPI::GetSystemLanguage()
 	return FInternationalization::Get().GetCurrentCulture()->GetName().Left(2);
 }
 
-bool UStomtAPI::IsEmailCorrect(FString Email)
+bool UStomtAPI::bIsEmailCorrect(FString Email)
 {
 	const FRegexPattern pattern(TEXT("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"));
 	FRegexMatcher matcher(pattern, Email);
