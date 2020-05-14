@@ -102,7 +102,7 @@ private:
 	/**
 	* Loads the access token from disk.
 	*/
-	FString ReadAccesstoken();
+	FString ReadAccessToken();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Write Config

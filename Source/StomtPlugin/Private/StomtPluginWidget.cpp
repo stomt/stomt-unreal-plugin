@@ -142,7 +142,7 @@ void UStomtPluginWidget::OnTargetResponse(UStomtRestRequest * TargetRequest)
 
 	UE_LOG(StomtLog, Log, TEXT("OnTargetResponse: %s"), *this->TargetName);
 
-	this->ImageURL = this->Api->GetImageURL();
+	this->ImageUrl = this->Api->GetImageUrl();
 
 	this->Api->OnTargetRequestComplete.Broadcast(TargetRequest);
 }

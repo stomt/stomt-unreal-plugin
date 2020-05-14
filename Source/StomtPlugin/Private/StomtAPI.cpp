@@ -854,10 +854,10 @@ void UStomtAPI::SendOfflineStomts()
 	if (Stomts.Num() > 0)
 	{
 		UE_LOG(StomtNetwork, Log, TEXT("Start sending offline stomts: %d"), Stomts.Num());
-		for (UStomt* StomtToSend : Stomts)
+		for (UStomt* OneStomt : Stomts)
 		{
 			UE_LOG(StomtNetwork, Log, TEXT("Sending Offline Stomt"));
-			this->SendStomt(StomtToSend);
+			this->SendStomt(OneStomt);
 		}
 
 		this->Config->ClearStomts();

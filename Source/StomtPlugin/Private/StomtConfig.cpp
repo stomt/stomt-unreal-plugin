@@ -359,7 +359,7 @@ FString UStomtConfig::ReadStomtConf(FString FieldName)
 	{
 		UStomtRestJsonObject* JsonObj = UStomtRestJsonObject::ConstructJsonObject(this);
 		JsonObj->DecodeJson(Result);
-		this->Accesstoken = JsonObj->GetField(FieldName)->AsString();
+		this->AccessToken = JsonObj->GetField(FieldName)->AsString();
 	}
 
 	return Result;
@@ -393,7 +393,7 @@ UStomtRestJsonObject* UStomtConfig::ReadStomtConfAsJson()
 	return JsonObj;
 }
 
-FString UStomtConfig::ReadAccesstoken()
+FString UStomtConfig::ReadAccessToken()
 {
 	UStomtRestJsonObject* StomtConfigJson = this->ReadStomtConfAsJson();
 
