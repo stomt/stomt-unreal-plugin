@@ -1,6 +1,19 @@
 # Collect Feedback In-Game | STOMT for Unreal Engine 4
-#### Implementation Time: ~20 Minutes (incl. Triggers)
-#### Base Unreal Version: 4.18 (For specific versions visit: [4.16](https://github.com/stomt/stomt-unreal-plugin/tree/UE/4.16), [4.17](https://github.com/stomt/stomt-unreal-plugin/tree/UE/4.17), [4.18](https://github.com/stomt/stomt-unreal-plugin/tree/UE/4.18), [4.19](https://github.com/stomt/stomt-unreal-plugin/tree/UE/4.19), [4.20](https://github.com/stomt/stomt-unreal-plugin/tree/UE/4.20), [4.21](https://github.com/stomt/stomt-unreal-plugin/tree/UE/4.21))
+
+**Implementation Time: ~20 Minutes (incl. Triggers)**
+
+**Base Unreal Version: 4.20
+(For specific versions visit:
+[4.16](https://github.com/stomt/stomt-unreal-plugin/tree/UE/4.16),
+[4.17](https://github.com/stomt/stomt-unreal-plugin/tree/UE/4.17),
+[4.18](https://github.com/stomt/stomt-unreal-plugin/tree/UE/4.18),
+[4.19](https://github.com/stomt/stomt-unreal-plugin/tree/UE/4.19),
+[4.20](https://github.com/stomt/stomt-unreal-plugin/tree/UE/4.20),
+[4.21](https://github.com/stomt/stomt-unreal-plugin/tree/UE/4.21),
+[4.22](https://github.com/stomt/stomt-unreal-plugin/tree/UE/4.22),
+[4.23](https://github.com/stomt/stomt-unreal-plugin/tree/UE/4.23),
+[4.24](https://github.com/stomt/stomt-unreal-plugin/tree/UE/4.24),
+[4.25](https://github.com/stomt/stomt-unreal-plugin/tree/UE/4.25))**
 
 <p align="center">
   <img alt="STOMT Unreal Engine feedback integration" src="https://i.imgur.com/1i1eCrb.jpg" />
@@ -83,11 +96,7 @@ _You should now see the feedback form window in your game. Try to toggle "I wish
 
 <img alt="STOMT Plugin configuraton" width="600" src="https://i.imgur.com/hFA7xUs.png" />
 
-
 4. Add the `StomtWidgetBP` to the viewport via script (`ExampleActor`) or in your main HUD (`ExampleUI`) as widget.
-
-
-
 
 
 ## Form Triggers
@@ -124,10 +133,7 @@ Append labels, as for example your game-version or the player position/level. Yo
 
 <img alt="Events" width="600" src="http://schukies.io/images/stomt/label.PNG" />
 
-## Common Issues
-
-* UE 4.18.2 Error/Info message text disappears when it's displayed for the second time.
-* UE 4.16.3 None
+## Issues
 
 Don't hesitate to [contact](https://www.stomt.com/stomt-unreal-engine-plugin) us if you have any issues or need help.
 
