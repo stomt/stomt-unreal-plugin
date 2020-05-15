@@ -12,91 +12,91 @@ UStomt::UStomt()
 
 }
 
-UStomt* UStomt::ConstructStomt(FString target_id, bool positive, FString text)
+UStomt* UStomt::ConstructStomt(FString NewTargetId, bool bNewPositive, FString NewText)
 {
-	UStomt* stomt = NewObject<UStomt>();
-	stomt->SetTargetID(target_id);
-	stomt->SetPositive(positive);
-	stomt->SetText(text);
+	UStomt* NewStomt = NewObject<UStomt>();
+	NewStomt->SetTargetId(NewTargetId);
+	NewStomt->SetPositive(bNewPositive);
+	NewStomt->SetText(NewText);
 
-	return stomt;
+	return NewStomt;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Data accessors
 
-void UStomt::SetTargetID(FString target_id)
+void UStomt::SetTargetId(FString NewTargetId)
 {
-	this->target_id = target_id;
+	this->TargetId = NewTargetId;
 }
 
-void UStomt::SetPositive(bool positive)
+void UStomt::SetPositive(bool bNewPositive)
 {
-	this->positive = positive;
+	this->bPositive = bNewPositive;
 }
 
-void UStomt::SetText(FString text)
+void UStomt::SetText(FString NewText)
 {
-	this->text = text;
+	this->Text = NewText;
 }
 
-void UStomt::SetAnonym(bool IsAnonym)
+void UStomt::SetAnonym(bool bNewAnonym)
 {
-	this->anonym = IsAnonym;
+	this->bAnonym = bNewAnonym;
 }
 
-void UStomt::SetServersideID(FString serversideID)
+void UStomt::SetServersideId(FString NewServersideId)
 {
-	this->serversideID = serversideID;
+	this->ServersideId = NewServersideId;
 }
 
-void UStomt::AddLabel(UStomtLabel* label)
+void UStomt::AddLabel(UStomtLabel* newLabel)
 {
-	this->labels.Add(label);
+	this->Labels.Add(newLabel);
 }
-void UStomt::SetLabels(TArray<UStomtLabel*> labels)
+void UStomt::SetLabels(TArray<UStomtLabel*> NewLabels)
 {
-	this->labels = labels;
+	this->Labels = NewLabels;
 }
 
-void UStomt::SetLabels(TArray<FString> labels)
+void UStomt::SetLabels(TArray<FString> NewLabels)
 {
-	if (labels.Num() <= 0)
+	if (NewLabels.Num() <= 0)
 		return;
 
-	this->labels.Empty();
+	this->Labels.Empty();
 
-	for (int i = 0; i != labels.Num(); ++i)
+	for (int i = 0; i != NewLabels.Num(); ++i)
 	{
-		this->labels.Add(UStomtLabel::ConstructLabel(labels[i]));
+		this->Labels.Add(UStomtLabel::ConstructLabel(NewLabels[i]));
 	}
 }
 
-FString UStomt::GetTargetID()
+FString UStomt::GetTargetId()
 {
-	return this->target_id;
+	return this->TargetId;
 }
 
 bool UStomt::GetPositive()
 {
-	return this->positive;
+	return this->bPositive;
 }
 
 FString UStomt::GetText()
 {
-	return this->text;
+	return this->Text;
 }
 
 bool UStomt::GetAnonym()
 {
-	return this->anonym;
+	return this->bAnonym;
 }
 TArray<UStomtLabel*> UStomt::GetLabels()
 {
-	return this->labels;
+	return this->Labels;
 }
 
-FString UStomt::GetServersideID()
+FString UStomt::GetServersideId()
 {
-	return this->serversideID;
+	return this->ServersideId;
 }

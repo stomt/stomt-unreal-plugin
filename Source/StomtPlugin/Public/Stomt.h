@@ -19,11 +19,11 @@ public:
 
 	/** 
 	* Creates new Stomt object 
-	* @param target_id - Stomt target ID
-	* @param positive - whether it is wish(false) or like(true)
-	* @param text - Stomt content text.
+	* @param NewTargetId - Stomt target Id
+	* @param bNewPositive - whether it is wish(false) or like(true)
+	* @param NewText - Stomt content text.
 	*/
-	static UStomt* ConstructStomt(FString target_id, bool positive, FString text);
+	static UStomt* ConstructStomt(FString NewTargetId, bool bNewPositive, FString NewText);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Destruction and reset
@@ -32,23 +32,34 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	// Data accessors
 
-	void SetTargetID(FString target_id);
-	void SetPositive(bool positive);
-	void SetText(FString text);
-	void SetAnonym(bool IsAnonym);
-	void SetServersideID(FString serversideID);
+	void SetTargetId(FString NewTargetId);
+
+	void SetPositive(bool bNewPositive);
+	
+	void SetText(FString NewText);
+	
+	void SetAnonym(bool bNewAnonym);
+	
+	void SetServersideId(FString NewServersideId);
 
 	// Labels
-	void AddLabel(UStomtLabel* label);
-	void SetLabels(TArray<UStomtLabel*> labels);
-	void SetLabels(TArray<FString> labels);
+	void AddLabel(UStomtLabel* NewLabel);
+	
+	void SetLabels(TArray<UStomtLabel*> NewLabels);
+	
+	void SetLabels(TArray<FString> NewLabels);
 
-	FString					GetTargetID();
-	bool					GetPositive();
-	FString					GetText();
-	bool					GetAnonym();
-	TArray<UStomtLabel*>	GetLabels();
-	FString					GetServersideID();
+	FString GetTargetId();
+	
+	bool GetPositive();
+	
+	FString GetText();
+	
+	bool GetAnonym();
+	
+	TArray<UStomtLabel*> GetLabels();
+	
+	FString GetServersideId();
 	
 
 	//////////////////////////////////////////////////////////////////////////
@@ -56,22 +67,29 @@ public:
 
 private:
 	UPROPERTY()
-	FString		serversideID;
-	UPROPERTY()
-	FString		target_id;
-	UPROPERTY()
-	bool		positive;
-	UPROPERTY()
-	FString		text;
-	UPROPERTY()
-	FString		url;
-	UPROPERTY()
-	bool		anonym;
-	UPROPERTY()
-	FString		img_name;
-	UPROPERTY()
-	FString		lonlat;
-	UPROPERTY()
-	TArray<UStomtLabel*> labels;
-};
+	FString		ServersideId;
 
+	UPROPERTY()
+	FString		TargetId;
+	
+	UPROPERTY()
+	bool		bPositive;
+	
+	UPROPERTY()
+	FString		Text;
+	
+	UPROPERTY()
+	FString		Url;
+	
+	UPROPERTY()
+	bool		bAnonym;
+	
+	UPROPERTY()
+	FString		ImgName;
+	
+	UPROPERTY()
+	FString		LonLat;
+	
+	UPROPERTY()
+	TArray<UStomtLabel*> Labels;
+};

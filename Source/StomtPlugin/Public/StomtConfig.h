@@ -37,46 +37,52 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	FString GetAccessToken();
-	void	SetAccessToken(FString AccessToken);
+
+	void SetAccessToken(FString NewAccessToken);
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
-	bool	GetSubscribed();
-	void	SetSubscribed(bool Subscribed);
+	bool GetSubscribed();
+
+	void SetSubscribed(bool bNewSubscribed);
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	bool	GetLoggedIn();
-	void	SetLoggedIn(bool LoggedIn);
+
+	void SetLoggedIn(bool bNewLoggedIn);
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
-	bool	GetAcceptScreenshotUpload();
-	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
-	void	SetAcceptScreenshotUpload(bool acceptScreenshotUpload);
+	bool GetAcceptScreenshotUpload();
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
-	bool	GetAcceptLogUpload();
+	void SetAcceptScreenshotUpload(bool bNewAcceptScreenshotUpload);
+
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
-	void	SetAcceptLogUpload(bool acceptLogUpload);
+	bool GetAcceptLogUpload();
+
+	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
+	void SetAcceptLogUpload(bool bNewAcceptLogUpload);
 
 	UPROPERTY(BlueprintAssignable, Category = "Stomt|Event")
 	FOnConfigUpdated OnConfigUpdated;
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	TArray<UStomtJsonValue*> GetStomtsAsJson();
+
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	TArray<UStomt*> GetStomts();
+	
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
-	bool	AddStomt(UStomt* stomt);
+	bool AddStomt(UStomt* NewStomt);
 
 	/**
 	* Clears the stomt array in /stomt/stomt.conf.json
 	*/
 	bool ClearStomts();
 
+private:
 
 	//////////////////////////////////////////////////////////////////////////
 	// Read Config
-
-private:
 
 	/**
 	* Loads the access token from disk.
@@ -96,18 +102,15 @@ private:
 	/**
 	* Loads the access token from disk.
 	*/
-	FString ReadAccesstoken();
-
+	FString ReadAccessToken();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Write Config
 
-private:
-
 	/**
 	* Saves the access token in /stomt/stomt.conf.json
 	*/
-	bool SaveAccesstoken(FString accesstoken);
+	bool SaveAccessToken(FString NewAccessToken);
 
 	/**
 	* Saves the a value in /stomt/stomt.conf.json
@@ -117,12 +120,12 @@ private:
 	/**
 	* Saves the a stomt in /stomt/stomt.conf.json
 	*/
-	bool SaveStomtToConf(UStomt& stomt);
+	bool SaveStomtToConf(UStomt& NewStomt);
 
 	/**
 	* Saves the flag in /stomt/stomt.conf.json
 	*/
-	bool SaveFlag(FString FlagName, bool FlagState);
+	bool SaveFlag(FString FlagName, bool bFlagState);
 
 	/**
 	* Loads the access token from disk.
@@ -140,31 +143,29 @@ private:
 	*/
 	FString ReadLogFile(FString LogFileName);
 
-private:
-
 	bool WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting);
+	
 	bool ReadFile(FString& Result, FString FileName, FString SaveDirectory);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Data
 
-	bool				Subscribed;
-	bool				LoggedIn;
-	bool				AcceptLogUpload;
-	bool				AcceptScreenshotUpload;
+	bool bSubscribed;
+	bool bLoggedIn;
+	bool bAcceptLogUpload;
+	bool bAcceptScreenshotUpload;
 
-	FString				SubscribedFieldName;
-	FString				LoggedInFieldName;
-	FString				AccessTokenFieldName;
-	FString				StomtsFieldName;
-	FString				LogUploadFieldName;
-	FString				ScreenshotUploadFieldName;
+	FString SubscribedFieldName;
+	FString LoggedInFieldName;
+	FString AccessTokenFieldName;
+	FString StomtsFieldName;
+	FString LogUploadFieldName;
+	FString ScreenshotUploadFieldName;
 
-	FString				Accesstoken;
-	FString				ConfigFolder;
-	FString				ConfigName;
+	FString AccessToken;
+	FString ConfigFolder;
+	FString ConfigName;
 
 	UPROPERTY()
 	TArray<UStomtJsonValue*> Stomts;
-
 };

@@ -59,13 +59,13 @@ public:
 	*	Target-image URL
 	*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
-	FString	ImageURL;
+	FString	ImageUrl;
 
 	/**
 	*	STOMT API.
 	*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
-	UStomtAPI* api;
+	UStomtAPI* Api;
 
 	/**
 	*	STOMT Config.
@@ -77,31 +77,31 @@ public:
 	*	Whether the E-Mail variable is a phone number.
 	*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
-	bool UsePhoneNumber;
+	bool bUsePhoneNumber;
 
 	/**
 	*	Whether the stomt is not positive (a wish).
 	*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
-	bool IsWish;
+	bool bIsWish;
 
 	/**
 	*	Whether a screenshot should be appended. (not implemented)
 	*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
-	bool IsScreenshotSelected;
+	bool bIsScreenshotSelected;
 
 	/**
 	*	Whether the user mail is already known. 
 	*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
-	bool IsEMailAlreadyKnown;
+	bool bIsEMailAlreadyKnown;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
-	bool IsUserLoggedIn;
+	bool bIsUserLoggedIn;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
-	bool UploadLogs;
+	bool bUploadLogs;
 
 	/**
 	*	Error-Code whether the user login worked. (0: OK, 403: wrong password, 404: account does not exist. )
@@ -182,6 +182,6 @@ public:
 private:
 
 	UPROPERTY()
-	UStomt* stomt;
+	UStomt* Stomt;
 
 };
