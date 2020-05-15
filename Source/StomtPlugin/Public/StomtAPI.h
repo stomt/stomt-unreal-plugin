@@ -20,7 +20,7 @@ class STOMTPLUGIN_API UStomtAPI : public UObject
 
 public:
 
-	static UStomtAPI* ConstructStomtAPI(FString AppID);
+	static UStomtAPI* ConstructStomtAPI(FString AppId);
 
 	UStomtAPI();
 
@@ -30,38 +30,41 @@ public:
 	* Sends a stomt. 
 	* @param stomt - Stomt Object with some content.
 	*/
-	void SendStomt(UStomt* stomt);
+	void SendStomt(UStomt* Stomt);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Data accessors
 
 	/**
-	* Sets the Stomt rest Server URL.
+	* Sets the STOMT REST API Server URL.
 	* For example: https://rest.stomt.com
 	* @param URL - Stomt REST URL
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
-	void	SetRestURL(FString URL);
+	void SetRestUrl(FString NewRestUrl);
+
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
-	FString GetRestURL();
+	FString GetRestUrl();
 
 	/**
-	* Sets the Stomt rest Server URL.
-	* For example: https://rest.stomt.com
+	* Sets the STOMT Website Server URL.
+	* For example: https://www.stomt.com
 	* @param URL - Stomt REST URL
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
-	void	SetStomtURL(FString URL);
+	void SetStomtUrl(FString NewStomtUrl);
+
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
-	FString GetStomtURL();
+	FString GetStomtUrl();
 
 	/**
 	* Sets the Stomt App ID.
 	* That was created here: https://www.stomt.com/dev/my-apps
 	* @param AppID - Stomt APP ID
 	*/
-	void	SetAppID(FString appID);
-	FString GetAppID();
+	void SetAppId(FString NewAppId);
+
+	FString GetAppId();
 
 	/**
 	* Returns the Target-Name that can be displayed.
@@ -73,17 +76,19 @@ public:
 	* Sets a Stomt Target
 	* @param TargetID - ID of Stomt Target
 	*/
-	void	SetTargetID(FString targetID);
-	FString	GetTargetID();
+	void SetTargetId(FString NewTargetId);
+
+	FString	GetTargetId();
 
 	/**
 	* Sets the URL for the target image.
 	* @param URL - Target-Image URL
 	*/
-	void	SetImageURL(FString URL);
-	FString	GetImageURL();
+	void SetImageUrl(FString NewImageUrl);
+	
+	FString	GetImageUrl();
 
-	void SetStomtToSend(UStomt* stomt);
+	void SetStomtToSend(UStomt* Stomt);
 
 	/**
 	* Gets the Request object that contains Request/response information.
@@ -110,13 +115,7 @@ public:
 	UFUNCTION()
 	void OnLoginRequestResponse(UStomtRestRequest * Request);
 
-	/**
-	* Sends stomt labels. (deprecated)
-	* @param stomt - Stomt Object with serverside ID set and labels set.
-	*/
-	void SendStomtLabels(UStomt* stomt);
-
-	UStomtRestRequest* RequestSession(FString Accesstoken);
+	UStomtRestRequest* RequestSession();
 
 	UFUNCTION()
 	void OnRequestSessionResponse(UStomtRestRequest * Request);
@@ -125,7 +124,7 @@ public:
 	* Sends an REST Request for a stomt target.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
-	UStomtRestRequest* RequestTargetByAppID();
+	UStomtRestRequest* RequestTargetByAppId();
 
 	/**
 	* Sends an REST Request for a stomt target.
@@ -134,7 +133,7 @@ public:
 	* @param TargetID - ID of the requested stomt target.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
-	UStomtRestRequest* RequestTarget(FString targetID);
+	UStomtRestRequest* RequestTarget(FString TargetId);
 
 	UFUNCTION()
 	void OnRequestTargetResponse(UStomtRestRequest * Request);
@@ -157,7 +156,7 @@ public:
 
 	void SendSubscription(FString EMail);
 
-	void SendSubscription(FString EMailOrNumber, bool UseEmail);
+	void SendSubscription(FString EMailOrNumber, bool bUseEmail);
 
 	UFUNCTION()
 	void OnSendEMailResponse(UStomtRestRequest * Request);
@@ -171,7 +170,7 @@ public:
 	// Track SDK Usage
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt Track")
-	void SendTrack(UStomtTrack* Track);
+	void SendTrack(UStomtTrack* NewTrack);
 
 
 	//////////////////////////////////////////////////////////////////////////
@@ -218,71 +217,77 @@ public:
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt API")
-	UStomtConfig*	Config;
+	UStomtConfig* Config;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt API")
-	UStomtTrack*	Track;
+	UStomtTrack* Track;
 
-	UStomt*			StomtToSend;
+	UStomt* StomtToSend;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt API")
-	FString			ImageUploadName;
+	FString ImageUploadName;
 
-	FString			errorLog_file_uid;
-	FString			DefaultScreenshotName;
+	FString ErrorLogFileUid;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
-	bool			UseImageUpload;
+	FString DefaultScreenshotName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
-	bool			useDefaultLabels;
-
-	bool			IsLogUploadComplete;
-	bool			IsImageUploadComplete;
-
-	bool			LoginRequestWasSend;
-	bool			EMailFlagWasSend;
-	bool			LogFileWasSend;
-
-	bool			NetworkError;
-
-	FString			RestURL;
+	bool bUseImageUpload;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
-	FString			StomtURL;
+	bool bUseDefaultLabels;
+
+	bool bIsLogUploadComplete;
+	
+	bool bIsImageUploadComplete;
+
+	bool bLoginRequestWasSend;
+	
+	bool bEMailFlagWasSend;
+
+	bool bLogFileWasSend;
+
+	bool bNetworkError;
+
+	FString RestUrl;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
-	FString			TargetName;
+	FString StomtUrl;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
-	FString			TargetID;
-	FString			AppID;
-	FString			ImageURL;
+	FString TargetName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
-	int			StomtsCreatedByUser;
+	FString TargetId;
+
+	FString AppId;
+	
+	FString ImageUrl;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
-	int			StomtsReceivedByTarget;
+	int StomtsCreatedByUser;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
-	FString			UserID;
+	int StomtsReceivedByTarget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stomt API")
+	FString UserId;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Multi-Language
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
-		UStomtRestJsonObject* LoadLanguageFile();
+	UStomtRestJsonObject* LoadLanguageFile();
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
-		FString GetLangText(FString text);
+	FString GetLangText(FString Text);
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
-		FString GetCurrentLanguage();
+	FString GetCurrentLanguage();
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
-		bool SetCurrentLanguage(FString language);
+	bool SetCurrentLanguage(FString newLanguage);
 
 private:
 	FString GetSystemLanguage();
@@ -306,27 +311,28 @@ public:
 	bool DoesScreenshotFileExist();
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
-	void UseScreenshotUpload(bool UseUpload);
+	void UseScreenshotUpload(bool bUseUpload);
 
 	void AddCustomKeyValuePair(FString key, FString value);
 
-	void				HandleOfflineStomts();
+	void HandleOfflineStomts();
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt API")
-	void				SendOfflineStomts();
+	void SendOfflineStomts();
 	
 private:
+	bool WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool bAllowOverwriting);
 
+	bool ReadFile(FString& Result, FString FileName, FString SaveDirectory);
 
+	TArray<uint8> ReadBinaryFile(FString FilePath);
 
-	bool				WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool AllowOverwriting);
-	bool				ReadFile(FString& Result, FString FileName, FString SaveDirectory);
+	UStomtRestRequest* SetupNewRequest(StomtEnumRequestVerb::Type Verb);
 
-	TArray<uint8>		ReadBinaryFile(FString FilePath);
+	void AddAccesstokenToRequest(UStomtRestRequest* Request);
 
-	UStomtRestRequest*	SetupNewPostRequest();
-	UStomtRestRequest*	SetupNewDeleteRequest();
-	void				AddAccesstokenToRequest(UStomtRestRequest* Request);
+	UFUNCTION()
+	void ParseAccessTokenFromResponse(UStomtRestRequest * Request);
 
 	TArray<TArray<FString>> CustomKeyValuePairs;
 };

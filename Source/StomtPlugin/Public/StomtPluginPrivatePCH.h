@@ -11,7 +11,7 @@
 #include "Core.h"
 #include "Engine.h"
 
-DECLARE_LOG_CATEGORY_EXTERN(Stomt, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(StomtLog, Log, All);
 
 //Logging during plugin startup
 DECLARE_LOG_CATEGORY_EXTERN(StomtInit, Log, All);
