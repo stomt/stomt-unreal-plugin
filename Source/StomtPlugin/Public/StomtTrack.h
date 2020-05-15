@@ -18,33 +18,38 @@ public:
 
 	~UStomtTrack();
 
+
 public:
 	//////////////////////////////////////////////////////////////////////////
 	// Read Track
 
 	UStomtRestJsonObject* GetAsJsonObject();
 
-public:
 	//////////////////////////////////////////////////////////////////////////
 	// Write Track
 
-	void SetDevicePlatform(FString DevicePlatform);
-	void SetDeviceID(FString DeviceID);
-	void SetSDKType(FString SDKType);
-
-	void SetSDKVersion(FString SDKVersion);
-	void SetSDKIntegration(FString SDKIntegration);
-	void SetTargetID(FString TargetID);
-	void SetStomtID(FString StomtID);
+	void SetDevicePlatform(FString NewDevicePlatform);
+	
+	void SetDeviceId(FString NewDeviceId);
+	
+	void SetSdkType(FString NewSdkType);
+	
+	void SetSdkVersion(FString NewSdkVersion);
+	
+	void SetSdkIntegration(FString NewSdkIntegration);
+	
+	void SetTargetId(FString NewTargetId);
+	
+	void SetStomtId(FString NewStomtId);
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt Track")
-	void SetEventCategory(FString EventCategory);
+	void SetEventCategory(FString NewEventCategory);
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt Track")
-	void SetEventAction(FString EventAction);
+	void SetEventAction(FString NewEventAction);
 
 	UFUNCTION(BlueprintCallable, Category = "Stomt Track")
-	void SetEventLabel(FString EventLabel);
+	void SetEventLabel(FString NewEventLabel);
 
 
 private:
@@ -52,22 +57,39 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// Data
 
-	// automatically set in ConstructStomtTrack() //
+	// Automatically set in ConstructStomtTrack() //
 
-	FString DevicePlatform;		// optional, Window, Linux, …
-	FString	DeviceID;			// optional, unique custom identifier
+	// optional, Window, Linux, …
+	FString DevicePlatform;
+	
+	// optional, unique custom identifier
+	FString	DeviceId;
 
-	FString	SDKType;			// required, unreal, unity, ios, …
-	FString	SDKVersion;			// optional
-	FString	SDKIntegration;		// optional, the name of the game or build...
+	// required, unreal, unity, ios, …
+	FString	SdkType;
+
+	// optional
+	FString	SdkVersion;
+
+	// optional, the name of the game or build...
+	FString	SdkIntegration;
+
 
 	// NOT automatically set //
 
-	FString TargetID;			// optional, id of the target selected in the sdk
-	FString	StomtID;			// optional, id of the created/voted/commented stomt
+	// optional, id of the target selected in the Sdk
+	FString TargetId;
+	
+	// optional, id of the created/voted/commented Stomt
+	FString	StomtId;
 
-	FString	EventCategory;		// required, Typically the object that was interacted with (e.g. 'Video')
-	FString EventAction;		// required, The type of interaction (e.g. 'play')
-	FString EventLabel;			// optional, Useful for categorization
+	// required, Typically the object that was interacted with (e.g. 'Video')
+	FString	EventCategory;
+
+	// required, The type of interaction (e.g. 'play')
+	FString EventAction;
+
+	// optional, Useful for categorization
+	FString EventLabel;
 
 };
