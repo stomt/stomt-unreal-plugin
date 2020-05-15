@@ -47,6 +47,7 @@ UStomtAPI::UStomtAPI()
 	this->Config = UStomtConfig::ConstructStomtConfig();
 	this->Track = UStomtTrack::ConstructStomtTrack();
 	this->SetCurrentLanguage(this->GetSystemLanguage());
+	this->RequestSession();
 }
 
 UStomtAPI::~UStomtAPI()
@@ -194,7 +195,7 @@ void UStomtAPI::ParseAccessTokenFromResponse(UStomtRestRequest * Request)
 	if (Accesstoken.Equals(this->Config->GetAccessToken())) return;
 
 	this->Config->SetAccessToken(Accesstoken);
-	this->RequestSession(Accesstoken);
+	this->RequestSession();
 }
 
 
@@ -330,9 +331,9 @@ void UStomtAPI::OnLoginRequestResponse(UStomtRestRequest * Request)
 	this->SendTrack(this->Track);
 }
 
-UStomtRestRequest* UStomtAPI::RequestSession(FString Accesstoken)
+UStomtRestRequest* UStomtAPI::RequestSession()
 {
-	if (Accesstoken.IsEmpty()) return NULL;
+	if (this->Config->GetAccessToken().IsEmpty()) return NULL;
 
 	UStomtRestRequest* Request = SetupNewRequest(StomtEnumRequestVerb::GET);
 	Request->OnRequestComplete.AddDynamic(this, &UStomtAPI::OnRequestSessionResponse);

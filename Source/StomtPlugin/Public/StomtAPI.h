@@ -115,7 +115,7 @@ public:
 	UFUNCTION()
 	void OnLoginRequestResponse(UStomtRestRequest * Request);
 
-	UStomtRestRequest* RequestSession(FString Accesstoken);
+	UStomtRestRequest* RequestSession();
 
 	UFUNCTION()
 	void OnRequestSessionResponse(UStomtRestRequest * Request);
