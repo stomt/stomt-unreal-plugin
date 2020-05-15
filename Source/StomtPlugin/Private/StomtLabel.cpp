@@ -11,59 +11,59 @@ UStomtLabel::UStomtLabel()
 {
 	// Default 
 	/*
-	this->color = FString("#5EBEFF");
-	this->isPublic = false;
-	this->asTargetOwner = false;
+	this->Color = FString("#5EBEFF");
+	this->bIsPublic = false;
+	this->bAsTargetOwner = false;
 	*/
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Data accessors
 
-UStomtLabel * UStomtLabel::ConstructLabel(FString name)
+UStomtLabel * UStomtLabel::ConstructLabel(FString NewName)
 {
-	UStomtLabel* stomtLabel = NewObject<UStomtLabel>();
-	stomtLabel->SetName(name);
+	UStomtLabel* StomtLabel = NewObject<UStomtLabel>();
+	StomtLabel->SetName(NewName);
 
-	return stomtLabel;
+	return StomtLabel;
 }
 
-void UStomtLabel::SetName(FString name)
+void UStomtLabel::SetName(FString NewName)
 {
-	this->name = name;
+	this->Name = NewName;
 }
 
-void UStomtLabel::SetColor(FString color)
+void UStomtLabel::SetColor(FString NewColor)
 {
-	this->color = color;
+	this->Color = NewColor;
 }
 
-void UStomtLabel::SetIsPublic(bool isPublic)
+void UStomtLabel::SetIsPublic(bool bNewIsPublic)
 {
-	this->isPublic = isPublic;
+	this->bIsPublic = bNewIsPublic;
 }
 
-void UStomtLabel::SetAsTargetOwner(bool asTargetOwner)
+void UStomtLabel::SetAsTargetOwner(bool bNewAsTargetOwner)
 {
-	this->asTargetOwner = asTargetOwner;
+	this->bAsTargetOwner = bNewAsTargetOwner;
 }
 
 FString UStomtLabel::GetName()
 {
-	return this->name;
+	return this->Name;
 }
 
 FString UStomtLabel::GetColor()
 {
-	return this->color;
+	return this->Color;
 }
 
 bool UStomtLabel::GetIsPublic()
 {
-	return this->isPublic;
+	return this->bIsPublic;
 }
 
 bool UStomtLabel::GetAsTargetOwner()
 {
-	return this->asTargetOwner;
+	return this->bAsTargetOwner;
 }

@@ -154,7 +154,7 @@ public:
 	// URL processing
 
 	/** Open URL with current setup */
-	virtual void ProcessURL(const FString& Url = TEXT("http://alyamkin.com"));
+	virtual void ProcessUrl(const FString& Url = TEXT("http://alyamkin.com"));
 
 	/** Apply current internal setup to Request and process it */
 	void ProcessRequest(TSharedRef<IHttpRequest> HttpRequest);
@@ -180,9 +180,9 @@ public:
 	// Data
 public:
 	/** Wether to use a static json string instead of JsonObjects */
-	void UseStaticJsonString(bool use);
+	void UseStaticJsonString(bool bNewUseStaticJsonString);
 
-	void UseRequestLogging(bool use);
+	void UseRequestLogging(bool bNewRequestLogging);
 
 	void SetStaticJsonString(FString JsonString);
 
@@ -197,10 +197,10 @@ public:
 protected:
 
 	/** Wether to use a static json string instead of JsonObjects */
-	bool useStaticJsonString;
+	bool bUseStaticJsonString;
 
 	/** Wether to use a log output for the Request */
-	bool RequestLogging;
+	bool bRequestLogging;
 
 	/** Static json string that will be used instead of json objects */
 	FString StaticJsonOutputString;
