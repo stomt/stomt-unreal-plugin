@@ -331,6 +331,7 @@ private:
 
 	void AddAccesstokenToRequest(UStomtRestRequest* Request);
 
+	UFUNCTION()
 	void ParseAccessTokenFromResponse(UStomtRestRequest * Request);
 
 	TArray<TArray<FString>> CustomKeyValuePairs;
