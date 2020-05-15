@@ -47,7 +47,6 @@ UStomtAPI::UStomtAPI()
 	this->Config = UStomtConfig::ConstructStomtConfig();
 	this->Track = UStomtTrack::ConstructStomtTrack();
 	this->SetCurrentLanguage(this->GetSystemLanguage());
-	this->RequestSession();
 }
 
 UStomtAPI::~UStomtAPI()

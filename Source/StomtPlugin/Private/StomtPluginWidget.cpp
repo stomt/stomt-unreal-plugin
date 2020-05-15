@@ -27,6 +27,9 @@ void UStomtPluginWidget::OnConstruction(FString AppId)
 
 	this->Config = this->Api->Config;
 
+	// Request User
+	this->Api->RequestSession();
+
 	// Request Target Name
 	UStomtRestRequest* Request = this->Api->RequestTargetByAppId();
 	Request->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnTargetResponse);
