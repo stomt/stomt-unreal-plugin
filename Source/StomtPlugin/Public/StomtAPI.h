@@ -322,13 +322,16 @@ public:
 	
 private:
 	bool WriteFile(FString TextToSave, FString FileName, FString SaveDirectory, bool bAllowOverwriting);
+
 	bool ReadFile(FString& Result, FString FileName, FString SaveDirectory);
 
 	TArray<uint8> ReadBinaryFile(FString FilePath);
 
-	UStomtRestRequest* SetupNewPostRequest();
-	UStomtRestRequest* SetupNewDeleteRequest();
+	UStomtRestRequest* SetupNewRequest(StomtEnumRequestVerb::Type Verb);
+
 	void AddAccesstokenToRequest(UStomtRestRequest* Request);
+
+	void ParseAccessTokenFromResponse(UStomtRestRequest * Request);
 
 	TArray<TArray<FString>> CustomKeyValuePairs;
 };

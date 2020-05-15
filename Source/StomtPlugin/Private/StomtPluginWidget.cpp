@@ -31,7 +31,7 @@ void UStomtPluginWidget::OnConstruction(FString AppId)
 	UStomtRestRequest* Request = this->Api->RequestTargetByAppId();
 	Request->OnRequestComplete.AddDynamic(this, &UStomtPluginWidget::OnTargetResponse);
 
-	//Lookup EMail
+	// Lookup E-Mail
 	this->bIsEMailAlreadyKnown = this->Api->Config->GetSubscribed();
 	this->bIsUserLoggedIn = this->Api->Config->GetLoggedIn();
 }
@@ -55,45 +55,34 @@ void UStomtPluginWidget::OnSubmit()
 		return;
 	}
 
+	// Check EMail
+	this->bIsEMailAlreadyKnown = this->Api->Config->GetSubscribed();
+	UE_LOG(StomtLog, Log, TEXT("Is EMail Already Known: %s"), this->bIsEMailAlreadyKnown ? TEXT("true") : TEXT("false"));
+
 	// Create Stomt Instance
 	this->Stomt = UStomt::ConstructStomt(this->Api->GetTargetId(), !this->bIsWish, this->Message);
 	this->Stomt->SetLabels(this->Labels);
 	this->Stomt->SetAnonym(false);
 
 	this->Api->SetStomtToSend(this->Stomt);
-
-	FString LogFileName = FApp::GetProjectName() + FString(TEXT(".log"));
-
 	this->Api->HandleOfflineStomts();
 
 	if (this->bUploadLogs)
 	{
+		FString LogFileName = FApp::GetProjectName() + FString(TEXT(".log"));
 		FString LogFile = this->Api->ReadLogFile(LogFileName);
 		if (!LogFile.IsEmpty())
 		{
 			this->Api->SendLogFile(LogFile, LogFileName);
-		}
-		else
-		{
-			this->Api->bIsLogUploadComplete = true;
-			if (!this->Api->bUseImageUpload)
-			{
-				this->Api->SendStomt(this->Stomt);
-			}
-		}
-	}
-	else
-	{
-		this->Api->bIsLogUploadComplete = true;
-		if (!this->Api->bUseImageUpload)
-		{
-			this->Api->SendStomt(this->Stomt);
+			return;
 		}
 	}
 
-	// Check EMail
-	this->bIsEMailAlreadyKnown = this->Api->Config->GetSubscribed();
-	UE_LOG(StomtLog, Log, TEXT("Is EMail Already Known: %s"), this->bIsEMailAlreadyKnown ? TEXT("true") : TEXT("false"));
+	this->Api->bIsLogUploadComplete = true;
+	if (!this->Api->bUseImageUpload)
+	{
+		this->Api->SendStomt(this->Stomt);
+	} // else Screenhot Upload is triggered by blueprint
 }
 
 void UStomtPluginWidget::OnSubmitLastLayer()
