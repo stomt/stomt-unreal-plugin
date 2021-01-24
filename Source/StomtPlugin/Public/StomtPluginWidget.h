@@ -32,6 +32,12 @@ public:
 	FString Message;
 
 	/**
+	*	Stomt details-text from the UI textbox.
+	*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
+	FString Details;
+
+	/**
 	*	EMail from the UI EMail layer.
 	*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stomt Widget Plugin")
@@ -121,6 +127,13 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
 	void OnMessageChanged(FString text);
+
+	/**
+	*	Event when details text of the widget is committed.
+	*	@param text - Current details text from the widget-textbox
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Stomt Widget Plugin")
+	void OnDetailsCommitted(FString text);
 
 	/**
 	*	Once the user sends off the stomt.

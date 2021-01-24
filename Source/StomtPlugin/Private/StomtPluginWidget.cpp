@@ -48,6 +48,19 @@ void UStomtPluginWidget::OnMessageChanged(FString text)
 	}
 }
 
+
+void UStomtPluginWidget::OnDetailsCommitted(FString text)
+{
+	if (!text.IsEmpty())
+	{
+		this->Details = text;
+	}
+	else
+	{
+		this->Details = FString(TEXT(""));
+	}
+}
+
 void UStomtPluginWidget::OnSubmit()
 {
 	if (this->Message.IsEmpty())
@@ -56,7 +69,7 @@ void UStomtPluginWidget::OnSubmit()
 	}
 
 	// Create Stomt Instance
-	this->stomt = UStomt::ConstructStomt(this->api->GetTargetID(), !this->IsWish, this->Message);
+	this->stomt = UStomt::ConstructStomt(this->api->GetTargetID(), !this->IsWish, this->Message, this->Details);
 	this->stomt->SetLabels(this->Labels);
 	this->stomt->SetAnonym(false);
 

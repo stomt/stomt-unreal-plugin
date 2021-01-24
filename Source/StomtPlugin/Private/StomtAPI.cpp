@@ -64,7 +64,8 @@ void UStomtAPI::SendStomt(UStomt* stomt)
 	// Fields
 	request->GetRequestObject()->SetField(TEXT("target_id"),	UStomtJsonValue::ConstructJsonValueString(	this, stomt->GetTargetID()	));
 	request->GetRequestObject()->SetField(TEXT("positive"),	UStomtJsonValue::ConstructJsonValueBool(	this, stomt->GetPositive()	));
-	request->GetRequestObject()->SetField(TEXT("text"),		UStomtJsonValue::ConstructJsonValueString(	this, stomt->GetText()		));
+	request->GetRequestObject()->SetField(TEXT("text"), UStomtJsonValue::ConstructJsonValueString(this, stomt->GetText()));
+	request->GetRequestObject()->SetField(TEXT("details"), UStomtJsonValue::ConstructJsonValueString(this, stomt->GetDetails()));
 	request->GetRequestObject()->SetField(TEXT("anonym"),		UStomtJsonValue::ConstructJsonValueBool(	this, stomt->GetAnonym()	));
 	
 	//Labels
