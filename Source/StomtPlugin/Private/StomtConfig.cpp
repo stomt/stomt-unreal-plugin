@@ -242,7 +242,8 @@ TArray<UStomt*> UStomtConfig::GetStomts()
 			UStomt* StomtObject = UStomt::ConstructStomt(
 				JObjStomt->GetStringField("target_id"), 
 				JObjStomt->GetBoolField("positive"),
-				JObjStomt->GetStringField("text")	
+				JObjStomt->GetStringField("text"),
+				JObjStomt->GetStringField("details")
 			);
 
 			StomtObjects.Add(StomtObject);
