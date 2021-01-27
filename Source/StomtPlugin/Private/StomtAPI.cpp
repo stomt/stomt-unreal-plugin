@@ -217,8 +217,9 @@ void UStomtAPI::SendStomt(UStomt* NewStomt)
 	Request->GetRequestObject()->SetField(TEXT("target_id"), UStomtJsonValue::ConstructJsonValueString(this, NewStomt->GetTargetId()));
 	Request->GetRequestObject()->SetField(TEXT("positive"), UStomtJsonValue::ConstructJsonValueBool(this, NewStomt->GetPositive()));
 	Request->GetRequestObject()->SetField(TEXT("text"), UStomtJsonValue::ConstructJsonValueString(this, NewStomt->GetText()));
+	Request->GetRequestObject()->SetField(TEXT("details"), UStomtJsonValue::ConstructJsonValueString(this, NewStomt->GetDetails()));
 	Request->GetRequestObject()->SetField(TEXT("anonym"), UStomtJsonValue::ConstructJsonValueBool(this, NewStomt->GetAnonym()));
-	
+
 	// Labels
 	UStomtRestJsonObject* JObjExtraData = UStomtRestJsonObject::ConstructJsonObject(this);
 	TArray<UStomtJsonValue*> Labels = TArray<UStomtJsonValue*>();
