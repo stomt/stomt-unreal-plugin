@@ -51,6 +51,19 @@ void UStomtPluginWidget::OnMessageChanged(FString text)
 	}
 }
 
+
+void UStomtPluginWidget::OnDetailsCommitted(FString text)
+{
+	if (!text.IsEmpty())
+	{
+		this->Details = text;
+	}
+	else
+	{
+		this->Details = FString(TEXT(""));
+	}
+}
+
 void UStomtPluginWidget::OnSubmit()
 {
 	if (this->Message.IsEmpty())
@@ -63,7 +76,7 @@ void UStomtPluginWidget::OnSubmit()
 	UE_LOG(StomtLog, Log, TEXT("Is EMail Already Known: %s"), this->bIsEMailAlreadyKnown ? TEXT("true") : TEXT("false"));
 
 	// Create Stomt Instance
-	this->Stomt = UStomt::ConstructStomt(this->Api->GetTargetId(), !this->bIsWish, this->Message);
+	this->Stomt = UStomt::ConstructStomt(this->Api->GetTargetId(), !this->bIsWish, this->Message, this->Details);
 	this->Stomt->SetLabels(this->Labels);
 	this->Stomt->SetAnonym(false);
 
