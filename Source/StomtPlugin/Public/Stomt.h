@@ -22,8 +22,9 @@ public:
 	* @param NewTargetId - Stomt target Id
 	* @param bNewPositive - whether it is wish(false) or like(true)
 	* @param NewText - Stomt content text.
+	* @param NewDetails - Stomt details text.
 	*/
-	static UStomt* ConstructStomt(FString NewTargetId, bool bNewPositive, FString NewText);
+	static UStomt* ConstructStomt(FString NewTargetId, bool bNewPositive, FString NewText, FString NewDetails);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Destruction and reset
@@ -37,6 +38,8 @@ public:
 	void SetPositive(bool bNewPositive);
 	
 	void SetText(FString NewText);
+
+	void SetDetails(FString NewDetails);
 	
 	void SetAnonym(bool bNewAnonym);
 	
@@ -54,12 +57,15 @@ public:
 	bool GetPositive();
 	
 	FString GetText();
+
+	FString GetDetails();
 	
 	bool GetAnonym();
 	
 	TArray<UStomtLabel*> GetLabels();
 	
 	FString GetServersideId();
+
 	
 
 	//////////////////////////////////////////////////////////////////////////
@@ -81,6 +87,9 @@ private:
 	UPROPERTY()
 	FString		Url;
 	
+	UPROPERTY()
+	FString		Details;
+
 	UPROPERTY()
 	bool		bAnonym;
 	
