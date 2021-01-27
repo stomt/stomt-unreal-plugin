@@ -105,14 +105,10 @@ TArray<FString> UStomtRestRequest::GetAllResponseHeaders()
 
 void UStomtRestRequest::ProcessUrl(const FString& Url)
 {
-	TSharedRef<IHttpRequest> HttpRequest = FHttpModule::Get().CreateRequest();
+	// Signature changed from version 4.25 to 4.26 (ThreadSafe)
+	auto HttpRequest = FHttpModule::Get().CreateRequest();
 	HttpRequest->SetURL(Url);
 
-	this->ProcessRequest(HttpRequest);
-}
-
-void UStomtRestRequest::ProcessRequest(TSharedRef<IHttpRequest> HttpRequest)
-{	
 	// Set verb
 	switch (RequestVerb)
 	{
@@ -189,6 +185,7 @@ void UStomtRestRequest::ProcessRequest(TSharedRef<IHttpRequest> HttpRequest)
 	// Execute the Request
 	HttpRequest->ProcessRequest();
 }
+
 
 //////////////////////////////////////////////////////////////////////////
 // Request callbacks
