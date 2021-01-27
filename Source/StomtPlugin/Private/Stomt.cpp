@@ -12,12 +12,13 @@ UStomt::UStomt()
 
 }
 
-UStomt* UStomt::ConstructStomt(FString NewTargetId, bool bNewPositive, FString NewText)
+UStomt* UStomt::ConstructStomt(FString NewTargetId, bool bNewPositive, FString NewText, FString NewDetails)
 {
 	UStomt* NewStomt = NewObject<UStomt>();
 	NewStomt->SetTargetId(NewTargetId);
 	NewStomt->SetPositive(bNewPositive);
 	NewStomt->SetText(NewText);
+	NewStomt->SetDetails(NewDetails);
 
 	return NewStomt;
 }
@@ -38,6 +39,11 @@ void UStomt::SetPositive(bool bNewPositive)
 void UStomt::SetText(FString NewText)
 {
 	this->Text = NewText;
+}
+
+void UStomt::SetDetails(FString NewDetails)
+{
+	this->Details = NewDetails;
 }
 
 void UStomt::SetAnonym(bool bNewAnonym)
@@ -85,6 +91,12 @@ bool UStomt::GetPositive()
 FString UStomt::GetText()
 {
 	return this->Text;
+}
+
+
+FString UStomt::GetDetails()
+{
+	return this->Details;
 }
 
 bool UStomt::GetAnonym()
