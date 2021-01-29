@@ -33,7 +33,7 @@ UStomtTrack::UStomtTrack()
 	this->SetSdkType(FString("UnrealEngine") + UKismetSystemLibrary::GetEngineVersion());
 	UE_LOG(StomtInit, Log, TEXT("SdkType: %s"), *this->SdkType);
 
-	this->SetSdkVersion("2.5.0");
+	this->SetSdkVersion("2.5.1");
 	UE_LOG(StomtInit, Log, TEXT("SdkVersion: %s"), *this->SdkVersion);
 
 	this->SetSdkIntegration(UKismetSystemLibrary::GetGameName());
