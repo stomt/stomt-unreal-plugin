@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
-	"Version": 9,
-	"VersionName": "2.5.0",
+	"Version": 10,
+	"VersionName": "2.5.1",
 	"EngineVersion" : "4.23.0",
 	"FriendlyName": "StomtPlugin",
 	"Description": "This Widget allows the easy integration of the feedback solution www.stomt.com in your game.",
